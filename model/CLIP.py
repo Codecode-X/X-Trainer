@@ -10,7 +10,7 @@ import utils
 import os
 
 # 可用的预训练模型
-_MODELS = {
+_MODELS_URL = {
     "RN50": "https://openaipublic.azureedge.net/clip/models/afeb0e10f9e5a86da6080e35cf09123aca3b358a0c3e3b6c78a7b63bc04b6762/RN50.pt",
     "RN101": "https://openaipublic.azureedge.net/clip/models/8fa8567bab74a42d41c5915025a8e4538c3bdbe8804a470a72f30b0d94fab599/RN101.pt",
     "RN50x4": "https://openaipublic.azureedge.net/clip/models/7e526bd135e493cef0776de27d5f42653e6b4c8bf9e0f653bb11773263205fdd/RN50x4.pt",
@@ -23,7 +23,7 @@ _MODELS = {
 }
 
 @MODEL_REGISTRY.register()
-class CLIP(ModelBase):
+class Clip(ModelBase):
 
     def __init__(self,
                  embed_dim: int,
@@ -223,16 +223,16 @@ class CLIP(ModelBase):
         # ---载入预训练模型的参数 state_dict---
         # 从配置中读取 模型名称 和 预训练权重下载保存路径
         name = cfg.MODEL.NAME  # 例如 'RN50'、'ViT-B/32' 等
-        if hasattr(cfg.MODEL, 'DOWNLOAD_ROOT'): # 预训练权重保存路径
-            download_root = cfg.MODEL.DOWNLOAD_ROOT 
-        else:
-            download_root = os.path.expanduser("~/.cache/clip")
-        if name in _MODELS:
-            model_path = utils.download(_MODELS[name], download_root)
+        
+        download_root = cfg.Clip.download_root \
+            if hasattr(cfg.Clip, 'download_root') else os.path.expanduser("~/.cache/clip")  # 预训练权重下载保存路径
+        
+        if name in _MODELS_URL:
+            model_path = utils.download(_MODELS_URL[name], download_root)
         elif os.path.isfile(name):
             model_path = name
         else:
-            raise RuntimeError(f"Model {name} not found; available models = {_MODELS.keys()}")
+            raise RuntimeError(f"Model {name} not found; available models = {_MODELS_URL.keys()}")
         state_dict = None
         with open(model_path, 'rb') as opened_file:
             state_dict = torch.load(opened_file, map_location="cpu")
@@ -262,7 +262,7 @@ class CLIP(ModelBase):
         transformer_layers = len(set(k.split(".")[2] for k in state_dict if k.startswith("transformer.resblocks")))
 
         # ---实例化 NPCLIP 模型---
-        model = CLIP(
+        model = Clip(
             embed_dim,
             image_resolution, vision_layers, vision_width, vision_patch_size,
             context_length, vocab_size, transformer_width, transformer_heads, transformer_layers

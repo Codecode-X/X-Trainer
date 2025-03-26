@@ -8,7 +8,7 @@ class InstanceNormalization(TransformBase):
     使用每个通道的均值和标准差对当前图像进行归一化。
 
     属性：
-        - eps (float): 防止除零的小值 | 默认值为 1e-8。
+        - None
 
     主要功能：
         - 对输入图像进行实例归一化。
@@ -21,8 +21,7 @@ class InstanceNormalization(TransformBase):
     """
 
     def __init__(self, cfg):
-        self.eps = cfg.INPUT.InstanceNormalization.eps \
-            if hasattr(cfg.INPUT, 'InstanceNormalization') else 1e-8
+        self.eps = 1e-8
 
     def __call__(self, img):
         C, H, W = img.shape

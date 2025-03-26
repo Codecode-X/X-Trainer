@@ -22,9 +22,9 @@ class Cutout(TransformBase):
     """
     def __init__(self, cfg):
         self.n_holes = cfg.INPUT.Cutout.n_holes \
-            if hasattr(cfg.INPUT, 'Cutout') else 1
+            if hasattr(cfg.INPUT.Cutout, 'n_holes') else 1
         self.length = cfg.INPUT.Cutout.length \
-            if hasattr(cfg.INPUT, 'Cutout') else 16
+            if hasattr(cfg.INPUT.Cutout, 'length') else 16
 
     def __call__(self, img):
         """

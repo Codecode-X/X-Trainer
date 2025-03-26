@@ -4,4 +4,4 @@ from .ModelBase import ModelBase # isort:skip
 
 from .SimpleModel import SimpleNet
 
-from .CLIP import CLIP
+from .Clip import Clip

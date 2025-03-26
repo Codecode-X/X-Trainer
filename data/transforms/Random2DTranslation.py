@@ -5,6 +5,12 @@ import torchvision.transforms.functional as F
 from torchvision.transforms.functional import InterpolationMode
 
 
+INTERPOLATION_MODES = {
+    "bilinear": InterpolationMode.BILINEAR,  # 双线性插值
+    "bicubic": InterpolationMode.BICUBIC,  # 双三次插值
+    "nearest": InterpolationMode.NEAREST,  # 最近邻插值
+}
+
 @TRANSFORM_REGISTRY.register()
 class Random2DTranslation(TransformBase):
     """
@@ -24,12 +30,11 @@ class Random2DTranslation(TransformBase):
         4. 在调整后的图像上随机选择一个区域进行裁剪，使其大小为 (height, width)。
     """
     def __init__(self, cfg):
-        self.height = cfg.INPUT.INTERPOLATION
-        self.width = cfg.INPUT.INTERPOLATION
+        self.height, self.width = cfg.INPUT.SIZE, cfg.INPUT.SIZE
         self.p = cfg.INPUT.Random2DTranslation.p \
-            if hasattr(cfg.INPUT, 'Random2DTranslation') else 0.5
-        self.interpolation = InterpolationMode(cfg.INPUT.Random2DTranslation.interpolation) \
-            if hasattr(cfg.INPUT, 'Random2DTranslation') else InterpolationMode.BILINEAR
+            if hasattr(cfg.INPUT.Random2DTranslation, 'p') else 0.5
+        self.interpolation = INTERPOLATION_MODES[cfg.INPUT.INTERPOLATION] \
+            if hasattr(cfg.INPUT, 'INTERPOLATION') else InterpolationMode.BILINEAR
 
     def __call__(self, img):
         if random.uniform(0, 1) > self.p:

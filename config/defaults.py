@@ -1,5 +1,8 @@
 from yacs.config import CfgNode as CN
 
+
+# TODO: 判断到底真正需要哪些配置
+
 ###########################
 # Config definition
 ###########################

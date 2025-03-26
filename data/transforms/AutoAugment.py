@@ -21,7 +21,7 @@ class ImageNetPolicy(TransformBase):
 
     def __init__(self, cfg):
         self.fillcolor = cfg.INPUT.ImageNetPolicy.fillcolor \
-            if hasattr(cfg.INPUT, 'ImageNetPolicy') else (128, 128, 128)
+            if hasattr(cfg.INPUT.ImageNetPolicy, 'fillcolor') else (128, 128, 128)
         
         self.policies = [
             SubPolicy(0.4, "posterize", 8, 0.6, "rotate", 9, self.fillcolor),
@@ -67,7 +67,7 @@ class CIFAR10Policy(TransformBase):
 
     def __init__(self, cfg):
         self.fillcolor = cfg.INPUT.CIFAR10Policy.fillcolor \
-            if hasattr(cfg.INPUT, 'CIFAR10Policy') else (128, 128, 128)
+            if hasattr(cfg.INPUT.CIFAR10Policy, 'fillcolor') else (128, 128, 128)
         
         self.policies = [
             SubPolicy(0.1, "invert", 7, 0.2, "contrast", 6, self.fillcolor),
@@ -112,7 +112,7 @@ class SVHNPolicy(TransformBase):
 
     def __init__(self, cfg):
         self.fillcolor=cfg.INPUT.SVHNPolicy.fillcolor \
-            if hasattr(cfg.INPUT, 'SVHNPolicy') else (128, 128, 128)
+            if hasattr(cfg.INPUT.SVHNPolicy, 'fillcolor') else (128, 128, 128)
         self.policies = [
             SubPolicy(0.9, "shearX", 4, 0.2, "invert", 3, self.fillcolor),
             SubPolicy(0.9, "shearY", 8, 0.7, "invert", 5, self.fillcolor),

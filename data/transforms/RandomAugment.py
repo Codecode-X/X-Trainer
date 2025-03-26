@@ -19,8 +19,8 @@ class RandomIntensityAugment(TransformBase):
     """
     从预定义的增强操作列表中随机选择数量 n 的操作，并且随机选择其强度。    
     属性：
-        - n (int): 操作数量。
-        - m (int): 操作强度。
+        - n (int): 操作数量 | 默认值：2
+        - m (int): 操作强度 | 默认值：10
         
     主要功能：
         - 对输入图像应用随机数据增强。
@@ -32,9 +32,9 @@ class RandomIntensityAugment(TransformBase):
     """
     def __init__(self, cfg):
         self.n = cfg.INPUT.RandomIntensityAugment.n \
-            if hasattr(cfg.INPUT, 'RandomIntensityAugment') else 2
+            if hasattr(cfg.INPUT.RandomIntensityAugment, 'n') else 2
         self.m = cfg.INPUT.RandomIntensityAugment.m \
-            if hasattr(cfg.INPUT, 'RandomIntensityAugment') else 10
+            if hasattr(cfg.INPUT.RandomIntensityAugment, 'm') else 10
         assert 0 <= self.m <= 30
 
         self.augment_list = [
@@ -71,8 +71,8 @@ class ProbabilisticAugment(TransformBase):
     从预定义的增强操作列表中随机选择数量 n 的操作，每个操作以概率 p 应用。
 
     属性：
-        - n (int): 操作数量。
-        - p (float): 操作概率。
+        - n (int): 操作数量 | 默认值：2
+        - p (float): 操作概率 | 默认值：0.6
 
     主要功能：
         - 对输入图像应用随机数据增强。
@@ -85,9 +85,9 @@ class ProbabilisticAugment(TransformBase):
 
     def __init__(self, cfg):
         self.n = cfg.INPUT.ProbabilisticAugment.n \
-            if hasattr(cfg.INPUT, 'ProbabilisticAugment') else 2
+            if hasattr(cfg.INPUT.ProbabilisticAugment, 'n') else 2
         self.p = cfg.INPUT.ProbabilisticAugment.p \
-            if hasattr(cfg.INPUT, 'ProbabilisticAugment') else 0.6
+            if hasattr(cfg.INPUT.ProbabilisticAugment, 'p') else 0.6
         
         self.augment_list = [
             (AutoContrast, 0, 1),

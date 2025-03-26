@@ -21,11 +21,11 @@ class GaussianNoise(TransformBase):
     """
     def __init__(self, cfg):
         self.mean = cfg.INPUT.GaussianNoise.mean \
-            if hasattr(cfg.INPUT, 'GaussianNoise') else 0
+            if hasattr(cfg.INPUT.GaussianNoise, 'mea') else 0
         self.std = cfg.INPUT.GaussianNoise.std \
-            if hasattr(cfg.INPUT, 'GaussianNoise') else 0.15
+            if hasattr(cfg.INPUT.GaussianNoise, 'std') else 0.15
         self.p = cfg.INPUT.GaussianNoise.p \
-            if hasattr(cfg.INPUT, 'GaussianNoise') else 0.5
+            if hasattr(cfg.INPUT.GaussianNoise, 'p') else 0.5
 
     def __call__(self, img):
         if random.uniform(0, 1) > self.p:

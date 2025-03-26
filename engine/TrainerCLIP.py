@@ -1,18 +1,17 @@
 from TrainerBase import TrainerBase
 from model import build_model
 from utils import count_num_param
-from optim import build_optimizer, build_lr_scheduler
 from torch.cuda.amp import GradScaler
 import torch
 import torch.nn as nn
 from torch.nn import functional as F
 from torch.cuda.amp import GradScaler, autocast
-from metrics import compute_accuracy
-from utils import load_checkpoint
-from optim import build_optimizer, build_lr_scheduler
+from utils.metrics import compute_accuracy
+from optim import build_optimizer
+from lr_scheduler import build_lr_scheduler
 import os.path as osp
 
-class TrainerCLIP(TrainerBase):
+class TrainerClip(TrainerBase):
 
     def check_cfg(self, cfg): # 检查配置文件中的 PREC 字段是否为合法值
         """ (实现父类的方法) 检查配置文件中的 PREC 字段是否为合法值。"""
@@ -65,7 +64,7 @@ class TrainerCLIP(TrainerBase):
         # 构建优化器和调度器并注册 -> 示例：优化器只优化 CLIP 的图像编码器
         image_encoder = self.model.visual
         self.optim = build_optimizer(image_encoder, cfg.OPTIM)
-        self.sched = build_lr_scheduler(self.optim, cfg.OPTIM)
+        self.sched = build_lr_scheduler(cfg, self.optim)
         self.register_model("CLIP_image_encoder", image_encoder, self.optim, self.sched)
 
         return self.model, self.optim, self.sched

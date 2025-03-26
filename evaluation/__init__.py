@@ -1,3 +1,4 @@
 from .build import build_evaluator, EVALUATOR_REGISTRY  # isort:skip
 
-from .evaluator import EvaluatorBase, Classification
+from .EvaluatorBase import EvaluatorBase
+from .EvaluatorClassification import EvaluatorClassification

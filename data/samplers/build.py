@@ -4,12 +4,12 @@ SAMPLER_REGISTRY = Registry("SAMPLER")
 
 
 def build_train_sampler(cfg):
-    """ 根据配置中的训练采样器名称 (cfg.DATALOADER.TRAIN_X.SAMPLER) 构建相应的 训练采样器。"""
+    """ 根据配置中的训练采样器名称 (cfg.DATALOADER.TRAIN.SAMPLER ) 构建相应的 训练采样器。"""
     avai_samplers = SAMPLER_REGISTRY.registered_names()
-    check_availability(cfg.DATALOADER.TRAIN_X.SAMPLER, avai_samplers)
+    check_availability(cfg.DATALOADER.TRAIN.SAMPLER , avai_samplers)
     if cfg.VERBOSE:
-        print("Loading sampler: {}".format(cfg.DATALOADER.TRAIN_X.SAMPLER))
-    return SAMPLER_REGISTRY.get(cfg.DATALOADER.TRAIN_X.SAMPLER)(cfg)
+        print("Loading sampler: {}".format(cfg.DATALOADER.TRAIN.SAMPLER))
+    return SAMPLER_REGISTRY.get(cfg.DATALOADER.TRAIN.SAMPLER)(cfg)
 
 
 def build_test_sampler(cfg):

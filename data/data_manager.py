@@ -20,7 +20,6 @@ class DataManager:
 
     属性：
         - num_classes (int): 类别数量。
-        - num_source_domains (int): 源域数量。
         - lab2cname (dict): 类别到名称的映射。
         - dataset (DatasetBase): 数据集。
         - train_loader (DataLoader): 训练数据加载器。
@@ -45,7 +44,7 @@ class DataManager:
             1. 构建数据集对象。
             2. 构建数据增强。
             3. 构建数据加载器（数据集 + 数据增强）。
-            4. 记录属性：类别数量、源域数量、类别到名称的映射。
+            4. 记录属性：类别数量、类别到名称的映射。
             5. 记录对象：数据集、训练数据加载器、验证数据加载器、测试数据加载器。
             6. 如果启用了详细信息打印，打印数据集摘要信息。
         """
@@ -72,8 +71,6 @@ class DataManager:
             sampler=train_sampler,  # 训练采样器
             data_source=dataset.train_x,  # 数据源
             batch_size=cfg.DATALOADER.TRAIN_X.BATCH_SIZE,  # 批大小
-            n_domain=cfg.DATALOADER.TRAIN_X.N_DOMAIN,  # 域数量
-            n_ins=cfg.DATALOADER.TRAIN_X.N_INS,  # 每个类别的实例数量
             tfm=tfm_train,  # 训练数据增强
             is_train=True,  # 训练模式
             dataset_transform=dataset_transform  # 数据集转换器，用于对数据集进行转换和增强
@@ -101,9 +98,8 @@ class DataManager:
             dataset_transform=dataset_transform # 数据集转换器，用于对数据集进行转换和增强
         )
 
-        # ---记录属性：类别数量、源域数量、类别到名称的映射---
+        # ---记录属性：类别数量、类别到名称的映射---
         self._num_classes = dataset.num_classes  # 类别数量
-        self._num_source_domains = len(cfg.DATASET.SOURCE_DOMAINS)  # 源域数量
         self._lab2cname = dataset.lab2cname  # 类别到名称的映射
         
         # ---记录对象：数据集、训练数据加载器、验证数据加载器、测试数据加载器---
@@ -121,11 +117,6 @@ class DataManager:
         return self._num_classes
 
     @property
-    def num_source_domains(self):
-        """返回源域数量。"""
-        return self._num_source_domains
-
-    @property
     def lab2cname(self):
         """返回类别到名称的映射。"""
         return self._lab2cname
@@ -133,13 +124,10 @@ class DataManager:
     def show_dataset_summary(self, cfg):
         """打印数据集摘要信息。"""
         dataset_name = cfg.DATASET.NAME  # 数据集名称
-        target_domains = cfg.DATASET.TARGET_DOMAINS  # 目标域
 
         # 构建摘要表格
         table = []
         table.append(["数据集", dataset_name])
-        if target_domains:
-            table.append(["目标域", target_domains])
         table.append(["类别数量", f"{self.num_classes:,}"])
         table.append(["有标签训练数据", f"{len(self.dataset.train_x):,}"])
         if self.dataset.train_u:
@@ -180,7 +168,7 @@ def _build_data_loader(cfg, sampler, data_source=None, batch_size=64, tfm=None, 
         dataset_transform(cfg, data_source, transform=tfm, is_train=is_train), # 数据转换器（转换为 tensor, 数据增强等操作）
         batch_size=batch_size, 
         sampler=sampler, # 采样器
-        num_workers=cfg.DATALOADER.NUM_WORKERS,
+        num_workers=cfg.DATALOADER.NUM_WORKERS, # 工作进程数
         drop_last=(is_train and len(data_source) >= batch_size), # 只有在 训练模式下 且 数据源的长度大于等于批大小时 才丢弃最后一个批次
         pin_memory=(torch.cuda.is_available() and cfg.USE_CUDA) # 只有在 CUDA 可用且使用 CUDA 时才将数据存储在固定内存中
     )
@@ -221,7 +209,7 @@ class TransformeWrapper(TorchDataset):
         # 获取相关配置信息
         self.cfg = cfg  # 配置
         self.k_tfm = cfg.DATALOADER.K_TRANSFORMS if is_train else 1 # 增强次数 | 如果是训练模式，获取数据增强次数；测试模式下默认为 1
-        self.return_img0 = cfg.DATALOADER.RETURN_IMG0  # 是否返回未增强的原始图像
+        self.return_img0 = cfg.DATALOADER.RETURN_IMG0  # 是否记录未增强的原始图像 | 默认为 False
 
         # 如果需要对图像进行 K 次增强，但未提供 transform，则抛出异常
         if self.k_tfm > 1 and transform is None:

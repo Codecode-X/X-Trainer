@@ -12,7 +12,8 @@ import torch.nn as nn
 from tqdm import tqdm
 from data import DataManager
 from torch.cuda.amp import GradScaler
-from optim import build_optimizer, build_lr_scheduler
+from optim import build_optimizer
+from lr_scheduler import build_lr_scheduler
 from model import build_model
 from utils import (count_num_param, mkdir_if_missing, load_pretrained_weights)
 from evaluation import build_evaluator
@@ -544,16 +545,16 @@ class TrainerBase:
         """
         # 判断模型保存条件：是否是最后一个 epoch、是否需要验证、是否满足保存检查点的频率
         is_last_epoch = (self.epoch + 1) == self.max_epoch # 是否是最后一个 epoch
-        need_eval = not self.cfg.TRAIN.DO_EVAL # 是否需要验证（每个 epoch 后都验证，并保存验证性能最好的模型）
+        need_eval = self.cfg.TRAIN.DO_EVAL # 是否需要验证（每个 epoch 后都验证，并保存验证性能最好的模型）
         meet_checkpoint_freq = (  # 是否满足保存检查点的频率
             (self.epoch + 1) % self.cfg.TRAIN.CHECKPOINT_FREQ == 0
             if self.cfg.TRAIN.CHECKPOINT_FREQ > 0 else False
         )
 
         # 根据条件保存模型
-        if need_eval and self.cfg.TEST.FINAL_MODEL == "best_val":
+        if need_eval:
             # 如果每个 epoch 后都验证，则进行验证，并保存验证性能最好的模型
-            curr_result = self.test(split="val")
+            curr_result = self.test(split="val")  # TODO：是否有输出验证结果
             is_best = curr_result > self.best_result
             if is_best:
                 self.best_result = curr_result
@@ -728,8 +729,8 @@ class TrainerBase:
         print("模型参数数量：", count_num_param(self.model))
         
         # 给模型载入预训练权重 (如果配置了预训练权重)
-        if cfg.MODEL.INIT_WEIGHTS: 
-            load_pretrained_weights(self.model, cfg.MODEL.INIT_WEIGHTS)  # 加载预训练权重
+        if cfg.MODEL.INIT_WEIGHTS_PATH: 
+            load_pretrained_weights(self.model, cfg.MODEL.INIT_WEIGHTS_PATH)  # 加载预训练权重
 
         # 冻结模型某些层 (如果配置了冻结层)
         pass  # 未实现
@@ -748,7 +749,7 @@ class TrainerBase:
 
         # 为 整个模型 或 部分模块 (例如 head) 构建优化器和学习率调度器，并注册
         self.optim = build_optimizer(self.model, cfg.OPTIM)  # 构建优化器
-        self.sched = build_lr_scheduler(self.optim, cfg.OPTIM)  # 构建学习率调度器
+        self.sched = build_lr_scheduler(cfg, self.optim)  # 构建学习率调度器
         self.register_model(cfg.MODEL.NAME, self.model, self.optim, self.sched) # 注册模型
 
         return self.model, self.optim, self.sched

@@ -8,6 +8,9 @@ class Normalize(TransformBase):
     对输入图像进行归一化处理。
     参数：
         - cfg (CfgNode): 配置节点，包含归一化所需的均值和标准差。
+    属性：
+        - mean (lint<float>): 均值 | [0.485, 0.456, 0.406]，默认 ImageNet
+        - std (lint<float>): 标准差 | [0.229, 0.224, 0.225]，默认 ImageNet
     主要功能：
         - 对输入图像进行归一化处理，使其像素值符合指定的均值和标准差。
     主要步骤：

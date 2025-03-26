@@ -81,9 +81,6 @@ class Caltech101(DatasetBase):
                 with open(fewshot_dataset, "wb") as file:
                     pickle.dump(data, file, protocol=pickle.HIGHEST_PROTOCOL)  # 保存
 
-        # 如果设置了子样本类别处理 (默认为 all，即全集)，则进行处理
-        train, val, test = self.subsample_classes(train, val, test, subsample=cfg.DATASET.SUBSAMPLE_CLASSES)  # 子样本类别处理
-
         # 调用父类构造方法
         super().__init__(train=train, val=val, test=test)  
 
@@ -106,51 +103,7 @@ class Caltech101(DatasetBase):
         test = _convert(split["test"])  # 转换测试数据
 
         return train, val, test  # 返回训练、验证和测试数据
-    
-    @staticmethod
-    def subsample_classes(*args, subsample="all"):
-        """子样本类别处理
 
-        Args:
-            args: 数据集列表，例如 train, val 和 test。
-            subsample (str): 要子样本的类别。
-        """
-        assert subsample in ["all", "base", "new"]  # 断言子样本类别在指定范围内
-
-        if subsample == "all":
-            return args  # 如果是全部类别，直接返回
-
-        dataset = args[0]
-        labels = set()
-        for item in dataset:
-            labels.add(item.label)  # 获取所有标签
-        labels = list(labels)
-        labels.sort()
-        n = len(labels)
-        m = math.ceil(n / 2)  # 将类别分成两半
-
-        print(f"SUBSAMPLE {subsample.upper()} CLASSES!")  # 打印子样本类别信息
-        if subsample == "base":
-            selected = labels[:m]  # 选择前一半类别
-        else:
-            selected = labels[m:]  # 选择后一半类别
-        relabeler = {y: y_new for y_new, y in enumerate(selected)}  # 重新标记类别
-        
-        output = []
-        for dataset in args:
-            dataset_new = []
-            for item in dataset:
-                if item.label not in selected:
-                    continue
-                item_new = Datum(
-                    impath=item.impath,
-                    label=relabeler[item.label],
-                    classname=item.classname
-                )
-                dataset_new.append(item_new)
-            output.append(dataset_new)
-        
-        return output  # 返回处理后的数据集
     
     @staticmethod
     def save_split(train, val, test, filepath, path_prefix):

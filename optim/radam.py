@@ -1,17 +1,3 @@
-"""
-Imported from: https://github.com/LiyuanLucasLiu/RAdam
-
-https://arxiv.org/abs/1908.03265
-
-@article{liu2019radam,
-  title={On the Variance of the Adaptive Learning Rate and Beyond},
-  author={Liu, Liyuan and Jiang, Haoming and He, Pengcheng and Chen, Weizhu and Liu, Xiaodong and Gao, Jianfeng and Han, Jiawei},
-  journal={arXiv preprint arXiv:1908.03265},
-  year={2019}
-}
-
-RAdam: 一种新的优化器，结合了 Adam 和 RMSprop 的优点，具有自适应学习率和动量的特性。
-"""
 import math
 import torch
 from torch.optim.optimizer import Optimizer
