@@ -34,13 +34,13 @@ class EvaluatorClassification(EvaluatorBase):
         self.y_true = [] # 真实标签
         self.y_pred = [] # 预测标签
 
-        self.per_class = cfg.EVALUATOR.EvaluatorClassification.per_class # 是否评估每个类别的结果
+        self.per_class = cfg.EVALUATOR.per_class # 是否评估每个类别的结果
         self.per_class_res = None # 每个类别的结果
         if self.per_class: # 是否评估每个类别的结果
             assert lab2cname is not None
             self.per_class_res = defaultdict(list) # 用于记录每个类别的结果的字典
         
-        self.calc_cmat = cfg.EVALUATOR.EvaluatorClassification.calc_cmat # 是否计算混淆矩阵
+        self.calc_cmat = cfg.EVALUATOR.calc_cmat # 是否计算混淆矩阵
 
     def reset(self):
         """(实现父类的方法) 重置评估器状态。"""
