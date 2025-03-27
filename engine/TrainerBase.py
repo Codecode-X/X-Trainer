@@ -12,7 +12,7 @@ import torch.nn as nn
 from tqdm import tqdm
 from data_manager import DataManager
 from torch.cuda.amp import GradScaler
-from optim import build_optimizer
+from optimizer import build_optimizer
 from lr_scheduler import build_lr_scheduler
 from model import build_model
 from utils import (count_num_param, mkdir_if_missing, load_pretrained_weights)
@@ -88,7 +88,7 @@ class TrainerBase:
         self.best_result = -np.inf  # 初始化最佳结果
         self.start_epoch = self.epoch = 0
         # 读取配置信息
-        self.max_epoch = cfg.OPTIM.MAX_EPOCH
+        self.max_epoch = cfg.TRAIN.MAX_EPOCH
         self.output_dir = cfg.OUTPUT_DIR
         self.cfg = cfg
         # 设置设备（GPU 或 CPU）
@@ -748,7 +748,7 @@ class TrainerBase:
             self.model = nn.DataParallel(self.model)
 
         # 为 整个模型 或 部分模块 (例如 head) 构建优化器和学习率调度器，并注册
-        self.optim = build_optimizer(self.model, cfg.OPTIM)  # 构建优化器
+        self.optim = build_optimizer(self.model, cfg)  # 构建优化器
         self.sched = build_lr_scheduler(cfg, self.optim)  # 构建学习率调度器
         self.register_model(cfg.MODEL.NAME, self.model, self.optim, self.sched) # 注册模型
 

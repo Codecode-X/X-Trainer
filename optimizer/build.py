@@ -7,6 +7,7 @@ OPTIMIZER_REGISTRY = Registry("OPTIMIZER")
 
 def build_optimizer(model, cfg, param_groups=None):
     """构建优化器。
+    
     参数：
         - model (nn.Module): 模型。
         - cfg (CfgNode): 配置。
@@ -18,11 +19,11 @@ def build_optimizer(model, cfg, param_groups=None):
     主要步骤：
         1. 处理参数 model，确保 model 是 nn.Module 的实例且不是 nn.DataParallel 的实例。
         2. 读取配置：
-            - optimizer_name: OPTIMIZER.NAME，优化器名称。
-            - lr: OPTIMIZER.LR，学习率。
-            - base_lr_mult: OPTIMIZER.BASE_LR_MULT，基础学习率缩放系数。
-            - staged_lr: OPTIMIZER.STAGED_LR，分阶段学习率。
-            - new_layers: OPTIMIZER.NEW_LAYERS，新层。
+            - OPTIMIZER.NAME (str): 优化器名称。
+            - OPTIMIZER.LR (float): 学习率。
+            - OPTIMIZER.STAGED_LR (bool): 是否采用分阶段学习率。
+                - OPTIMIZER.NEW_LAYERS (list): 新层列表。
+                - OPTIMIZER.BASE_LR_MULT (float): 基础层学习率缩放系数，一般设置小于 1。
         3. 根据 staged_lr 配置创建待优化的模型参数组。
         4. 实例化优化器。
         5. 返回

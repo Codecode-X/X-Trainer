@@ -7,7 +7,7 @@ import torch.nn as nn
 from torch.nn import functional as F
 from torch.cuda.amp import GradScaler, autocast
 from utils.metrics import compute_accuracy
-from optim import build_optimizer
+from optimizer import build_optimizer
 from lr_scheduler import build_lr_scheduler
 import os.path as osp
 
@@ -63,7 +63,7 @@ class TrainerClip(TrainerBase):
 
         # 构建优化器和调度器并注册 -> 示例：优化器只优化 CLIP 的图像编码器
         image_encoder = self.model.visual
-        self.optim = build_optimizer(image_encoder, cfg.OPTIM)
+        self.optim = build_optimizer(image_encoder, cfg)
         self.sched = build_lr_scheduler(cfg, self.optim)
         self.register_model("CLIP_image_encoder", image_encoder, self.optim, self.sched)
 
