@@ -5,11 +5,15 @@ import os.path as osp
 
 from .tools import mkdir_if_missing
 
-__all__ = ["Logger", "setup_logger"]
+__all__ = [
+    "Logger",  # 将控制台输出写入外部文本文件类
+    "setup_logger" # 设置标准输出日志
+]
 
 
 class Logger:
-    """将控制台输出写入外部文本文件。
+    """
+    将控制台输出写入外部文本文件的类。
     参数:
         fpath (str): 保存日志文件的目录。
 

@@ -1,12 +1,21 @@
 import hashlib
 import os
+import os.path as osp
+import tarfile
+import zipfile
+import gdown
 import urllib
 import warnings
 from tqdm import tqdm
 
-def download(url: str, root: str):
+__all__ = [
+    "download_weight", # 通过 url 下载模型权重文件
+    "download_data" # 下载数据并解压
+]
+
+def download_weight(url: str, root: str):
     """
-    下载指定 URL 的文件到指定目录，并返回下载后的文件路径。
+    下载指定 URL 的权重文件到指定目录，并返回下载后的文件路径。
        
     参数：
         - url：str，文件的 URL 地址。
@@ -58,3 +67,51 @@ def download(url: str, root: str):
         raise RuntimeError("文件已下载，但 SHA256 校验和不匹配")
 
     return download_target
+
+
+def download_data(url, dst, from_gdrive=True):
+    """
+    下载数据并解压，支持 zip, tar, tar.gz 文件，解压后文件存储在目标路径的文件夹中。
+
+    参数:
+        - url (str): 数据下载链接。
+        - dst (str): 下载文件的目标路径。
+        - from_gdrive (bool): 是否从 Google Drive 下载。
+    
+    返回:
+        - None
+    """
+    # 如果目标路径的父目录不存在，则创建
+    if not osp.exists(osp.dirname(dst)):
+        os.makedirs(osp.dirname(dst))
+
+    if from_gdrive:
+        # 使用 gdown 下载文件
+        gdown.download(url, dst, quiet=False)
+    else:
+        raise NotImplementedError
+
+    print("Extracting file ...")
+
+    # 解压 zip 文件
+    if dst.endswith(".zip"):
+        zip_ref = zipfile.ZipFile(dst, "r")
+        zip_ref.extractall(osp.dirname(dst))
+        zip_ref.close()
+
+    # 解压 tar 文件
+    elif dst.endswith(".tar"):
+        tar = tarfile.open(dst, "r:")
+        tar.extractall(osp.dirname(dst))
+        tar.close()
+
+    # 解压 tar.gz 文件
+    elif dst.endswith(".tar.gz"):
+        tar = tarfile.open(dst, "r:gz")
+        tar.extractall(osp.dirname(dst))
+        tar.close()
+
+    else:
+        raise NotImplementedError
+
+    print("File extracted to {}".format(osp.dirname(dst)))

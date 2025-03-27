@@ -1,7 +1,3 @@
-"""
-Modified from https://github.com/KaiyangZhou/deep-person-reid
-
-"""
 import warnings
 import torch
 import torch.nn as nn
@@ -12,18 +8,26 @@ AVAI_OPTIMS = ["adam", "amsgrad", "sgd", "rmsprop", "radam", "adamw"]  # 可用�
 
 def build_optimizer(model, optim_cfg, param_groups=None):
     """构建优化器函数
+
     参数:
-        model (nn.Module 或 iterable): 模型。
-        optim_cfg (CfgNode): 优化配置。
-        param_groups: 参数组 (可选参数): 如果提供了参数组，则直接使用这些参数组创建优化器，而忽略 staged_lr 配置。
+        - model (nn.Module 或 iterable): 模型。
+        - optim_cfg (CfgNode): 优化配置。
+        - param_groups: 参数组 (可选参数): 如果提供了参数组，则直接使用这些参数组创建优化器，而忽略 staged_lr 配置。
+    
     作用:
-        根据提供的模型 model 和优化配置 optim_cfg（比如使用哪种优化器、学习率、权重衰减等参数），
-        生成一个可以直接用来训练模型的优化器对象。
-        支持分阶段学习率、灵活的参数分组、适配多种优化器。
+        - 根据提供的模型 model 和优化配置 optim_cfg（比如使用哪种优化器、学习率、权重衰减等参数），
+        - 生成一个可以直接用来训练模型的优化器对象。
+        - 支持分阶段学习率、灵活的参数分组、适配多种优化器。
+
+    适用场景:
+        - 适用于 迁移学习 和 预训练模型微调 的场景，
+        - 由于预训练模型的基础层（如 CNN 的前几层或 Transformer 的底层层）已经学到了通用特征，因此通常希望它们的学习率较低，防止破坏已有的特征表示。
+        - 而新加入的任务特定层（如新的分类头、额外的 FC 层）需要更高的学习率，以快速适应新任务。
+    
     例子:
-        假设你有一个图像分类模型，前几层（基础层）使用了 ResNet 的预训练权重，最后一层（新层）是你自己加的全连接层。
-        目标：希望对前几层使用较低的学习率（防止破坏预训练特性），对最后一层使用较高的学习率（快速学习新任务）。
-        解决方法：用 build_optimizer，通过 staged_lr 分配不同的学习率。
+        - 假设你有一个图像分类模型，前几层（基础层）使用了 ResNet 的预训练权重，最后一层（新层）是你自己加的全连接层。
+        - 目标：希望对前几层使用较低的学习率（防止破坏预训练特性），对最后一层使用较高的学习率（快速学习新任务）。
+        - 解决方法：用 build_optimizer，通过 staged_lr 分配不同的学习率。
     """
     optim = optim_cfg.NAME  # 优化器名称
     lr = optim_cfg.LR  # 学习率

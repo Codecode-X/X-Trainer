@@ -1,4 +1,4 @@
-from data.transforms import TRANSFORM_REGISTRY
+from data_manager.transforms import TRANSFORM_REGISTRY
 from .TransformBase import TransformBase
 from PIL import Image
 from torchvision.transforms import Compose, Resize, CenterCrop, ToTensor, Normalize

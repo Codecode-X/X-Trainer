@@ -1,7 +1,10 @@
 from collections import defaultdict
 import torch
 
-__all__ = ["AverageMeter", "MetricMeter"]
+__all__ = [
+    "AverageMeter",  # 计算并存储平均值和当前值
+    "MetricMeter" # 存储一组指标值
+]
 
 
 class AverageMeter:

@@ -1,4 +1,4 @@
-from data.transforms import TRANSFORM_REGISTRY
+from data_manager.transforms import TRANSFORM_REGISTRY
 from .TransformBase import TransformBase
 import random
 import torchvision.transforms.functional as F

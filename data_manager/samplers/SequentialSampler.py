@@ -1,5 +1,5 @@
 from torch.utils.data.sampler import SequentialSampler as TorchSequentialSampler
-from data.samplers import SAMPLER_REGISTRY
+from data_manager.samplers import SAMPLER_REGISTRY
 
 
 

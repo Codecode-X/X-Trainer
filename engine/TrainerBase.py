@@ -10,13 +10,13 @@ import datetime
 import torch
 import torch.nn as nn
 from tqdm import tqdm
-from data import DataManager
+from data_manager import DataManager
 from torch.cuda.amp import GradScaler
 from optim import build_optimizer
 from lr_scheduler import build_lr_scheduler
 from model import build_model
 from utils import (count_num_param, mkdir_if_missing, load_pretrained_weights)
-from evaluation import build_evaluator
+from evaluator import build_evaluator
 from utils import (MetricMeter, AverageMeter)
 
 

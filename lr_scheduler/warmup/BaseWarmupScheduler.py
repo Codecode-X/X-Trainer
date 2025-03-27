@@ -3,9 +3,11 @@ from torch.optim.lr_scheduler import _LRScheduler
 class BaseWarmupScheduler(_LRScheduler):
     """
     基类 学习率预热包装器
-    该类继承自 _LRScheduler，可以作为学习率调度器的基类。
+    该类继承自 _LRScheduler，提供学习率预热包装器通用结构。
     
-    子类需要实现 __init__() 和 get_lr() 方法来定义 初始化方法 和 学习率的计算方式。
+    子类需要实现以下方法：
+        - __init__()：初始化方法
+        - get_lr()：计算下一个学习率
     """
     def __init__(self, cfg, successor, last_epoch=-1):
         """ 初始化方法 

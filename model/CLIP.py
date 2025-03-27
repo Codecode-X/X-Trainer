@@ -228,7 +228,7 @@ class Clip(ModelBase):
             if hasattr(cfg.Clip, 'download_root') else os.path.expanduser("~/.cache/clip")  # 预训练权重下载保存路径
         
         if name in _MODELS_URL:
-            model_path = utils.download(_MODELS_URL[name], download_root)
+            model_path = utils.download_weight(_MODELS_URL[name], download_root)
         elif os.path.isfile(name):
             model_path = name
         else:

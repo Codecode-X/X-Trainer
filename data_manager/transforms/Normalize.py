@@ -1,5 +1,5 @@
 from TransformBase import TransformBase
-from data.transforms import TRANSFORM_REGISTRY
+from data_manager.transforms import TRANSFORM_REGISTRY
 from torchvision.transforms import Normalize
 
 @TRANSFORM_REGISTRY.register()

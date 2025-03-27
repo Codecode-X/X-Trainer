@@ -1,4 +1,4 @@
-from data.transforms import TRANSFORM_REGISTRY
+from data_manager.transforms import TRANSFORM_REGISTRY
 from .TransformBase import TransformBase
 """
 Source: https://github.com/DeepVoltaire/AutoAugment
