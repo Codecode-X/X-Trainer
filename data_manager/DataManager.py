@@ -70,7 +70,7 @@ class DataManager:
             cfg,
             sampler=train_sampler,  # 训练采样器
             data_source=dataset.train,  # 数据源
-            batch_size=cfg.DATALOADER.TRAIN.BATCH_SIZE,  # 批大小
+            batch_size=cfg.DATALOADER.BATCH_SIZE,  # 批大小
             tfm=tfm_train,  # 训练数据增强
             is_train=True,  # 训练模式
             dataset_transform=dataset_transform  # 数据集转换器，用于对数据集进行转换和增强

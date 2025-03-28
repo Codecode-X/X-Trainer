@@ -463,10 +463,6 @@ class TrainerBase:
     def check_cfg(self, cfg):
         """
         检查配置中的某些变量是否正确设置（可选子类实现）。   
-
-        例如，一个训练器可能需要特定的采样器进行训练，如 'RandomDomainSampler'，
-        因此可以进行检查：assert cfg.DATALOADER.SAMPLER_TRAIN == 'RandomDomainSampler'
-
         未实现
         """
         pass
