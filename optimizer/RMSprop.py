@@ -2,11 +2,11 @@ from .build import OPTIMIZER_REGISTRY
 from torch.optim import RMSprop as TorchRMSprop
 
 @OPTIMIZER_REGISTRY.register()
-class Rmsprop(TorchRMSprop):
-    """ Rmsprop 优化器 """
+class RMSprop(TorchRMSprop):
+    """ RMSprop 优化器 """
     def __init__(self, cfg, params=None):
         """
-        初始化 Rmsprop 优化器
+        初始化 RMSprop 优化器
 
         参数:
             - cfg (CfgNode): 配置

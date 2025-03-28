@@ -74,7 +74,7 @@ def setup_logger(output=None):
     if output is None:
         return  # 如果没有提供输出路径，则返回
 
-    if output.endswith(".txt") or output.endswith(".log"):
+    if isinstance(output, str) and (output.endswith(".txt") or output.endswith(".log")):
         fpath = output  # 如果输出路径以.txt 或.log 结尾，则直接使用该路径
     else:
         fpath = osp.join(output, "log.txt")  # 否则，将输出路径与"log.txt"拼接

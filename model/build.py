@@ -24,10 +24,12 @@ def build_model(cfg):
         print("Loading model: {}".format(model_name))
 
     # 实例化模型
-    model = MODEL_REGISTRY.get(model_name)(cfg)
-    
-    # 调用模型的自己的 build_model() 方法
-    if hasattr(model, "build_model") and callable(model.build_model):
-        model.build_model(cfg)
-
+    try:
+        model = MODEL_REGISTRY.get(model_name)(cfg) # 直接调用模型构造方法
+    except TypeError as e:
+        model_class = MODEL_REGISTRY.get(model_name) # 获取模型类
+        if hasattr(model_class, "build_model") and callable(model_class.build_model):
+            model = model_class.build_model(cfg) # 调用模型类的静态方法 build_model 构造自己
+        else:
+            raise e
     return model

@@ -37,7 +37,7 @@ from .torchtools import (
     load_pretrained_weights, # 加载预训练权重到模型
     init_network_weights, # 初始化网络权重
     transform_image, # 对图像应用 K 次 tfm 增强 并返回结果
-    image_to_tensor_pipeline # 图像预处理转换管道
+    standard_image_transform # 图像预处理转换管道
 )
 
 from .download import (

@@ -1,6 +1,6 @@
 import math
 import torch
-from OptimizerBase import OptimizerBase
+from .OptimizerBase import OptimizerBase
 from .build import OPTIMIZER_REGISTRY
 
 @OPTIMIZER_REGISTRY.register()

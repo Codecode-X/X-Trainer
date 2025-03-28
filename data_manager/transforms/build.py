@@ -1,16 +1,9 @@
-from utils import Registry, check_availability
-from torchvision.transforms import (Resize, Compose, ToTensor, CenterCrop)
+from utils import Registry
+from torchvision.transforms import (Resize, Compose, ToTensor, Normalize)
 from torchvision.transforms.functional import InterpolationMode
 
 
 TRANSFORM_REGISTRY = Registry("TRANSFORM")
-
-
-INTERPOLATION_MODES = {
-    "bilinear": InterpolationMode.BILINEAR,  # 双线性插值
-    "bicubic": InterpolationMode.BICUBIC,  # 双三次插值
-    "nearest": InterpolationMode.NEAREST,  # 最近邻插值
-}
 
 
 def build_train_transform(cfg):
@@ -20,7 +13,10 @@ def build_train_transform(cfg):
     1. 检查配置中的数据增强方法是否存在/合法
     2. 遍历配置选择的数据增强方法，添加到数据增强列表中，并 Compose
         - 确保图像大小匹配模型输入大小，如果后续没有裁剪操作，则使用 Resize
-        - 遍历配置选择的数据增强方法，添加到数据增强列表中
+        - 遍历配置选择的ToTensor前的数据增强方法，添加到数据增强列表中
+        - 添加 ToTensor() 转换
+        - 遍历配置选择的ToTensor后的数据增强方法，添加到数据增强列表中
+        - 添加标准化(可选)
     3. 返回数据增强列表
     
     注意：有的增强需要配置参数，可通过自定义增强类（在类中通过读取 cfg 获取）
@@ -39,7 +35,8 @@ def build_train_transform(cfg):
     all_choices = before_choices + after_choices
     if ("random_crop" not in all_choices) and ("random_resized_crop" not in all_choices):
         input_size = cfg.INPUT.SIZE
-        interp_mode = INTERPOLATION_MODES[cfg.INPUT.INTERPOLATION]
+        assert isinstance(input_size, int), "cfg.INPUT.SIZE 必须是单个整数" # 确保Resize保持图像的长宽比
+        interp_mode = getattr(InterpolationMode, cfg.INPUT.INTERPOLATION.upper(), InterpolationMode.BILINEAR)
         tfm_train.append(Resize(input_size, interpolation=interp_mode))
     # 遍历配置选择的数据增强方法，添加到数据增强列表中
     for choice in before_choices:
@@ -49,6 +46,10 @@ def build_train_transform(cfg):
     for choice in after_choices:
         if cfg.VERBOSE: print(f"ToTensor 后训练数据增强：{choice}")
         tfm_train.append(TRANSFORM_REGISTRY.get(choice)(cfg))
+    # 添加标准化(可选)
+    if cfg.INPUT.NORMALIZE:
+        tfm_train.append(Normalize(mean=cfg.INPUT.PIXEL_MEAN, std=cfg.INPUT.PIXEL_STD))
+
     tfm_train = Compose(tfm_train)
     
     # ---返回数据增强列表--- 
@@ -60,44 +61,32 @@ def build_test_transform(cfg):
     构建测试数据增强。
 
     主要步骤：
-    1. 检查配置中的数据增强方法是否存在/合法
-    2. 将 Resize、CenterCrop、ToTensor、Normalize(可选)、InstanceNormalize(可选) 添加到测试数据增强列表中
+    1. 检查配置信息
+    2. 构建测试数据增强列表
+        - 采用无增强的标准图像预处理(resize + RGB)
+        - 添加 ToTensor() 转换
+        - 添加标准化(可选)
     3. 返回测试数据增强列表
     """
     print("构建测试数据增强.....")
     
-    # ---检查配置中的数据增强方法是否存在/合法---
-    interp_mode = INTERPOLATION_MODES[cfg.INPUT.INTERPOLATION]
-    input_size = cfg.INPUT.SIZE
-    all_choices = cfg.INPUT.BEFORE_TOTENSOR_TRANSFORMS + cfg.INPUT.AFTER_TOTENSOR_TRANSFORM
-    _check_cfg(all_choices)
-
-    # ---将 Resize、CenterCrop、ToTensor、Normalize(可选)、InstanceNormalize(可选) 添加到测试数据增强列表中---
-    Normalize = TRANSFORM_REGISTRY.get('Normalize')(cfg) \
-        if "normalize" in all_choices else None,
-    InstanceNormalize = TRANSFORM_REGISTRY.get('InstanceNormalize')(cfg) \
-        if "InstanceNormalize" in all_choices else None,
-    tfm_test = [
-        Resize(max(input_size), interpolation=interp_mode),
-        CenterCrop(input_size),
-        ToTensor(),
-        Normalize(), # 如果配置了 normalize，则添加
-        InstanceNormalize(), # 如果配置了 InstanceNormalize，则添加
-    ]
+    # ---测试增强采用无增强的标准图像预处理(resize + RGB)---   
+    standardNoAugTransform = TRANSFORM_REGISTRY.get("StandardNoAugTransform")(cfg) # 标准无增强预处理流程
+    tfm_test = [standardNoAugTransform, ToTensor()] # 添加 ToTensor() 转换
+    if cfg.INPUT.NORMALIZE:
+        tfm_test.append(Normalize(mean=cfg.INPUT.PIXEL_MEAN, std=cfg.INPUT.PIXEL_STD)) # 添加标准化(可选)
     tfm_test = Compose(tfm_test)
-    
+
     if cfg.VERBOSE:  # 打印日志
         print(f"测试数据增强：")
-        print("  - Resize")
-        print("  - CenterCrop")
-        print("  - ToTensor")
-        if Normalize: print("  - Normalize")
-        if InstanceNormalize: print("  - InstanceNormalize")
+        print("  - 标准标准图像预处理转换: resize + RGB + toTensor + normalize")
 
     # ---返回测试数据增强列表---
     return tfm_test
 
 
 def _check_cfg(choices, avai_transforms):
+    if len(choices) == 0:
+        return True
     for choice in choices:
-        assert choice in avai_transforms
+        assert choice in avai_transforms, f"增强方法<{format(choice)}>不在可用的数据增强方法{avai_transforms}中"

@@ -225,7 +225,7 @@ class Clip(ModelBase):
         pretrained_name = cfg.MODEL.pretrained  # 例如 'RN50'、'ViT-B/32' 等
         
         download_root = cfg.MODEL.download_root \
-            if hasattr(cfg.Clip, 'download_root') else os.path.expanduser("~/.cache/clip")  # 预训练权重下载保存路径
+            if hasattr(cfg.MODEL, 'download_root') else os.path.expanduser("~/.cache/clip")  # 预训练权重下载保存路径
         
         if pretrained_name in _MODELS_URL:
             model_path = utils.download_weight(_MODELS_URL[pretrained_name], download_root)

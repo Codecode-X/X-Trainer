@@ -3,7 +3,16 @@ from engine import build_trainer
 import argparse
 import torch
 
+def reset_cfg(cfg, args):
+    """ 将参数 (args) 的设置覆盖到配置 (cfg)。"""
+    cfg.OUTPUT_DIR = args.output_dir
+    cfg.RESUME = args.resume
+    return cfg
+
 def main(args):
+    assert args.train or args.eval_only, "训练和评估模式至少要设置一个！"
+    assert args.train != args.eval_only, "训练和评估模式不能同时设置！" 
+
     # -----读取配置文件-----
     cfg = load_yaml_config(args.config_path) # 读取配置
     print("\n=======配置信息=======\n" + str(cfg) + "\n=======配置信息=======\n") # 打印配置以验证
@@ -15,7 +24,7 @@ def main(args):
         set_random_seed(cfg.SEED)
     
     # 设置日志记录器
-    setup_logger(cfg) 
+    setup_logger(cfg.OUTPUT_DIR) # 设置日志记录器
 
     # 如果支持 CUDA 且配置启用了 CUDA，则优化 CUDA 性能
     if torch.cuda.is_available() and cfg.USE_CUDA:
@@ -40,9 +49,16 @@ if __name__ == "__main__":
 
     parser.add_argument('--config_path', type=str, default=default_config_path, help='配置文件的路径')
     parser.add_argument("--output-dir", type=str, default=default_output_dir, help="输出目录")
-    parser.add_argument('--eval_only', action='store_true', help='设置为仅评估模式')
     parser.add_argument("--resume", type=str, default="", help="检查点目录（从该目录恢复训练）")
+    parser.add_argument('--seed', type=int, default=-1, help='随机种子')
+
+    parser.add_argument('--train', action='store_true', help='设置为训练模式')
+
+    parser.add_argument('--eval_only', action='store_true', help='设置为仅评估模式')
+    parser.add_argument('--model_dir', type=str, default='', help='模型目录')
+    parser.add_argument('--load_epoch', type=int, default=0, help='加载的模型的训练轮数')
 
     args = parser.parse_args()
-    main()
+    main(args)
 
+    # python run.py --train --config_path config/defaults.yaml --output-dir output

@@ -10,7 +10,7 @@ from collections import OrderedDict
 import torch
 import torch.nn as nn
 import torchvision.transforms as T
-
+from torchvision.transforms import Compose, Resize, CenterCrop, ToTensor, Normalize, InterpolationMode
 from .tools import mkdir_if_missing
 
 __all__ = [
@@ -23,7 +23,7 @@ __all__ = [
     "load_pretrained_weights", # 加载预训练权重到模型
     "init_network_weights", # 初始化网络权重
     "transform_image", # 对图像应用 K 次 tfm 增强 并返回结果
-    "image_to_tensor_pipeline" # 图像预处理转换管道
+    "standard_image_transform" # 图像预处理转换管道
 ]
 
 def save_checkpoint(state, save_dir, is_best=False,
@@ -335,35 +335,30 @@ def transform_image(tfm_func, img0, K=1):
     return img_list[0] if len(img_list) == 1 else img_list  
 
 
-def image_to_tensor_pipeline(interpolation_mode, size, normalize=None, pixel_mean=None, pixel_std=None):
-    """图像预处理转换管道。
-
-    参数：
-        - interpolation_mode (str): 插值模式。
-        - size (tuple): 调整图像大小。
-        - normalize (bool): 是否进行归一化。
-        - pixel_mean (list, optional): 图像归一化均值。
-        - pixel_std (list, optional): 图像归一化标准差。
-
-    返回：
-        - torchvision.transforms.Compose: 转换管道。
-
-    详细步骤：
-        1. 调整图像大小为 size，使用 interpolation_mode 插值模式。
-        2. 转换为张量。
-        3. 归一化（如果 normalize 为 True）。
+def standard_image_transform(input_size, interp_mode):
     """
-    to_tensor = []
+    标准图像预处理转换管道。
+    
+    参数:
+        - input_size (int): 输入图像的大小。
+        - interp_mode (str): 插值模式 | 可选值包括: NEAREST, BILINEAR, BICUBIC
+    返回:
+        - Compose: 组合的图像转换。
 
-    # 调整图像大小为 size，使用 interpolation_mode 插值模式
-    to_tensor.append(T.Resize(size, interpolation=interpolation_mode))
-
-    # 转换为张量
-    to_tensor.append(T.ToTensor())
-
-    # 归一化
-    if normalize and pixel_mean and pixel_std: 
-        normalize = T.Normalize(mean=pixel_mean, std=pixel_std)
-        to_tensor.append(normalize)
-
-    return T.Compose(to_tensor)
+    主要步骤：
+        - 保持图像的宽高比，调整图像大小到 input_size，并使用指定的插值模式
+        - 中心裁剪(CenterCrop)图像到 input_size*input_size
+        - 转换为 RGB 图像
+    """
+    assert isinstance(input_size, int), "input_size 必须是整数"
+    
+    interp_mode = getattr(InterpolationMode, interp_mode.upper(), InterpolationMode.BILINEAR) # 获取插值模式
+    
+    def _image_to_rgb(image):
+        return image.convert("RGB")
+    
+    return Compose([
+        Resize(input_size, interpolation=interp_mode),
+        CenterCrop(input_size),
+        _image_to_rgb
+    ])

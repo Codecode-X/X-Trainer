@@ -1,4 +1,4 @@
-from TrainerBase import TrainerBase
+from .TrainerBase import TrainerBase
 from model import build_model
 from utils import count_num_param
 from torch.cuda.amp import GradScaler
@@ -9,8 +9,9 @@ from torch.cuda.amp import GradScaler, autocast
 from utils.metrics import compute_accuracy
 from optimizer import build_optimizer
 from lr_scheduler import build_lr_scheduler
-import os.path as osp
+from .build import TRAINER_REGISTRY
 
+@TRAINER_REGISTRY.register()
 class TrainerClip(TrainerBase):
 
     def check_cfg(self, cfg): # 检查配置文件中的 PREC 字段是否为合法值

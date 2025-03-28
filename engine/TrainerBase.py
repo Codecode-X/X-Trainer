@@ -18,8 +18,9 @@ from model import build_model
 from utils import (count_num_param, mkdir_if_missing, load_pretrained_weights)
 from evaluator import build_evaluator
 from utils import (MetricMeter, AverageMeter)
+from .build import TRAINER_REGISTRY
 
-
+@TRAINER_REGISTRY.register()
 class TrainerBase:
     """
     迭代训练器的基类。
@@ -271,12 +272,7 @@ class TrainerBase:
             * epoch
             * 验证结果
         """
-        if not directory: # 如果目录不存在，直接返回
-            print(
-                "Note that load_model() is skipped as no pretrained "
-                "model is given (ignore this if it's done on purpose)"
-            )
-            return
+        assert directory is not None, "load_model()的参数directory模型目录为None"
 
         names = self.get_model_names()  # 获取所有模型名称
 

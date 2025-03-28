@@ -31,14 +31,15 @@ TEST:
 # 数据集
 DATASET:
   NAME: "Caltech101"  # 数据集类名
-  DATASET_DIR: "/root/caltech-101"  # 数据集根目录
+  DATASET_DIR: "/root/autodl-tmp/caltech-101"  # 数据集根目录
   SPLIT: [0.7, 0.1, 0.2]  # 训练/验证/测试集划分比例
   NUM_SHOTS: -1  # 每类样本数：-1=全量，0=零样本，≥1=小样本学习
-  IMAGE_DIR: "/root/caltech-101/101_ObjectCategories"  # 图像目录 - 分类数据集基础配置
+  IMAGE_DIR: "/root/autodl-tmp/caltech-101/101_ObjectCategories"  # 图像目录 - 分类数据集基础配置
 
 # 数据加载
 DATALOADER:
-  BATCH_SIZE: 32  # 训练批大小（影响显存占用）
+  BATCH_SIZE_TRAIN: 32  # 训练批大小
+  BATCH_SIZE_TEST: 100  # 测试批大小
   NUM_WORKERS: 4  # 数据加载并行进程数（建议=CPU 核心数）
   K_TRANSFORMS: 1  # 每种增强在原始图像上（横向）重复应用次数
   RETURN_IMG0: False  # 是否返回原始未增强图像（用于可视化或对比学习）
@@ -53,24 +54,30 @@ INPUT:
   # 输入图像尺寸，需与模型兼容
   SIZE: 224
 
-  # 图像缩放插值方法，可选：bilinear, bicubic, nearest
-  INTERPOLATION: "bilinear"
+  # 图像缩放插值方法，可选：NEAREST, BILINEAR, BICUBIC
+  INTERPOLATION: "BICUBIC"
 
   # 在转换为张量之前的数据增强方法列表
-  BEFORE_TOTENSOR_TRANSFORMS: ["TransformClipVisual"]
+  BEFORE_TOTENSOR_TRANSFORMS: ["StandardNoAugTransform"]
 
   # 在转换为张量之后的数据增强方法列表
-  AFTER_TOTENSOR_TRANSFORMS: [""]
+  AFTER_TOTENSOR_TRANSFORMS: []
 
   # 特定模型增强策略
-  TransformClipVisual: None  # CLIP 专用预处理 (无额外配置)
+  StandardNoAugTransform: 
+    norm: True  # 是否标准化图像
+
+  # 是否在最后归一化图像
+  NORMALIZE: True  # 是否归一化图像
+  PIXEL_MEAN: [0.48145466, 0.4578275, 0.40821073]  # 图像均值
+  PIXEL_STD: [0.26862954, 0.26130258, 0.27577711]  # 图像标准差
 
 # ===================== 模型配置 (Model) =====================
 MODEL:
   NAME: "Clip"  # 模型类名
   
   # 特定 Clip 模型配置
-  pretrained: "ViT-B/16"  # 预训练模型名称（如 ViT-B/16）
+  pretrained: "RN50"  # 预训练模型名称（如 ViT-B/16）
   download_root: "~/.cache/clip"  # 预训练模型下载目录
 
 # ===================== 学习率策略配置 (LR) =====================

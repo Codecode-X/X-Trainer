@@ -4,5 +4,5 @@ from .OptimizerBase import OptimizerBase
 from .SGD import SGD
 from .Adam import Adam
 from .AdamW import AdamW
-from .RMSprop import Rmsprop
+from .RMSprop import RMSprop
 from .RAdam import RAdam

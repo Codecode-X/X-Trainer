@@ -102,7 +102,7 @@
 | 配置项                                   | 类型 | 示例                                   | 说明                                                   |
 | ---------------------------------------- | ---- | -------------------------------------- | ------------------------------------------------------ |
 | **cfg.INPUT.SIZE**                       | int  | 224                                    | 输入图像统一尺寸（需匹配模型）                         |
-| **cfg.INPUT.INTERPOLATION**              | str  | "bilinear"                             | 图像缩放插值方法：<br>`bilinear`, `bicubic`, `nearest` |
+| **cfg.INPUT.INTERPOLATION**              | str  | "BILINEAR"                             | 图像缩放插值方法(大写)：<br>`BILINEAR`, `BICUBIC`, `NEAREST` |
 | **cfg.INPUT.BEFORE_TOTENSOR_TRANSFORMS** | list | `["RandomResizedCrop", "ColorJitter"]` | 在转换为张量之前的数据增强方法列表                     |
 | **cfg.INPUT.AFTER_TOTENSOR_TRANSFORMS**  | list | `["Normalize"]`                        | 在转换为张量之后的数据增强方法列表                     |
 
@@ -111,28 +111,25 @@
 | 增强策略                                  | 配置项                                         | 示例                        | 说明                                                         |
 | ----------------------------------------- | ---------------------------------------------- | --------------------------- | ------------------------------------------------------------ |
 | **AutoAugment**                           |                                                |                             | 从 25 个最佳子策略中随机选择。<br />适用于不同数据集（ImageNet，CIFAR10，SVHN） |
-| ├─ **ImageNetPolicy**                     | `cfg.INPUT.ImageNetPolicy.fillcolor`           | (128,128,128)               | 图像填充颜色（RGB 值）                                        |
+| ├─ **ImageNetPolicy**                     | `cfg.INPUT.ImageNetPolicy.fillcolor`           | (128,128,128)               | 图像填充颜色（RGB 值）                                       |
 | ├─ **CIFAR10Policy**                      | `cfg.INPUT.CIFAR10Policy.fillcolor`            | (128,128,128)               |                                                              |
 | └─ **SVHNPolicy**                         | `cfg.INPUT.SVHNPolicy.fillcolor`               | (128,128,128)               |                                                              |
 | **RandomAugment**                         |                                                |                             | 随机组合增强操作                                             |
-| ├─ **RandomIntensityAugment**             | `cfg.INPUT.RandomIntensityAugment.n`           | 2                           | 随机选择 n 个增强操作                                          |
+| ├─ **RandomIntensityAugment**             | `cfg.INPUT.RandomIntensityAugment.n`           | 2                           | 随机选择 n 个增强操作                                        |
 |                                           | `cfg.INPUT.RandomIntensityAugment.m`           | 10                          | 增强强度（0-30，值越大效果越强）                             |
-| └─ **ProbabilisticAugment**               | `cfg.INPUT.ProbabilisticAugment.n`             | 2                           | 随机选择 n 个增强操作                                          |
+| └─ **ProbabilisticAugment**               | `cfg.INPUT.ProbabilisticAugment.n`             | 2                           | 随机选择 n 个增强操作                                        |
 |                                           | `cfg.INPUT.ProbabilisticAugment.p`             | 0.6                         | 每个操作的应用概率                                           |
 | **Cutout**                                |                                                |                             | 随机遮挡图像区域                                             |
 |                                           | `cfg.INPUT.Cutout.n_holes`                     | 1                           | 每张图像的遮挡区域数量                                       |
 |                                           | `cfg.INPUT.Cutout.length`                      | 16                          | 每个方形遮挡区域的边长（像素）                               |
 | **GaussianNoise**                         |                                                |                             | 添加高斯噪声                                                 |
-|                                           | `cfg.INPUT.GaussianNoise.mean`                 | 0                           | 噪声均值（通常保持 0 不变）                                    |
+|                                           | `cfg.INPUT.GaussianNoise.mean`                 | 0                           | 噪声均值（通常保持 0 不变）                                  |
 |                                           | `cfg.INPUT.GaussianNoise.std`                  | 0.15                        | 噪声强度（值越大噪声越明显）                                 |
-|                                           | `cfg.INPUT.GaussianNoise.p`                    | 0.5                         | 应用概率（0-1 之间）                                          |
+|                                           | `cfg.INPUT.GaussianNoise.p`                    | 0.5                         | 应用概率（0-1 之间）                                         |
 | **Random2DTranslation**                   |                                                |                             | 缩放后随机裁剪                                               |
 |                                           | `cfg.INPUT.Random2DTranslation.p`              | 0.5                         | 执行概率（0=禁用，1=始终应用）                               |
-| **Normalize**                             | `cfg.INPUT.PIXEL_MEAN`                         | [0.485,0.456,0.406]         | 图像归一化均值（需与预训练模型一致）                         |
-|                                           | `cfg.INPUT.PIXEL_STD`                          | [0.229,0.224,0.225]         | 图像归一化标准差                                             |
-| **InstanceNormalization**                 | -                                              | -                           | 实例归一化（无配置参数）                                     |
 | ---------**特定模型增强策略**------------ | ---------------------------------------------- | --------------------------- | -------------------------------------------------------      |
-| **TransformClipVisual**（CLIP）           | -                                              | -                           | CLIP 专用预处理（无配置参数）                                 |
+| **TransformClipVisual**（CLIP）           | -                                              | -                           | CLIP 专用预处理（无配置参数）                                |
 
 ---
 

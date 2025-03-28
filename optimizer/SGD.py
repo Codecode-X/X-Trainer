@@ -2,7 +2,7 @@ from .build import OPTIMIZER_REGISTRY
 from torch.optim import SGD as TorchSGD
 
 @OPTIMIZER_REGISTRY.register()
-class Sgd(TorchSGD):
+class SGD(TorchSGD):
     """ Sgd 优化器 """
     def __init__(self, cfg, params=None):
         """

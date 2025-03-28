@@ -1,7 +1,7 @@
 import random
 from collections import defaultdict
 from .build import DATASET_REGISTRY
-from DatasetBase import DatasetBase
+from .DatasetBase import DatasetBase
 from utils import read_json, write_json
 import os
 from utils import check_isfile
@@ -21,9 +21,6 @@ class DatasetClsBase(DatasetBase):
         - lab2cname (dict): 标签到类别名称的映射。
         - classnames (list): 类别名称列表。
         - num_classes (int): 类别数量。
-        - impath (str): 图像路径。
-        - label (int): 类别标签。
-        - classname (str): 类别名称。
 
     对内访问属性:
         - 父类 DatasetBase 的属性:
@@ -102,22 +99,6 @@ class DatasetClsBase(DatasetBase):
     def num_classes(self):
         """返回类别数量"""
         return self._num_classes
-
-    @property
-    def impath(self):
-        """返回图像路径"""
-        return self._impath
-
-    @property
-    def label(self):
-        """返回类别标签"""
-        return self._label
-
-    @property
-    def classname(self):
-        """返回类别名称"""
-        return self._classname
-    
     
 
     # -----------------------父类 DatasetBase 要求子基类实现的抽象方法-----------------------
@@ -243,7 +224,6 @@ class DatasetClsBase(DatasetBase):
 
 # -------------------辅助类 和 函数-------------------
 
-@staticmethod
 def _get_num_classes(dataset):
     """统计类别数量。在 init 实现
 
@@ -261,7 +241,6 @@ def _get_num_classes(dataset):
     # 返回最大标签值加 1 作为类别数量
     return max(label_set) + 1
 
-@staticmethod
 def _get_lab2cname(dataset):
     """
     获取标签到类别名称的映射（字典）。
@@ -305,4 +284,17 @@ class Datum:
         self._label = label
         # 初始化类别名称
         self._classname = classname
+
+    @property
+    def impath(self):
+        """返回图像路径"""
+        return self._impath
+    @property
+    def label(self):
+        """返回类别标签"""
+        return self._label
+    @property
+    def classname(self):
+        """返回类别名称"""
+        return self._classname
 

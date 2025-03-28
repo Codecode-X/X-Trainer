@@ -5,8 +5,6 @@ from .AutoAugment import ImageNetPolicy, CIFAR10Policy, SVHNPolicy, SubPolicy
 from .RandomAugment import RandomIntensityAugment, ProbabilisticAugment
 from .Cutout import Cutout
 from .GaussianNoise import GaussianNoise
-from .InstanceNormalization import InstanceNormalization
 from .Random2DTranslation import Random2DTranslation
-from .Normalize import Normalize
 
-from .TransformClipVisual import TransformClipVisual  # 用于 CLIP 模型的图像编码器的数据增强
+from .StandardNoAugTransform import StandardNoAugTransform  # 无增强的标准图像转换管道
