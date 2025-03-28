@@ -159,7 +159,7 @@ class Clip(ModelBase):
 
     def forward(self, input, return_feature=False):
         """
-        NPCLIP 前向传播。
+        CLIP 前向传播。
         
         参数：
             - input (dict): 输入数据 | 包含 'image' 和 'text' 两个键，对应图像和文本数据
@@ -205,47 +205,47 @@ class Clip(ModelBase):
     @staticmethod
     def build_model(cfg: dict):
         """
-        从预训练模型的状态字典 (state_dict) 构建 NPCLIP 模型。
+        从预训练模型的状态字典 (state_dict) 构建 CLIP 模型。
         (未实现 JIT 加载)
         
         参数：
             - cfg (dict): 配置
 
         返回：
-            - model (NPCLIP): 构建的 NPCLIP 模型
+            - model (CLIP): 构建的 CLIP 模型
 
         主要步骤：
             1. 载入预训练模型的参数 state_dict
             2. 读取 state_dict 中的模型参数
-            3. 根据模型参数实例化 NPCLIP 模型
-            4. 将预训练模型的参数加载到 NPCLIP 模型中
+            3. 根据模型参数实例化 CLIP 模型
+            4. 将预训练模型的参数加载到 CLIP 模型中
         """
         # ---载入预训练模型的参数 state_dict---
-        # 从配置中读取 模型名称 和 预训练权重下载保存路径
-        name = cfg.MODEL.NAME  # 例如 'RN50'、'ViT-B/32' 等
+        # 从配置中读取 预训练模型名称 和 预训练权重下载保存路径
+        pretrained_name = cfg.MODEL.pretrained  # 例如 'RN50'、'ViT-B/32' 等
         
-        download_root = cfg.Clip.download_root \
+        download_root = cfg.MODEL.download_root \
             if hasattr(cfg.Clip, 'download_root') else os.path.expanduser("~/.cache/clip")  # 预训练权重下载保存路径
         
-        if name in _MODELS_URL:
-            model_path = utils.download_weight(_MODELS_URL[name], download_root)
-        elif os.path.isfile(name):
-            model_path = name
+        if pretrained_name in _MODELS_URL:
+            model_path = utils.download_weight(_MODELS_URL[pretrained_name], download_root)
+        elif os.path.isfile(pretrained_name):
+            model_path = pretrained_name
         else:
-            raise RuntimeError(f"Model {name} not found; available models = {_MODELS_URL.keys()}")
+            raise RuntimeError(f"Model {pretrained_name} not found; available models = {_MODELS_URL.keys()}")
         state_dict = None
         with open(model_path, 'rb') as opened_file:
             state_dict = torch.load(opened_file, map_location="cpu")
 
         # ---读取 state_dict 中的模型参数---
         vit = "visual.proj" in state_dict
-        if vit:
+        if vit: # ViT
             vision_width = state_dict["visual.conv1.weight"].shape[0]
             vision_layers = len([k for k in state_dict.keys() if k.startswith("visual.") and k.endswith(".attn.in_proj_weight")])
             vision_patch_size = state_dict["visual.conv1.weight"].shape[-1]
             grid_size = round((state_dict["visual.positional_embedding"].shape[0] - 1) ** 0.5)
             image_resolution = vision_patch_size * grid_size
-        else:
+        else: # ResNet
             counts: list = [len(set(k.split(".")[2] for k in state_dict if k.startswith(f"visual.layer{b}"))) for b in [1, 2, 3, 4]]
             vision_layers = tuple(counts)
             vision_width = state_dict["visual.layer1.0.conv1.weight"].shape[0]
@@ -261,27 +261,27 @@ class Clip(ModelBase):
         transformer_heads = transformer_width // 64
         transformer_layers = len(set(k.split(".")[2] for k in state_dict if k.startswith("transformer.resblocks")))
 
-        # ---实例化 NPCLIP 模型---
+        # ---实例化 CLIP 模型---
         model = Clip(
             embed_dim,
             image_resolution, vision_layers, vision_width, vision_patch_size,
             context_length, vocab_size, transformer_width, transformer_heads, transformer_layers
         )
 
-        # ---将预训练模型的参数加载到 NPCLIP 模型中---
+        # ---将预训练模型的参数加载到 CLIP 模型中---
         for key in ["input_resolution", "context_length", "vocab_size"]:
             if key in state_dict:
                 del state_dict[key]
         convert_weights(model)
         model.load_state_dict(state_dict)
 
-        # 返回 eval 模式下的 NPCLIP 模型
+        # 返回 eval 模式下的 CLIP 模型
         return model.eval()
 
 
 
 
-# ------以下为 NPCLIP 模型的子模块或辅助函数的实现------
+# ------以下为 CLIP 模型的子模块或辅助函数的实现------
 
 def convert_weights(model: nn.Module):
     """Convert applicable model parameters to fp16"""

@@ -4,6 +4,7 @@ from .build import LRSCHEDULER_REGISTRY
 @LRSCHEDULER_REGISTRY.register()
 class CosineLrScheduler(CosineAnnealingLR):
     """
+    余弦学习率调度器
     CosineLrScheduler 是 torch.optim.lr_scheduler.CosineAnnealingLR 的封装类，
     使用注册机制方便在项目中统一管理学习率调度器。
 

@@ -100,16 +100,16 @@ _C.DATALOADER.K_TRANSFORMS = 1
 # img0 denotes image tensor without augmentation
 # Useful for consistency learning
 _C.DATALOADER.RETURN_IMG0 = False
-# Setting for the train_x data-loader
-_C.DATALOADER.TRAIN_X = CN()
-_C.DATALOADER.TRAIN_X.SAMPLER = "RandomSampler"
-_C.DATALOADER.TRAIN_X.BATCH_SIZE = 32
+# Setting for the train data-loader
+_C.DATALOADER.TRAIN = CN()
+_C.DATALOADER.TRAIN.SAMPLER = "RandomSampler"
+_C.DATALOADER.TRAIN.BATCH_SIZE = 32
 # Parameter for RandomDomainSampler
 # 0 or -1 means sampling from all domains
-_C.DATALOADER.TRAIN_X.N_DOMAIN = 0
+_C.DATALOADER.TRAIN.N_DOMAIN = 0
 # Parameter of RandomClassSampler
 # Number of instances per class
-_C.DATALOADER.TRAIN_X.N_INS = 16
+_C.DATALOADER.TRAIN.N_INS = 16
 
 # Setting for the train_u data-loader
 _C.DATALOADER.TRAIN_U = CN()
@@ -196,9 +196,9 @@ _C.TRAIN = CN()
 _C.TRAIN.CHECKPOINT_FREQ = 0
 # How often (batch) to print training information
 _C.TRAIN.PRINT_FREQ = 10
-# Use 'train_x', 'train_u' or 'smaller_one' to count
+# Use 'train', 'train_u' or 'smaller_one' to count
 # the number of iterations in an epoch (for DA and SSL)
-_C.TRAIN.COUNT_ITER = "train_x"
+_C.TRAIN.COUNT_ITER = "train"
 
 ###########################
 # Test

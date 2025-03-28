@@ -15,7 +15,7 @@ class TrainerClip(TrainerBase):
 
     def check_cfg(self, cfg): # 检查配置文件中的 PREC 字段是否为合法值
         """ (实现父类的方法) 检查配置文件中的 PREC 字段是否为合法值。"""
-        assert cfg.TRAINER.COOP.PREC in ["fp16", "fp32", "amp"]
+        assert cfg.TRAINER.PREC in ["fp16", "fp32", "amp"]
 
     def init_model(self, cfg):
         """
@@ -44,7 +44,7 @@ class TrainerClip(TrainerBase):
         print("模型参数数量：", count_num_param(self.model))
 
         # 冻结模型某些层 -> 示例：冻结 CLIP 的文本编码器，只训练图像编码器
-        if cfg.TRAINER.COOP.FROZEN_LAYERS:
+        if cfg.TRAINER.FROZEN_LAYERS:
             for name, param in self.model.named_parameters():
                 if "visual" in name:
                     param.requires_grad = False
@@ -53,7 +53,7 @@ class TrainerClip(TrainerBase):
         self.model.to(self.device)
 
         # 将模型调整为精度混合训练，以减少显存占用 (如果配置了精度混合训练)
-        self.scaler = GradScaler() if cfg.TRAINER.COOP.PREC == "amp" else None
+        self.scaler = GradScaler() if cfg.TRAINER.PREC == "amp" else None
 
         # 多 GPU 并行训练情况，则将模型部署到多个 GPU 上 (如果有多个 GPU)
         device_count = torch.cuda.device_count()
@@ -76,7 +76,7 @@ class TrainerClip(TrainerBase):
 
         image, label = self.parse_batch_train(batch)  # 解析训练批次数据，获取图像和标签
         
-        prec = self.cfg.TRAINER.COOP.PREC  # 配置的精度
+        prec = self.cfg.TRAINER.PREC  # 配置的精度
         if prec == "amp":  # 自动混合精度训练
             with autocast():
                 output = self.model(image)

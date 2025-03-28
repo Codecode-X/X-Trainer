@@ -40,7 +40,7 @@ class RAdam(OptimizerBase):
         weight_decay = cfg.OPTIMIZER.WEIGHT_DECAY
 
         # 相关设置
-        self.degenerated_to_sgd=True # 是否将 RAdam 退化为 SGD
+        self.degenerated_to_sgd=cfg.OPTIMIZER.DEGENERATED_TO_SGD # 是否将 RAdam 退化为 SGD
 
         # ----检查参数有效性-----
         if not 0.0 <= lr:

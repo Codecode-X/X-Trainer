@@ -38,13 +38,13 @@ def build_optimizer(model, cfg, param_groups=None):
     check_availability(optimizer_name, avai_optims)  # 检查对应名称的优化器是否存在
     if cfg.VERBOSE: print("Loading optimizer: {}".format(optimizer_name))
     
-    lr = cfg.OPTIM.LR  # 学习率
+    lr = cfg.OPTIMIZER.LR  # 学习率
 
-    base_lr_mult = cfg.OPTIM.BASE_LR_MULT  # 基础学习率缩放系数 | 一般设置为小于 1 的值
+    base_lr_mult = cfg.OPTIMIZER.BASE_LR_MULT  # 基础学习率缩放系数 | 一般设置为小于 1 的值
 
-    staged_lr = cfg.OPTIM.STAGED_LR  # 分阶段学习率 | 如果提供了 param_groups，则直接使用这些参数组创建优化器，忽略 staged_lr 配置。
+    staged_lr = cfg.OPTIMIZER.STAGED_LR  # 分阶段学习率 | 如果提供了 param_groups，则直接使用这些参数组创建优化器，忽略 staged_lr 配置。
     
-    new_layers = cfg.OPTIM.NEW_LAYERS  # 新层
+    new_layers = cfg.OPTIMIZER.NEW_LAYERS  # 新层
     if new_layers is None: warnings.warn("new_layers 为 None (staged_lr 无效)")
     if isinstance(new_layers, str): new_layers = [new_layers] # 如果 new_layers 是字符串，转换为列表    
 

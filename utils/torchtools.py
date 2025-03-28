@@ -315,12 +315,12 @@ def init_network_weights(model, init_type="normal", gain=0.02):
 
 def transform_image(tfm_func, img0, K=1):
     """
-    对图像应用 K 次 tfm 增强 并返回结果。
+    对图像应用 K 次 tfm 增强 并返回得到的 K 个不同的增强结果（注意不是叠加 K 次）。
 
     参数：
     - tfm_func (callable): transform 函数。
     - img0 (PIL.Image): 原始图像。
-    - K (int): 增强重复应用次数。
+    - K (int): 增强次数，生成 K 个增强结果。
 
     返回：
     - 增强后的单个图像 (如果只有一个增强结果) img_list[0] || 增强后的图像列表 img_list
@@ -328,7 +328,7 @@ def transform_image(tfm_func, img0, K=1):
     img_list = []  # 初始化图像列表
 
     for k in range(K):  # 进行 K 次重复增强
-        tfm_img = tfm_func(img0) # 对图像应用 transform
+        tfm_img = tfm_func(img0) # 对原始图像应用 transform
         img_list.append(tfm_img)
 
     # 如果进行了多次增强，则返回增强后的图像列表；否则，返回增强后的单个图像

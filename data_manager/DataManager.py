@@ -65,12 +65,12 @@ class DataManager:
             tfm_test = custom_tfm_test  # 使用自定义的测试数据增强
 
         # ---构建数据加载器（数据集 + 采样器 + 数据增强）---
-        train_sampler = build_train_sampler(dataset.train_x) # 构建训练采样器
+        train_sampler = build_train_sampler(dataset.train) # 构建训练采样器
         train_loader = _build_data_loader( # 根据配置信息，构建训练数据加载器 train_loader
             cfg,
             sampler=train_sampler,  # 训练采样器
-            data_source=dataset.train_x,  # 数据源
-            batch_size=cfg.DATALOADER.TRAIN_X.BATCH_SIZE,  # 批大小
+            data_source=dataset.train,  # 数据源
+            batch_size=cfg.DATALOADER.TRAIN.BATCH_SIZE,  # 批大小
             tfm=tfm_train,  # 训练数据增强
             is_train=True,  # 训练模式
             dataset_transform=dataset_transform  # 数据集转换器，用于对数据集进行转换和增强
@@ -129,9 +129,7 @@ class DataManager:
         table = []
         table.append(["数据集", dataset_name])
         table.append(["类别数量", f"{self.num_classes:,}"])
-        table.append(["有标签训练数据", f"{len(self.dataset.train_x):,}"])
-        if self.dataset.train_u:
-            table.append(["无标签训练数据", f"{len(self.dataset.train_u):,}"])
+        table.append(["有标签训练数据", f"{len(self.dataset.train):,}"])
         if self.dataset.val:
             table.append(["验证数据", f"{len(self.dataset.val):,}"])
         table.append(["测试数据", f"{len(self.dataset.test):,}"])
@@ -248,7 +246,7 @@ class TransformeWrapper(TorchDataset):
         if self.transform is not None:  
             self.transform = [self.transform] if not isinstance(self.transform, (list, tuple)) else self.transform # 如果 transform 不是列表或元组，则转为列表
             for i, tfm in enumerate(self.transform):  # 遍历每个 transform
-                img = transform_image(tfm, img0, self.k_tfm) # 对图像应用 (K 次) tfm 增强
+                img = transform_image(tfm, img0, self.k_tfm) # 对原始图像应用 (K 次) tfm 增强
                 keyname = f"img{i + 1}" if (i + 1) > 1 else "img"  # 键名为："img", "img1", "img2", ... 
                 output[keyname] = img  # 增强后的图像
         else: 

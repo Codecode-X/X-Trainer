@@ -4,6 +4,7 @@ from .build import LRSCHEDULER_REGISTRY
 @LRSCHEDULER_REGISTRY.register()
 class MultiStepLrScheduler(MultiStepLR):
     """
+    多步学习率调度器
     MultiStepLrScheduler 是 torch.optim.lr_scheduler.MultiStepLR 的封装类，
     使用注册机制方便在项目中统一管理学习率调度器。
 

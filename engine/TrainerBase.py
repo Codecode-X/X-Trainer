@@ -511,7 +511,7 @@ class TrainerBase:
         print("训练结束")
         
         # 如果训练后需要测试，则测试，并保存最佳模型；否则保存最后一个 epoch 的模型
-        do_test = not self.cfg.TEST.NO_TEST 
+        do_test = not self.cfg.TRAIN.NO_TEST 
         if do_test:
             if self.cfg.TEST.FINAL_MODEL == "best_val":
                 print("测试验证性能最好的模型")
@@ -739,7 +739,7 @@ class TrainerBase:
         self.model.to(self.device)
         
         # 将模型调整为精度混合训练，以减少显存占用 (如果配置了精度混合训练)
-        self.scaler = GradScaler() if cfg.TRAINER.COOP.PREC == "amp" else None
+        self.scaler = GradScaler() if cfg.TRAINER.PREC == "amp" else None
 
         # 将模型部署到多个 GPU 上 (如果有多个 GPU)
         device_count = torch.cuda.device_count()
