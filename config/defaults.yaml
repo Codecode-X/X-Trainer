@@ -63,7 +63,7 @@ INPUT:
   AFTER_TOTENSOR_TRANSFORMS: [""]
 
   # 特定模型增强策略
-  TransformClipVisual  # CLIP 专用预处理 (无额外配置)
+  TransformClipVisual: None  # CLIP 专用预处理 (无额外配置)
 
 # ===================== 模型配置 (Model) =====================
 MODEL:

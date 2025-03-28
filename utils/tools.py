@@ -14,6 +14,8 @@ from difflib import SequenceMatcher
 import PIL
 import torch
 from PIL import Image
+from six.moves import urllib
+from yacs.config import CfgNode
 
 __all__ = [
     "mkdir_if_missing",  # 如果缺少目录则创建
@@ -28,6 +30,7 @@ __all__ = [
     "get_most_similar_str_to_a_from_b",  # 获取最相似的字符串
     "check_availability",  # 检查可用性
     "tolist_if_not",  # 转换为列表
+    "load_yaml_config",  # 加载配置文件
 ]
 
 
@@ -83,8 +86,6 @@ def download_url(url, dst):
         url (str): 下载文件的 URL。
         dst (str): 目标路径。
     """
-    from six.moves import urllib
-
     print('* url="{}"'.format(url))
     print('* destination="{}"'.format(dst))
 
@@ -176,3 +177,20 @@ def tolist_if_not(x):
     if not isinstance(x, list):
         x = [x]
     return x
+
+
+
+def load_yaml_config(config_path):
+    """
+    加载 yaml 配置文件到 CfgNode 对象，并冻结配置。
+    
+    参数:
+        - config_path (str): 配置文件路径。
+    
+    返回:
+        - cfg (CfgNode): 配置对象。"
+    """   
+    with open(config_path, 'r', encoding='utf-8') as f:
+        cfg = CfgNode.load_cfg(f)
+    cfg.freeze()
+    return cfg
