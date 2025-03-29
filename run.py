@@ -2,6 +2,8 @@ from utils import load_yaml_config, setup_logger, set_random_seed, collect_env_i
 from engine import build_trainer
 import argparse
 import torch
+import os.path as osp
+import datetime
 
 def reset_cfg(cfg, args):
     """ 将参数 (args) 的设置覆盖到配置 (cfg)。"""
@@ -14,7 +16,9 @@ def main(args):
     assert args.train != args.eval_only, "训练和评估模式不能同时设置！" 
 
     # -----读取配置文件-----
-    cfg = load_yaml_config(args.config_path) # 读取配置
+    modify_fn = lambda cfg: setattr(cfg, "OUTPUT_DIR", osp.join(cfg.OUTPUT_DIR,  # 修正: 输出目录 = cfg.OUTPUT_DIR + 当前时间 
+                datetime.datetime.now().strftime(r"%y-%m-%d-%H-%M-%S"))) or cfg  # or cfg: 保证返回 cfg
+    cfg = load_yaml_config(args.config_path, modify_fn=modify_fn) # 读取配置
     print("\n=======配置信息=======\n" + str(cfg) + "\n=======配置信息=======\n") # 打印配置以验证
 
     # -----初始化-----

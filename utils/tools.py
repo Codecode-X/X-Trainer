@@ -177,17 +177,23 @@ def tolist_if_not(x):
 
 
 
-def load_yaml_config(config_path):
+def load_yaml_config(config_path, modify_fn=None):
     """
     加载 yaml 配置文件到 CfgNode 对象，并冻结配置。
     
     参数:
         - config_path (str): 配置文件路径。
+        - modify_fn (callable, optional): 可选的修改函数，用于修改配置对象。
     
     返回:
         - cfg (CfgNode): 配置对象。"
     """   
     with open(config_path, 'r', encoding='utf-8') as f:
         cfg = CfgNode.load_cfg(f)
+
+    if modify_fn is not None:
+        cfg = modify_fn(cfg)
+
+    # 冻结配置，防止修改   
     cfg.freeze()
     return cfg

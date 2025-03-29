@@ -20,7 +20,7 @@ TRAIN:
   NO_TEST: False  # 训练完成后跳过测试阶段
   CHECKPOINT_FREQ: 5  # 模型保存频率（单位：epoch）
   PRINT_FREQ: 5  # 训练日志打印间隔（单位：batch）
-  MAX_EPOCH: 20  # 最大训练轮次（单位：epoch）
+  MAX_EPOCH: 50  # 最大训练轮次（单位：epoch）
 
 # 测试流程
 TEST:
@@ -109,7 +109,7 @@ OPTIMIZER:
 
   # 特定于 Adam 优化器的参数
   betas: [0.9, 0.999]  # Adam 优化器的 beta 参数
-  weight_decay: 0.0005  # 权重衰减（L2 正则化）
+  weight_decay: 0.01  # 权重衰减（L2 正则化）
   eps: 1e-7  # Adam 优化器的 epsilon 参数
   amsgrad: False  # 是否使用 AMSGrad 变体
 

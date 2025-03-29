@@ -5,7 +5,6 @@ from torch.utils.tensorboard import SummaryWriter
 from utils import (tolist_if_not, load_checkpoint, save_checkpoint, resume_from_checkpoint)
 import time
 import numpy as np
-import os.path as osp
 import datetime
 import torch
 import torch.nn as nn
@@ -90,7 +89,7 @@ class TrainerBase:
         self.start_epoch = self.epoch = 0
         # 读取配置信息
         self.max_epoch = cfg.TRAIN.MAX_EPOCH
-        self.output_dir = cfg.OUTPUT_DIR
+        self.output_dir = cfg.OUTPUT_DIR  # 输出目录
         self.cfg = cfg
         # 设置设备（GPU 或 CPU）
         if torch.cuda.is_available() and cfg.USE_CUDA:
@@ -480,12 +479,10 @@ class TrainerBase:
         # 设置输出目录
         if self.cfg.RESUME: # 如果配置了 RESUME
             directory = self.cfg.RESUME # 恢复 RESUME 目录
+            self.start_epoch = self.resume_model_if_exist(directory) # 如果 RESUME 目录存在检查点，则恢复模型
         else: # 否则按照配置的输出目录
-            directory = self.cfg.OUTPUT_DIR
-        
-        # 如果存在检查点，则恢复模型
-        self.start_epoch = self.resume_model_if_exist(directory)  
-
+            directory =self.output_dir
+            mkdir_if_missing(directory) # 创建输出目录
         # 初始化 summary writer
         writer_dir = osp.join(self.output_dir, "tensorboard")
         mkdir_if_missing(writer_dir) # 创建日志目录
