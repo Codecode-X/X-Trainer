@@ -191,9 +191,6 @@ class Clip(ModelBase):
         """
         print("正在提取每个类别的文本特征，并保存到 self.text_features 中...")
         with torch.no_grad():  # 关闭梯度计算
-            # 检查在哪个设备上运行
-            device = self.transformer.attnpool.q_proj.weight.device
-            print("当前设备：", device)
             # tokenize 文本标签，转换为 token 嵌入
             tokenized_texts = self.tokenize(label_texts, self.context_length) # [num_classes, context_length]
             # 提取文本特征
