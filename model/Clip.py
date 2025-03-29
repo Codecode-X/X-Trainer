@@ -8,6 +8,8 @@ import torch.nn.functional as F
 from torch import nn
 import utils
 import os
+import warnings
+
 
 # 可用的预训练模型
 _MODELS_URL = {
@@ -205,8 +207,7 @@ class Clip(ModelBase):
     @staticmethod
     def build_model(cfg: dict):
         """
-        从预训练模型的状态字典 (state_dict) 构建 CLIP 模型。
-        (未实现 JIT 加载)
+        从预训练模型的状态字典 (state_dict / JIT) 构建 CLIP 模型。
         
         参数：
             - cfg (dict): 配置
@@ -215,14 +216,17 @@ class Clip(ModelBase):
             - model (CLIP): 构建的 CLIP 模型
 
         主要步骤：
-            1. 载入预训练模型的参数 state_dict
-            2. 读取 state_dict 中的模型参数
-            3. 根据模型参数实例化 CLIP 模型
-            4. 将预训练模型的参数加载到 CLIP 模型中
+            1. 下载预训练模型的参数
+            2. 读取预训练模型的参数，并实例化 CLIP 模型
+                1. 如果是 JIT 模型，直接加载，并修复 JIT 模型的设备和 dtype 信息
+                2. 如果是普通模型，加载模型参数并实例化 CLIP 模型
+            3. 返回 eval 模式下的 CLIP 模型
+            
         """
-        # ---载入预训练模型的参数 state_dict---
+        # ---下载预训练模型的参数---
         # 从配置中读取 预训练模型名称 和 预训练权重下载保存路径
         pretrained_name = cfg.MODEL.pretrained  # 例如 'RN50'、'ViT-B/32' 等
+        device = 'cuda' if cfg.USE_CUDA else 'cpu'
         
         download_root = cfg.MODEL.download_root \
             if hasattr(cfg.MODEL, 'download_root') else os.path.expanduser("~/.cache/clip")  # 预训练权重下载保存路径
@@ -233,50 +237,62 @@ class Clip(ModelBase):
             model_path = pretrained_name
         else:
             raise RuntimeError(f"Model {pretrained_name} not found; available models = {_MODELS_URL.keys()}")
-        state_dict = None
+        
+        # ---读取预训练模型的参数，并实例化 CLIP 模型---
         with open(model_path, 'rb') as opened_file:
-            state_dict = torch.load(opened_file, map_location="cpu")
+            try: # 首先尝试加载为 JIT 模型
+                model = torch.jit.load(opened_file, map_location="cpu").eval() # eval 模式
+                state_dict = None
+            except RuntimeError:
+                warnings.warn(f"File {model_path} is not a JIT archive. Loading as a state dict instead")
+                # 如果加载失败，则尝试加载为普通模型
+                state_dict = torch.load(opened_file, map_location="cpu")
 
-        # ---读取 state_dict 中的模型参数---
-        vit = "visual.proj" in state_dict
-        if vit: # ViT
-            vision_width = state_dict["visual.conv1.weight"].shape[0]
-            vision_layers = len([k for k in state_dict.keys() if k.startswith("visual.") and k.endswith(".attn.in_proj_weight")])
-            vision_patch_size = state_dict["visual.conv1.weight"].shape[-1]
-            grid_size = round((state_dict["visual.positional_embedding"].shape[0] - 1) ** 0.5)
-            image_resolution = vision_patch_size * grid_size
-        else: # ResNet
-            counts: list = [len(set(k.split(".")[2] for k in state_dict if k.startswith(f"visual.layer{b}"))) for b in [1, 2, 3, 4]]
-            vision_layers = tuple(counts)
-            vision_width = state_dict["visual.layer1.0.conv1.weight"].shape[0]
-            output_width = round((state_dict["visual.attnpool.positional_embedding"].shape[0] - 1) ** 0.5)
-            vision_patch_size = None
-            assert output_width ** 2 + 1 == state_dict["visual.attnpool.positional_embedding"].shape[0]
-            image_resolution = output_width * 32
+        if state_dict is None: 
+            # ---模型权重为 JIT ---
+            model = utils.patch_jit_model(model, device=device)  # 修复 JIT 模型的设备和dtype信息
+            return model 
+        else:
+            # ---模型权重为普通state_dict---
+            vit = "visual.proj" in state_dict
+            if vit: # ViT
+                vision_width = state_dict["visual.conv1.weight"].shape[0]
+                vision_layers = len([k for k in state_dict.keys() if k.startswith("visual.") and k.endswith(".attn.in_proj_weight")])
+                vision_patch_size = state_dict["visual.conv1.weight"].shape[-1]
+                grid_size = round((state_dict["visual.positional_embedding"].shape[0] - 1) ** 0.5)
+                image_resolution = vision_patch_size * grid_size
+            else: # ResNet
+                counts: list = [len(set(k.split(".")[2] for k in state_dict if k.startswith(f"visual.layer{b}"))) for b in [1, 2, 3, 4]]
+                vision_layers = tuple(counts)
+                vision_width = state_dict["visual.layer1.0.conv1.weight"].shape[0]
+                output_width = round((state_dict["visual.attnpool.positional_embedding"].shape[0] - 1) ** 0.5)
+                vision_patch_size = None
+                assert output_width ** 2 + 1 == state_dict["visual.attnpool.positional_embedding"].shape[0]
+                image_resolution = output_width * 32
 
-        embed_dim = state_dict["text_projection"].shape[1]
-        context_length = state_dict["positional_embedding"].shape[0]
-        vocab_size = state_dict["token_embedding.weight"].shape[0]
-        transformer_width = state_dict["ln_final.weight"].shape[0]
-        transformer_heads = transformer_width // 64
-        transformer_layers = len(set(k.split(".")[2] for k in state_dict if k.startswith("transformer.resblocks")))
+            embed_dim = state_dict["text_projection"].shape[1]
+            context_length = state_dict["positional_embedding"].shape[0]
+            vocab_size = state_dict["token_embedding.weight"].shape[0]
+            transformer_width = state_dict["ln_final.weight"].shape[0]
+            transformer_heads = transformer_width // 64
+            transformer_layers = len(set(k.split(".")[2] for k in state_dict if k.startswith("transformer.resblocks")))
 
-        # ---实例化 CLIP 模型---
-        model = Clip(
-            embed_dim,
-            image_resolution, vision_layers, vision_width, vision_patch_size,
-            context_length, vocab_size, transformer_width, transformer_heads, transformer_layers
-        )
+            # ---实例化 CLIP 模型---
+            model = Clip(
+                embed_dim,
+                image_resolution, vision_layers, vision_width, vision_patch_size,
+                context_length, vocab_size, transformer_width, transformer_heads, transformer_layers
+            )
 
-        # ---将预训练模型的参数加载到 CLIP 模型中---
-        for key in ["input_resolution", "context_length", "vocab_size"]:
-            if key in state_dict:
-                del state_dict[key]
-        convert_weights(model)
-        model.load_state_dict(state_dict)
+            # ---将预训练模型的参数加载到 CLIP 模型中---
+            for key in ["input_resolution", "context_length", "vocab_size"]:
+                if key in state_dict:
+                    del state_dict[key]
+            convert_weights(model)
+            model.load_state_dict(state_dict)
 
-        # 返回 eval 模式下的 CLIP 模型
-        return model.eval()
+            # 返回 eval 模式下的 CLIP 模型
+            return model.eval()
 
 
 

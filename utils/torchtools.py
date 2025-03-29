@@ -24,6 +24,7 @@ __all__ = [
     "init_network_weights", # 初始化网络权重
     "transform_image", # 对图像应用 K 次 tfm 增强 并返回结果
     "standard_image_transform" # 图像预处理转换管道
+    "patch_jit_model" # 修正 JIT 模型的设备和 dtype 信息
 ]
 
 def save_checkpoint(state, save_dir, is_best=False,
@@ -362,3 +363,86 @@ def standard_image_transform(input_size, interp_mode):
         CenterCrop(input_size),
         _image_to_rgb
     ])
+
+
+def patch_jit_model(model, device="cuda"):
+    """
+    修正 JIT 模型的设备和 dtype 信息。
+    该函数用于修正 JIT 模型的设备和数据类型信息，以确保模型在指定设备上运行。
+    
+    主要步骤：
+        1. 生成目标设备的节点。
+        2. 遍历模型的计算图，修正设备信息。
+        3. 如果目标设备是 CPU，则修正数据类型为 float32。
+        4. 返回修正后的模型。
+    
+    参数:
+        - model (torch.jit.ScriptModule): 经过 torch.jit.trace 或 torch.jit.script 编译的模型
+        - device (str): 目标设备 ("cuda" 或 "cpu")
+    
+    返回:
+        - torch.jit.ScriptModule: 设备和 dtype 修正后的 JIT 模型
+    """
+    
+    # ----生成目标设备的节点----
+    device_holder = torch.jit.trace(lambda: torch.ones([]).to(torch.device(device)), example_inputs=[])
+    device_node = [n for n in device_holder.graph.findAllNodes("prim::Constant") if "Device" in repr(n)][-1]
+
+    def _node_get(node: torch._C.Node, key: str):
+        """获取 JIT 计算图中的属性值"""
+        sel = node.kindOf(key)
+        return getattr(node, sel)(key)
+
+    def patch_device(module):
+        """修正 JIT 计算图中的设备信息"""
+        graphs = []
+        if hasattr(module, "graph"):  
+            graphs.append(module.graph)  # 标准的 JIT 计算图
+        if hasattr(module, "forward1"):
+            graphs.append(module.forward1.graph)  # 处理 forward1 变体
+
+        for graph in graphs:
+            for node in graph.findAllNodes("prim::Constant"):
+                if "value" in node.attributeNames() and str(_node_get(node, "value")).startswith("cuda"):
+                    node.copyAttributes(device_node)
+
+    # ----对模型及其子模块应用设备修正----
+    model.apply(patch_device)
+    
+    # × 只适用于clip，修改为下面 "递归遍历 JIT 模型的所有子模块"
+    # patch_device(model.encode_image)
+    # patch_device(model.encode_text)
+    
+    # √ 递归遍历 JIT 模型的所有子模块
+    for name, submodule in model.named_modules():
+        patch_device(submodule)
+
+    # ----如果是 CPU，需要修正 dtype 为 float32----
+    if str(device) == "cpu":
+        float_holder = torch.jit.trace(lambda: torch.ones([]).float(), example_inputs=[])
+        float_input = list(float_holder.graph.findNode("aten::to").inputs())[1]
+        float_node = float_input.node()
+
+        def patch_float(module):
+            """修正 JIT 计算图中的 dtype（仅限 CPU）"""
+            graphs = []
+            if hasattr(module, "graph"):  
+                graphs.append(module.graph)
+            if hasattr(module, "forward1"):
+                graphs.append(module.forward1.graph)
+
+            for graph in graphs:
+                for node in graph.findAllNodes("aten::to"):
+                    inputs = list(node.inputs())
+                    for i in [1, 2]:  # dtype 可能是 aten::to() 的第二个或第三个参数
+                        if _node_get(inputs[i].node(), "value") == 5:  # 5 代表 float32
+                            inputs[i].node().copyAttributes(float_node)
+
+        model.apply(patch_float)
+        patch_float(model.encode_image)
+        patch_float(model.encode_text)
+
+        # 强制整个模型的 dtype 变为 float32
+        model.float()
+
+    return model

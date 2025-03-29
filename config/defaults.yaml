@@ -77,7 +77,7 @@ MODEL:
   NAME: "Clip"  # 模型类名
   
   # 特定 Clip 模型配置
-  pretrained: "RN50"  # 预训练模型名称（如 ViT-B/16）
+  pretrained: "ViT-B/16"  # 预训练模型名称（如 ViT-B/16）
   download_root: "~/.cache/clip"  # 预训练模型下载目录
 
 # ===================== 学习率策略配置 (LR) =====================
