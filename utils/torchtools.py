@@ -396,8 +396,11 @@ def patch_jit_model(model, device="cuda"):
     def patch_device(module):
         """修正 JIT 计算图中的设备信息"""
         graphs = []
-        if hasattr(module, "graph"):  
-            graphs.append(module.graph)  # 标准的 JIT 计算图
+        try:
+            graphs = [module.graph] if hasattr(module, "graph") else []
+        except RuntimeError:
+            graphs = []
+
         if hasattr(module, "forward1"):
             graphs.append(module.forward1.graph)  # 处理 forward1 变体
 
@@ -425,9 +428,11 @@ def patch_jit_model(model, device="cuda"):
 
         def patch_float(module):
             """修正 JIT 计算图中的 dtype（仅限 CPU）"""
-            graphs = []
-            if hasattr(module, "graph"):  
-                graphs.append(module.graph)
+            try:
+                graphs = [module.graph] if hasattr(module, "graph") else []
+            except RuntimeError:
+                graphs = []
+                
             if hasattr(module, "forward1"):
                 graphs.append(module.forward1.graph)
 
