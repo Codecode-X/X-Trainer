@@ -98,7 +98,7 @@ class TrainerClip(TrainerBase):
             self.scaler.update()
         else:  # 默认 fp16
             output = self.clip_model(image) # 模型预测
-            loss = F.cross_entropy(output, label)  # 计算损失
+            loss = F.cross_entropy(output, label)  # 计算损失  
             self.model_backward_and_update(loss)  # 反向传播
 
         # 需要记录的 loss 日志

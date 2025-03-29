@@ -11,8 +11,6 @@ class StandardNoAugTransform(TransformBase):
     主要步骤：
         - 将图像保持长宽比缩放到指定大小，然后中心裁剪到指定大小
         - 将图像转换为 RGB 格式
-        - 将图像转换为张量
-        - 对图像进行标准化
     """
 
     def __init__(self, cfg):

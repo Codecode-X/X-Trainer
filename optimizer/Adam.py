@@ -32,12 +32,12 @@ class Adam(TorchAdam):
         # ---读取配置---
         # 读取优化器的默认参数
         lr = float(cfg.OPTIMIZER.LR)
-        betas = list(map(float, cfg.OPTIMIZER.betas))
+        betas = tuple(map(float, cfg.OPTIMIZER.betas))
         eps = float(cfg.OPTIMIZER.eps)
         weight_decay = float(cfg.OPTIMIZER.weight_decay)
 
         # 相关设置
-        amsgrad = cfg.OPTIMIZER.amsgrad  # 是否使用 AMSGrad
+        amsgrad = cfg.OPTIMIZER.get("amsgrad", False) # 是否使用 AMSGrad
 
         # ---检查参数有效性---
         if not 0.0 <= lr:

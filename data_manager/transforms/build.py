@@ -31,13 +31,7 @@ def build_train_transform(cfg):
 
     # ---遍历配置选择的数据增强方法，添加到数据增强列表中，并 Compose---
     tfm_train = [] # 数据增强列表
-    # 确保图像大小匹配模型输入大小，如果后续没有裁剪操作，则使用 Resize
-    all_choices = before_choices + after_choices
-    if ("random_crop" not in all_choices) and ("random_resized_crop" not in all_choices):
-        input_size = cfg.INPUT.SIZE
-        assert isinstance(input_size, int), "cfg.INPUT.SIZE 必须是单个整数" # 确保Resize保持图像的长宽比
-        interp_mode = getattr(InterpolationMode, cfg.INPUT.INTERPOLATION.upper(), InterpolationMode.BILINEAR)
-        tfm_train.append(Resize(input_size, interpolation=interp_mode))
+
     # 遍历配置选择的数据增强方法，添加到数据增强列表中
     for choice in before_choices:
         if cfg.VERBOSE: print(f"ToTensor 前训练数据增强：{choice}")

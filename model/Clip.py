@@ -231,22 +231,28 @@ class Clip(ModelBase):
 
         # 计算 图像 和 文本 间的 余弦相似度
         logit_scale = self.logit_scale.exp() # 温度参数 τ 的倒数
-        logits_per_image = logit_scale * image_features @ text_features.t() # image->text 相似度
-        logits_per_text = logits_per_image.t() # text->image 相似度
-
+        logits_per_image = logit_scale * image_features @ text_features.t() # image->text 相似度 | [batch, num_classes]
+        
         # 返回结果
-        self.output_logits = {
-            'logits_per_image': logits_per_image,
-            'logits_per_text': logits_per_text
-        }
-        self.output_featuer = {
-            'image': image_features,
-            'text': text_features
-        }
         if return_feature: 
-            return self.output_logits, self.output_featuer
+            return logits_per_image, image_features
         else:
-            return self.output_logits
+            return logits_per_image
+        
+        # 计算文本->图像的相似度
+        # logits_per_text = logits_per_image.t() # text->image 相似度
+        # self.output_logits = {
+        #     'logits_per_image': logits_per_image,
+        #     'logits_per_text': logits_per_text
+        # }
+        # self.output_featuer = {
+        #     'image': image_features,
+        #     'text': text_features
+        # }
+        # if return_feature: 
+        #     return self.output_logits, self.output_featuer
+        # else:
+        #     return self.output_logits
 
     
     def tokenize(self, texts: Union[str, List[str]], context_length: int = 77, truncate: bool = False) -> Union[torch.IntTensor, torch.LongTensor]:
