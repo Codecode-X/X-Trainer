@@ -16,11 +16,11 @@ class Adam(TorchAdam):
         配置:
             - 优化器默认参数
                 - OPTIMIZER.LR (float): 学习率
-                - OPTIMIZER.BETAS (Tuple[float, float]): Adam 的 beta 参数
-                - OPTIMIZER.EPS (float): 除数中的常数，避免除零错误
-                - OPTIMIZER.WEIGHT_DECAY (float): 权重衰减
+                - OPTIMIZER.betas (Tuple[float, float]): Adam 的 beta 参数
+                - OPTIMIZER.eps (float): 除数中的常数，避免除零错误
+                - OPTIMIZER.weight_decay (float): 权重衰减
             - 其他配置
-                - OPTIMIZER.AMSGRAD (bool): 是否使用 AMSGrad
+                - OPTIMIZER.amsgrad (bool): 是否使用 AMSGrad
 
         主要步骤:
             - 读取配置
@@ -31,13 +31,13 @@ class Adam(TorchAdam):
         
         # ---读取配置---
         # 读取优化器的默认参数
-        lr = cfg.OPTIMIZER.LR
-        betas = cfg.OPTIMIZER.BETAS
-        eps = cfg.OPTIMIZER.EPS
-        weight_decay = cfg.OPTIMIZER.WEIGHT_DECAY
+        lr = float(cfg.OPTIMIZER.LR)
+        betas = list(map(float, cfg.OPTIMIZER.betas))
+        eps = float(cfg.OPTIMIZER.eps)
+        weight_decay = float(cfg.OPTIMIZER.weight_decay)
 
         # 相关设置
-        amsgrad = cfg.OPTIMIZER.AMSGRAD
+        amsgrad = cfg.OPTIMIZER.amsgrad  # 是否使用 AMSGrad
 
         # ---检查参数有效性---
         if not 0.0 <= lr:

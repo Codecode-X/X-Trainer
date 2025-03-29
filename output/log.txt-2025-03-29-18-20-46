@@ -1,0 +1,24 @@
+Loading trainer: TrainerClip
+构建数据加载器...
+Loading dataset: Caltech101
+Reading split from /root/autodl-tmp/caltech-101/split.json
+构建训练数据增强.....
+ToTensor 前训练数据增强：StandardNoAugTransform
+构建测试数据增强.....
+测试数据增强：
+  - 标准标准图像预处理转换: resize + RGB + toTensor + normalize
+Loading sampler: RandomSampler
+Loading sampler: SequentialSampler
+Loading sampler: SequentialSampler
+--------------  ----------
+数据集          Caltech101
+类别数量        100
+有标签训练数据  5,763
+验证数据        824
+测试数据        1,655
+--------------  ----------
+构建模型，优化器，学习率调度器...
+Loading model: Clip
+模型参数数量： 149620737
+从小到大排序后的数据集文本标签： ['face', 'leopard', 'motorbike', 'accordion', 'airplane', 'anchor', 'ant', 'barrel', 'bass', 'beaver', 'binocular', 'bonsai', 'brain', 'brontosaurus', 'buddha', 'butterfly', 'camera', 'cannon', 'car_side', 'ceiling_fan', 'cellphone', 'chair', 'chandelier', 'cougar_body', 'cougar_face', 'crab', 'crayfish', 'crocodile', 'crocodile_head', 'cup', 'dalmatian', 'dollar_bill', 'dolphin', 'dragonfly', 'electric_guitar', 'elephant', 'emu', 'euphonium', 'ewer', 'ferry', 'flamingo', 'flamingo_head', 'garfield', 'gerenuk', 'gramophone', 'grand_piano', 'hawksbill', 'headphone', 'hedgehog', 'helicopter', 'ibis', 'inline_skate', 'joshua_tree', 'kangaroo', 'ketch', 'lamp', 'laptop', 'llama', 'lobster', 'lotus', 'mandolin', 'mayfly', 'menorah', 'metronome', 'minaret', 'nautilus', 'octopus', 'okapi', 'pagoda', 'panda', 'pigeon', 'pizza', 'platypus', 'pyramid', 'revolver', 'rhino', 'rooster', 'saxophone', 'schooner', 'scissors', 'scorpion', 'sea_horse', 'snoopy', 'soccer_ball', 'stapler', 'starfish', 'stegosaurus', 'stop_sign', 'strawberry', 'sunflower', 'tick', 'trilobite', 'umbrella', 'watch', 'water_lilly', 'wheelchair', 'wild_cat', 'windsor_chair', 'wrench', 'yin_yang']
+正在提取每个类别的文本特征，并保存到 self.text_features 中...

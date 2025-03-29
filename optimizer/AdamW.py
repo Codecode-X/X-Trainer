@@ -16,10 +16,10 @@ class AdamW(OptimizerBase):
         配置:
             - 优化器默认参数
                 - OPTIMIZER.LR (float): 学习率
-                - OPTIMIZER.BETAS (Tuple[float, float]): Adam 的 beta 参数
-                - OPTIMIZER.EPS (float): 除数中的常数，避免除零错误
-                - OPTIMIZER.WEIGHT_DECAY (float): 权重衰减
-                - OPTIMIZER.WARMUP (int): warmup 预热步数
+                - OPTIMIZER.betas (Tuple[float, float]): Adam 的 beta 参数
+                - OPTIMIZER.eps (float): 除数中的常数，避免除零错误
+                - OPTIMIZER.weight_decay (float): 权重衰减
+                - OPTIMIZER.warmup_steps (int): warmup 预热步数
 
         主要步骤:
             - 读取配置
@@ -29,11 +29,11 @@ class AdamW(OptimizerBase):
 
         # ----读取配置-----
         # 读取优化器的默认参数
-        lr = cfg.OPTIMIZER.LR
-        betas = cfg.OPTIMIZER.BETAS
-        eps = cfg.OPTIMIZER.EPS
-        weight_decay = cfg.OPTIMIZER.WEIGHT_DECAY
-        warmup = cfg.OPTIMIZER.WARMUP
+        lr = float(cfg.OPTIMIZER.LR)
+        betas = list(map(float, cfg.OPTIMIZER.betas))
+        eps = float(cfg.OPTIMIZER.eps)
+        weight_decay = float(cfg.OPTIMIZER.weight_decay)
+        warmup_steps = int(cfg.OPTIMIZER.warmup_steps)
 
         # ----检查参数有效性-----
         if not 0.0 <= lr:
@@ -50,7 +50,7 @@ class AdamW(OptimizerBase):
             betas=betas,
             eps=eps,
             weight_decay=weight_decay,
-            warmup=warmup
+            warmup=warmup_steps
         )
         super().__init__(params, defaults)
 

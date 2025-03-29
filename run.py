@@ -35,11 +35,14 @@ def main(args):
 
     # 测试和训练
     if args.eval_only: # 测试模式
+        assert args.model_dir != '', "评估模式下必须提供被评估模型所在目录！"
+        assert args.load_epoch > 0, "评估模式下必须提供被评估模型的训练轮数！"
         trainer.load_model(args.model_dir, epoch=args.load_epoch)
         trainer.test()
         return
     else: # 训练模式
-        trainer.train()
+        trainer.train(start_epoch=0,
+                      max_epoch=int(cfg.TRAIN.MAX_EPOCH))
 
 
 if __name__ == "__main__":
@@ -49,14 +52,14 @@ if __name__ == "__main__":
 
     parser.add_argument('--config_path', type=str, default=default_config_path, help='配置文件的路径')
     parser.add_argument("--output-dir", type=str, default=default_output_dir, help="输出目录")
-    parser.add_argument("--resume", type=str, default="", help="检查点目录（从该目录恢复训练）")
     parser.add_argument('--seed', type=int, default=-1, help='随机种子')
 
-    parser.add_argument('--train', action='store_true', help='设置为训练模式')
-
-    parser.add_argument('--eval_only', action='store_true', help='设置为仅评估模式')
-    parser.add_argument('--model_dir', type=str, default='', help='模型目录')
+    parser.add_argument("--resume", type=str, default="", help="检查点目录（从该目录恢复训练）")
     parser.add_argument('--load_epoch', type=int, default=0, help='加载的模型的训练轮数')
+
+    parser.add_argument('--train', action='store_true', help='设置为训练模式')
+    parser.add_argument('--eval_only', action='store_true', help='设置为仅评估模式')
+    parser.add_argument('--model_dir', type=str, default='', help='评估模型所在目录')
 
     args = parser.parse_args()
     main(args)

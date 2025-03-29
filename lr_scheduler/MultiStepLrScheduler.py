@@ -13,12 +13,12 @@ class MultiStepLrScheduler(MultiStepLR):
         - optimizer (torch.optim.Optimizer): 训练过程中使用的优化器。
 
     相关配置项:
-        - cfg.LR_SCHEDULER.MILESTONES: 学习率下降的周期数列表。
-        - cfg.LR_SCHEDULER.GAMMA: 学习率衰减系数。
+        - cfg.LR_SCHEDULER.MILESTONES(list<int>): 学习率下降的周期数。
+        - cfg.LR_SCHEDULER.GAMMA(float): 学习率衰减率。
     """
     def __init__(self, cfg, optimizer):
 
-        milestones=cfg.LR_SCHEDULER.MILESTONES  # 学习率下降的周期数
+        milestones = list(map(int, cfg.LR_SCHEDULER.MILESTONES))  # 学习率下降的周期数
         assert isinstance(milestones, list), f"milestones 必须是列表，但得到 {type(milestones)}"
         assert len(milestones) > 0, "milestones 列表不能为空"   
         assert all(isinstance(i, int) for i in milestones), "milestones 必须是整数列表"
@@ -26,5 +26,5 @@ class MultiStepLrScheduler(MultiStepLR):
         super().__init__(
             optimizer=optimizer,
             milestones=milestones, # 学习率下降的周期数
-            gamma=cfg.LR_SCHEDULER.GAMMA # 衰减率
+            gamma=float(cfg.LR_SCHEDULER.GAMMA) # 衰减率
         )

@@ -1,5 +1,7 @@
 from .BaseWarmupScheduler import BaseWarmupScheduler
+from .build import WARMUP_REGISTRY
 
+@WARMUP_REGISTRY.register()
 class ConstantWarmupScheduler(BaseWarmupScheduler):
     """
     常数 学习率预热包装器
@@ -24,7 +26,7 @@ class ConstantWarmupScheduler(BaseWarmupScheduler):
             - warmup_epoch (int): cfg.LR_SCHEDULER.WARMUP.EPOCHS: 预热周期
             - verbose (bool): cfg.VERBOSE: 是否打印信息
         """
-        self.cons_lr = cfg.LR_SCHEDULER.WARMUP.CONS_LR  # 常数学习率
+        self.cons_lr = float(cfg.LR_SCHEDULER.WARMUP.CONS_LR)  # 常数学习率
         super().__init__(cfg, successor, last_epoch)
         
     def get_lr(self):

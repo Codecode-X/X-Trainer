@@ -50,3 +50,5 @@ from .metrics import (
     compute_distance_matrix,  # 计算距离矩阵的函数
     compute_accuracy  # 计算准确率的函数
 )
+
+from .simple_tokenizer import SimpleTokenizer # 简单的分词器类

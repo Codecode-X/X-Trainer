@@ -15,19 +15,19 @@ class SGD(TorchSGD):
         配置:
             - 优化器默认参数
                 - OPTIMIZER.LR (float): 学习率
-                - OPTIMIZER.MOMENTUM (float): 动量
-                - OPTIMIZER.WEIGHT_DECAY (float): 权重衰减
-                - OPTIMIZER.DAMPENING (float): 阻尼
-                - OPTIMIZER.NESTEROV (bool): 是否使用 Nesterov 动量
+                - OPTIMIZER.momentum (float): 动量
+                - OPTIMIZER.weight_decay (float): 权重衰减
+                - OPTIMIZER.dampening (float): 阻尼
+                - OPTIMIZER.nesterov (bool): 是否使用 Nesterov 动量
         """
         
         # ---读取配置---
         # 读取优化器的默认参数
-        lr = cfg.OPTIMIZER.LR
-        momentum = cfg.OPTIMIZER.MOMENTUM
-        weight_decay = cfg.OPTIMIZER.WEIGHT_DECAY
-        dampening = cfg.OPTIMIZER.DAMPENING
-        nesterov = cfg.OPTIMIZER.NESTEROV
+        lr = float(cfg.OPTIMIZER.LR)
+        momentum = float(cfg.OPTIMIZER.momentum)
+        weight_decay = float(cfg.OPTIMIZER.weight_decay)
+        dampening = float(cfg.OPTIMIZER.dampening)
+        nesterov = bool(cfg.OPTIMIZER.nesterov)
 
         # ---检查参数有效性---
         if not 0.0 <= lr:

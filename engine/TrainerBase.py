@@ -436,6 +436,10 @@ class TrainerBase:
         1. 执行训练前的操作 before_train()
         2. 开始训练
             * 执行每个 epoch 前的操作 before_epoch()
+                * 设置输出目录
+                * 如果输出目录存在检查点，则恢复检查点
+                * 初始化 summary writer
+                * 记录开始时间（用于计算经过的时间）
             * 执行每个 epoch 的训练 run_epoch()
             * 执行每个 epoch 后的操作 after_epoch()
         3. 执行训练后的操作 after_train()

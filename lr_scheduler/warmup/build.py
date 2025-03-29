@@ -2,7 +2,7 @@ from utils import Registry, check_availability
 
 WARMUP_REGISTRY = Registry("WARMUP")
 
-def build_warmup(cfg):
+def build_warmup(cfg, successor):
     """根据配置中的预热调度器名称 (cfg.LR_SCHEDULER.WARMUP.NAME) 构建相应的预热调度器。
     参数：
         - cfg (CfgNode): 配置。
@@ -21,5 +21,5 @@ def build_warmup(cfg):
         print("Loading warmup: {}".format(cfg.LR_SCHEDULER.WARMUP.NAME))
 
     # 实例化预热调度器
-    warmup = WARMUP_REGISTRY.get(cfg.LR_SCHEDULER.WARMUP.NAME)(cfg)
+    warmup = WARMUP_REGISTRY.get(cfg.LR_SCHEDULER.WARMUP.NAME)(cfg, successor)
     return warmup

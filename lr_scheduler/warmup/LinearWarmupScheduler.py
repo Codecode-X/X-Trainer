@@ -1,6 +1,7 @@
 from .BaseWarmupScheduler import BaseWarmupScheduler
+from .build import WARMUP_REGISTRY
 
-
+@WARMUP_REGISTRY.register()
 class LinearWarmupScheduler(BaseWarmupScheduler):
     """
     线性 学习率预热包装器
@@ -25,7 +26,7 @@ class LinearWarmupScheduler(BaseWarmupScheduler):
             - warmup_epoch (int): cfg.LR_SCHEDULER.WARMUP.EPOCHS: 预热周期
             - verbose (bool): cfg.VERBOSE: 是否打印信息
         """
-        self.min_lr = cfg.LR_SCHEDULER.WARMUP.MIN_LR  # 最小学习率
+        self.min_lr = float(cfg.LR_SCHEDULER.WARMUP.MIN_LR)  # 最小学习率
         super().__init__(cfg, successor, last_epoch)
 
     def get_lr(self):

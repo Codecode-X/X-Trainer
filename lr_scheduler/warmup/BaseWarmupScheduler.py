@@ -1,5 +1,7 @@
 from torch.optim.lr_scheduler import _LRScheduler
+from .build import WARMUP_REGISTRY
 
+@WARMUP_REGISTRY.register()
 class BaseWarmupScheduler(_LRScheduler):
     """
     基类 学习率预热包装器
@@ -23,9 +25,9 @@ class BaseWarmupScheduler(_LRScheduler):
             - warmup_epoch (int): cfg.LR_SCHEDULER.WARMUP.EPOCHS: 预热周期
             - verbose (bool): cfg.VERBOSE: 是否打印信息
         """
-        warmup_epoch = cfg.LR_SCHEDULER.WARMUP.EPOCHS  # 预热周期
-        verbose = cfg.VERBOSE  # 是否打印日志
-        self.warmup_recount = cfg.LR_SCHEDULER.WARMUP.WARMUP_RECOUNT  # 是否在预热结束后重置周期
+        warmup_epoch = int(cfg.LR_SCHEDULER.WARMUP.EPOCHS)  # 预热周期
+        verbose = bool(cfg.VERBOSE)  # 是否打印日志
+        self.warmup_recount = bool(cfg.LR_SCHEDULER.WARMUP.WARMUP_RECOUNT)  # 是否在预热结束后重置周期
 
 
         self.successor = successor  # 后续的学习率调度器

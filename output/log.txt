@@ -19,3 +19,12 @@ Loading sampler: SequentialSampler
 --------------  ----------
 构建模型，优化器，学习率调度器...
 Loading model: Clip
+模型参数数量： 149620737
+Loading optimizer: Adam
+Loading lr_scheduler: CosineLrScheduler
+Loading warmup: LinearWarmupScheduler
+Adjusting learning rate of group 0 to 1.0000e-06.
+构建评估器...
+Loading evaluator: EvaluatorClassification
+No checkpoint found, train from scratch
+Initialize tensorboard (log_dir=./output/tensorboard)

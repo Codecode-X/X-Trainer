@@ -166,10 +166,7 @@ def check_availability(requested, available):
     """
     if requested not in available: # 如果请求的字符串不在可用列表中
         psb_ans = get_most_similar_str_to_a_from_b(requested, available)
-        raise ValueError(
-            "请求的字符串应属于 {}, 但得到 [{}] "
-            "(你是指 [{}] 吗？)".format(available, requested, psb_ans)
-        )
+        raise ValueError(f"请求的字符串应属于 [{available}], 但得到 [{requested}], (你是想请求 [{psb_ans}] 吗？)")
 
 
 def tolist_if_not(x):

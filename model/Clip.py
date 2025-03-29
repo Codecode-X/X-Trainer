@@ -8,8 +8,12 @@ import torch.nn.functional as F
 from torch import nn
 import utils
 import os
+from packaging import version
 import warnings
+from typing import Union, List
+from utils import SimpleTokenizer as Tokenizer
 
+_tokenizer = Tokenizer()  # 初始化分词器
 
 # 可用的预训练模型
 _MODELS_URL = {
@@ -28,6 +32,7 @@ _MODELS_URL = {
 class Clip(ModelBase):
 
     def __init__(self,
+                 cfg, # 配置
                  embed_dim: int,
                  # 视觉 (Vision) 部分
                  image_resolution: int, # 输入图像的分辨率 (如 224)
@@ -41,7 +46,7 @@ class Clip(ModelBase):
                  transformer_heads: int, # Transformer 的注意力头数
                  transformer_layers: int, # Transformer 的层数
                  ):
-        super().__init__()
+        super().__init__(cfg)
         self.output_logits = None  # 记录模型输出结果
         self.output_featuer = None # 记录模型输出特征
 
@@ -134,10 +139,28 @@ class Clip(ModelBase):
 
     # 视觉编码器
     def encode_image(self, image):
+        """ 
+        视觉编码器，提取图像特征。
+
+        参数：
+            - image (Tensor): 图像数据 | [batch_size, 3, input_size, input_size]
+
+        返回：
+            - image_features (Tensor): 图像特征 | [batch_size, embed_dim]
+        """
         return self.visual(image.type(self.dtype))
 
     # 文本编码器
     def encode_text(self, text):
+        """
+        文本编码器，提取文本特征。
+
+        参数：
+            - text (Tensor): 文本数据 | [batch_size, context_length]
+
+        返回：
+            - text_features (Tensor): 文本特征 | [batch_size, embed_dim]
+        """
         # 将输入文本转换为 token 嵌入，形状为 [batch_size, n_ctx(上下文长度), transformer_width]
         x = self.token_embedding(text).type(self.dtype)  # [batch_size, n_ctx, d_model]
         # 加上可训练的位置编码，保留序列位置信息
@@ -159,12 +182,30 @@ class Clip(ModelBase):
 
         return text_features
 
-    def forward(self, input, return_feature=False):
+    def init_text_features(self, label_texts:list):
+        """
+        提前提取好每个类别的文本特征，保存到 self.text_features 中。
+        
+        参数：
+            - label_texts (list): 类别文本列表 | [num_classes] | ['pagoda', 'panda', ..., 'stegosaurus', 'stop_sign']
+        """
+        print("正在提取每个类别的文本特征，并保存到 self.text_features 中...")
+        with torch.no_grad():  # 关闭梯度计算
+            # 检查在哪个设备上运行
+            device = self.transformer.attnpool.q_proj.weight.device
+            print("当前设备：", device)
+            # tokenize 文本标签，转换为 token 嵌入
+            tokenized_texts = self.tokenize(label_texts, self.context_length) # [num_classes, context_length]
+            # 提取文本特征
+            self.text_features = self.encode_text(tokenized_texts) # [num_classes, embed_dim]
+        print("文本特征提取完成！")
+
+    def forward(self, image, return_feature=False):
         """
         CLIP 前向传播。
         
         参数：
-            - input (dict): 输入数据 | 包含 'image' 和 'text' 两个键，对应图像和文本数据
+            - image: 图像数据 | [batch, 3, 224, 224]
             - return_feature (bool): 是否返回特征
         
         返回：
@@ -176,10 +217,12 @@ class Clip(ModelBase):
             2. 归一化特征向量
             3. 计算 图像 和 文本 间的 余弦相似度
         """
-        # 提取文本、图像特征
-        image, text = input['image'], input['text']
+        
+        # 提取图像特征
         image_features = self.encode_image(image)
-        text_features = self.encode_text(text)
+
+        # 读取预加载好的文本特征
+        text_features = self.text_features
 
         # 归一化特征向量：沿着特征维度计算特征向量的模，并用特征向量除以模
         image_features = image_features / image_features.norm(dim=1, keepdim=True)
@@ -195,6 +238,7 @@ class Clip(ModelBase):
             'logits_per_image': logits_per_image,
             'logits_per_text': logits_per_text
         }
+        print(self.output_logits)
         self.output_featuer = {
             'image': image_features,
             'text': text_features
@@ -203,9 +247,56 @@ class Clip(ModelBase):
             return self.output_logits, self.output_featuer
         else:
             return self.output_logits
+
+    
+    def tokenize(self, texts: Union[str, List[str]], context_length: int = 77, truncate: bool = False) -> Union[torch.IntTensor, torch.LongTensor]:
+        """
+        对输入的字符串或字符串列表进行分词（tokenize），并返回其 token 表示。
+
+        参数：
+        ----------
+        texts : Union[str, List[str]]
+            需要进行分词的文本，可以是单个字符串或字符串列表。
+
+        context_length : int
+            设定的上下文长度（context length），所有 CLIP 模型都使用 77 作为默认上下文长度。
+
+        返回：
+        -------
+        torch.LongTensor
+            一个二维张量，包含文本的 token 结果，形状为 (文本数量，context_length)。
+        """
+        # 如果输入是单个字符串，则转换为列表，确保后续处理统一
+        if isinstance(texts, str):
+            texts = [texts]
+        # 获取特殊 token：<|startoftext|>（SOT，文本起始标记） <|endoftext|>（EOT，文本结束标记）
+        sot_token = _tokenizer.encoder["<|startoftext|>"]
+        eot_token = _tokenizer.encoder["<|endoftext|>"]
+        # 对每个文本进行编码，并添加起始和结束标记 | 文本 "Hello world" -> [sot_token, tokenized("Hello"), tokenized("world"), eot_token]
+        all_tokens = [[sot_token] + _tokenizer.encode(text) + [eot_token] for text in texts]
+        
+        # 创建一个形状为 (文本数量，context_length) 的张量，初始值为 0（填充用）
+        if version.parse(torch.__version__) < version.parse("1.8.0"):
+            result = torch.zeros(len(all_tokens), context_length, dtype=torch.long)
+        else:
+            result = torch.zeros(len(all_tokens), context_length, dtype=torch.int)
+
+        # 遍历所有 token 序列，将其填充到 `result` 张量中
+        for i, tokens in enumerate(all_tokens):
+            # 如果 token 数量超过 context_length，则截断，或抛出错误
+            if len(tokens) > context_length:
+                if truncate:
+                    tokens = tokens[:context_length]
+                    tokens[-1] = eot_token
+                else:          
+                    raise RuntimeError(f"Input {texts[i]} is too long for context length {context_length}")
+            # 将 tokens 填充到 result[i]，超出部分自动填充 0
+            result[i, :len(tokens)] = torch.tensor(tokens)
+
+        return result
     
     @staticmethod
-    def build_model(cfg: dict):
+    def build_model(cfg: dict, jit=False):
         """
         从预训练模型的状态字典 (state_dict / JIT) 构建 CLIP 模型。
         
@@ -218,8 +309,8 @@ class Clip(ModelBase):
         主要步骤：
             1. 下载预训练模型的参数
             2. 读取预训练模型的参数，并实例化 CLIP 模型
-                1. 如果是 JIT 模型，直接加载，并修复 JIT 模型的设备和 dtype 信息
-                2. 如果是普通模型，加载模型参数并实例化 CLIP 模型
+                1. 如果加载为 JIT 模型，则直接返回 JIT 模型
+                2. 如果加载为普通模型，则根据模型参数构建 CLIP 模型
             3. 返回 eval 模式下的 CLIP 模型
             
         """
@@ -241,19 +332,20 @@ class Clip(ModelBase):
         # ---读取预训练模型的参数，并实例化 CLIP 模型---
         with open(model_path, 'rb') as opened_file:
             try: # 首先尝试加载为 JIT 模型
-                model = torch.jit.load(opened_file, map_location="cpu").eval() # eval 模式
+                jit_model = torch.jit.load(opened_file, map_location="cpu").eval() # eval 模式
                 state_dict = None
             except RuntimeError:
                 warnings.warn(f"File {model_path} is not a JIT archive. Loading as a state dict instead")
                 # 如果加载失败，则尝试加载为普通模型
                 state_dict = torch.load(opened_file, map_location="cpu")
 
-        if state_dict is None: 
-            # ---模型权重为 JIT ---
-            model = utils.patch_jit_model(model, device=device)  # 修复 JIT 模型的设备和dtype信息
-            return model 
+        if jit: 
+            # ---加载为 JIT 模型 ---
+            jit_model = utils.patch_jit_model(jit_model, device=device)  # 修复 JIT 模型的设备和dtype信息
+            return jit_model 
         else:
-            # ---模型权重为普通state_dict---
+            # ---加载为普通模型---
+            state_dict = state_dict or jit_model.state_dict()  # 如果没有 state_dict，则使用 JIT 模型的 state_dict
             vit = "visual.proj" in state_dict
             if vit: # ViT
                 vision_width = state_dict["visual.conv1.weight"].shape[0]
@@ -279,6 +371,7 @@ class Clip(ModelBase):
 
             # ---实例化 CLIP 模型---
             model = Clip(
+                cfg,
                 embed_dim,
                 image_resolution, vision_layers, vision_width, vision_patch_size,
                 context_length, vocab_size, transformer_width, transformer_heads, transformer_layers

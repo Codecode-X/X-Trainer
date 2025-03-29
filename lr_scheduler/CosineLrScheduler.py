@@ -13,11 +13,11 @@ class CosineLrScheduler(CosineAnnealingLR):
         - optimizer (torch.optim.Optimizer): 训练过程中使用的优化器。
 
     相关配置项:
-        - cfg.TRAIN.MAX_EPOCH: 最大周期
+        - cfg.TRAIN.MAX_EPOCH (int): 训练的最大周期数。
 
     """
     def __init__(self, cfg, optimizer):
-        T_max = cfg.TRAIN.MAX_EPOCH # 最大周期
+        T_max = int(cfg.TRAIN.MAX_EPOCH) # 最大周期
         assert isinstance(T_max, int), f"T_max 必须是整数，但得到 {type(T_max)}"
         assert T_max > 0, "T_max 必须大于 0"
         

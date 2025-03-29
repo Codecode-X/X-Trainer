@@ -78,12 +78,13 @@
 -----
 
 ### 数据加载（dataloader）
-| 配置项                          | 类型 | 示例  | 说明                                           |
-| ------------------------------- | ---- | ----- | ---------------------------------------------- |
-| **cfg.DATALOADER.BATCH_SIZE**   | int  | 32    | 训练批大小（影响显存占用）                     |
-| **cfg.DATALOADER.NUM_WORKERS**  | int  | 4     | 数据加载并行进程数（建议=CPU 核心数）           |
-| **cfg.DATALOADER.K_TRANSFORMS** | int  | 1     | 每种增强在原始图像上（横向）重复应用次数       |
-| **cfg.DATALOADER.RETURN_IMG0**  | bool | False | 是否返回原始未增强图像（用于可视化或对比学习） |
+| 配置项                              | 类型 | 示例  | 说明                                           |
+| ----------------------------------- | ---- | ----- | ---------------------------------------------- |
+| **cfg.DATALOADER.BATCH_SIZE_TRAIN** | int  | 32    | 训练批大小                                     |
+| **cfg.DATALOADER.BATCH_SIZE_TEST**  | int  | 100   | 测试批大小                                     |
+| **cfg.DATALOADER.NUM_WORKERS**      | int  | 4     | 数据加载并行进程数（建议=CPU 核心数）          |
+| **cfg.DATALOADER.K_TRANSFORMS**     | int  | 1     | 每种增强在原始图像上（横向）重复应用次数       |
+| **cfg.DATALOADER.RETURN_IMG0**      | bool | False | 是否返回原始未增强图像（用于可视化或对比学习） |
 
 ---
 
@@ -102,34 +103,36 @@
 | 配置项                                   | 类型 | 示例                                   | 说明                                                   |
 | ---------------------------------------- | ---- | -------------------------------------- | ------------------------------------------------------ |
 | **cfg.INPUT.SIZE**                       | int  | 224                                    | 输入图像统一尺寸（需匹配模型）                         |
-| **cfg.INPUT.INTERPOLATION**              | str  | "BILINEAR"                             | 图像缩放插值方法(大写)：<br>`BILINEAR`, `BICUBIC`, `NEAREST` |
+| **cfg.INPUT.INTERPOLATION**              | str  | "BICUBIC"                              | 图像缩放插值方法：<br>`BILINEAR`, `BICUBIC`, `NEAREST` |
 | **cfg.INPUT.BEFORE_TOTENSOR_TRANSFORMS** | list | `["RandomResizedCrop", "ColorJitter"]` | 在转换为张量之前的数据增强方法列表                     |
 | **cfg.INPUT.AFTER_TOTENSOR_TRANSFORMS**  | list | `["Normalize"]`                        | 在转换为张量之后的数据增强方法列表                     |
+| **cfg.INPUT.NORMALIZE**                  | bool | True                                   | 是否进行标准化                                         |
+| **cfg.INPUT.PIXEL_MEAN**                 | list | [0.48145466, 0.4578275, 0.40821073]    | 图像均值                                               |
+| **cfg.INPUT.PIXEL_STD**                  | list | [0.26862954, 0.26130258, 0.27577711]   | 图像标准差                                             |
 
 #### 特定图像增强策略配置表
 
-| 增强策略                                  | 配置项                                         | 示例                        | 说明                                                         |
-| ----------------------------------------- | ---------------------------------------------- | --------------------------- | ------------------------------------------------------------ |
-| **AutoAugment**                           |                                                |                             | 从 25 个最佳子策略中随机选择。<br />适用于不同数据集（ImageNet，CIFAR10，SVHN） |
-| ├─ **ImageNetPolicy**                     | `cfg.INPUT.ImageNetPolicy.fillcolor`           | (128,128,128)               | 图像填充颜色（RGB 值）                                       |
-| ├─ **CIFAR10Policy**                      | `cfg.INPUT.CIFAR10Policy.fillcolor`            | (128,128,128)               |                                                              |
-| └─ **SVHNPolicy**                         | `cfg.INPUT.SVHNPolicy.fillcolor`               | (128,128,128)               |                                                              |
-| **RandomAugment**                         |                                                |                             | 随机组合增强操作                                             |
-| ├─ **RandomIntensityAugment**             | `cfg.INPUT.RandomIntensityAugment.n`           | 2                           | 随机选择 n 个增强操作                                        |
-|                                           | `cfg.INPUT.RandomIntensityAugment.m`           | 10                          | 增强强度（0-30，值越大效果越强）                             |
-| └─ **ProbabilisticAugment**               | `cfg.INPUT.ProbabilisticAugment.n`             | 2                           | 随机选择 n 个增强操作                                        |
-|                                           | `cfg.INPUT.ProbabilisticAugment.p`             | 0.6                         | 每个操作的应用概率                                           |
-| **Cutout**                                |                                                |                             | 随机遮挡图像区域                                             |
-|                                           | `cfg.INPUT.Cutout.n_holes`                     | 1                           | 每张图像的遮挡区域数量                                       |
-|                                           | `cfg.INPUT.Cutout.length`                      | 16                          | 每个方形遮挡区域的边长（像素）                               |
-| **GaussianNoise**                         |                                                |                             | 添加高斯噪声                                                 |
-|                                           | `cfg.INPUT.GaussianNoise.mean`                 | 0                           | 噪声均值（通常保持 0 不变）                                  |
-|                                           | `cfg.INPUT.GaussianNoise.std`                  | 0.15                        | 噪声强度（值越大噪声越明显）                                 |
-|                                           | `cfg.INPUT.GaussianNoise.p`                    | 0.5                         | 应用概率（0-1 之间）                                         |
-| **Random2DTranslation**                   |                                                |                             | 缩放后随机裁剪                                               |
-|                                           | `cfg.INPUT.Random2DTranslation.p`              | 0.5                         | 执行概率（0=禁用，1=始终应用）                               |
-| ---------**特定模型增强策略**------------ | ---------------------------------------------- | --------------------------- | -------------------------------------------------------      |
-| **TransformClipVisual**（CLIP）           | -                                              | -                           | CLIP 专用预处理（无配置参数）                                |
+| 增强策略                      | 配置项                               | 示例          | 说明                                                         |
+| ----------------------------- | ------------------------------------ | ------------- | ------------------------------------------------------------ |
+| **AutoAugment**               |                                      |               | 从 25 个最佳子策略中随机选择。<br />适用于不同数据集（ImageNet，CIFAR10，SVHN） |
+| ├─ **ImageNetPolicy**         | `cfg.INPUT.ImageNetPolicy.fillcolor` | (128,128,128) | 图像填充颜色（RGB 值）                                       |
+| ├─ **CIFAR10Policy**          | `cfg.INPUT.CIFAR10Policy.fillcolor`  | (128,128,128) |                                                              |
+| └─ **SVHNPolicy**             | `cfg.INPUT.SVHNPolicy.fillcolor`     | (128,128,128) |                                                              |
+| **RandomAugment**             |                                      |               | 随机组合增强操作                                             |
+| ├─ **RandomIntensityAugment** | `cfg.INPUT.RandomIntensityAugment.n` | 2             | 随机选择 n 个增强操作                                        |
+|                               | `cfg.INPUT.RandomIntensityAugment.m` | 10            | 增强强度（0-30，值越大效果越强）                             |
+| └─ **ProbabilisticAugment**   | `cfg.INPUT.ProbabilisticAugment.n`   | 2             | 随机选择 n 个增强操作                                        |
+|                               | `cfg.INPUT.ProbabilisticAugment.p`   | 0.6           | 每个操作的应用概率                                           |
+| **Cutout**                    |                                      |               | 随机遮挡图像区域                                             |
+|                               | `cfg.INPUT.Cutout.n_holes`           | 1             | 每张图像的遮挡区域数量                                       |
+|                               | `cfg.INPUT.Cutout.length`            | 16            | 每个方形遮挡区域的边长（像素）                               |
+| **GaussianNoise**             |                                      |               | 添加高斯噪声                                                 |
+|                               | `cfg.INPUT.GaussianNoise.mean`       | 0             | 噪声均值（通常保持 0 不变）                                  |
+|                               | `cfg.INPUT.GaussianNoise.std`        | 0.15          | 噪声强度（值越大噪声越明显）                                 |
+|                               | `cfg.INPUT.GaussianNoise.p`          | 0.5           | 应用概率（0-1 之间）                                         |
+| **Random2DTranslation**       |                                      |               | 缩放后随机裁剪                                               |
+|                               | `cfg.INPUT.Random2DTranslation.p`    | 0.5           | 执行概率（0=禁用，1=始终应用）                               |
+| **StandardNoAugTransform**    | -                                    | -             | 标准化的无增强图像转换管道                                   |
 
 ---
 
@@ -233,32 +236,32 @@
 
 
 ### 特定优化器配置
-| 优化器 | 配置项 | 类型 | 示例 | 说明                                   |
-|------------|----------|--------|------|------------|
-| **Adam**   |          |        |        | 适合大多数深度学习任务 |
-| ├─ | **cfg.OPTIMIZER.BETAS**              | Tuple[float, float] | `(0.9, 0.999)` | Adam 的 beta 参数                      |
-| ├─          | **cfg.OPTIMIZER.EPS**                | float               | `1e-8`         | 除数中的常数，避免除零错误             |
-| ├─          | **cfg.OPTIMIZER.WEIGHT_DECAY**       | float               | `0.01`         | 权重衰减                               |
-| └─          | **cfg.OPTIMIZER.AMSGRAD**            | bool                | `False`        | 是否使用 AMSGrad                       |
-| **SGD**    |          |        |        | 需要精细调参但可能获得更好结果 |
-| ├─ | **cfg.OPTIMIZER.MOMENTUM**           | float               | `0.9`          | 动量                                   |
-| ├─          | **cfg.OPTIMIZER.WEIGHT_DECAY**       | float               | `0.0005`       | 权重衰减                               |
-| ├─          | **cfg.OPTIMIZER.DAMPENING**          | float               | `0.0`          | 阻尼                                   |
-| └─          | **cfg.OPTIMIZER.NESTEROV**           | bool                | `True`         | 是否使用 Nesterov 动量 |
-| **RMSprop**|          |        |        | 适合非平稳目标函数 |
-| ├─ | **cfg.OPTIMIZER.ALPHA**              | float               | `0.99`         | 移动平均系数                           |
-| ├─          | **cfg.OPTIMIZER.EPS**                | float               | `1e-8`         | 除数中的常数，避免除零错误             |
-| ├─          | **cfg.OPTIMIZER.WEIGHT_DECAY**       | float               | `0.0001`       | 权重衰减                               |
-| ├─          | **cfg.OPTIMIZER.MOMENTUM**           | float               | `0.9`          | 动量                                   |
-| └─          | **cfg.OPTIMIZER.CENTERED**           | bool                | `False`        | 是否使用中心化的 RMSprop |
-| **RAdam**  |          |        |        | 自适应学习率的鲁棒版本 |
-| ├─ | **cfg.OPTIMIZER.BETAS**              | Tuple[float, float] | `(0.9, 0.999)` | RAdam 的 beta 参数                     |
-| ├─          | **cfg.OPTIMIZER.EPS**                | float               | `1e-8`         | 除数中的常数，避免除零错误             |
-| ├─          | **cfg.OPTIMIZER.WEIGHT_DECAY**       | float               | `0.01`         | 权重衰减                               |
-| └─          | **cfg.OPTIMIZER.DEGENERATED_TO_SGD** | bool                | `False`        | 是否将 RAdam 退化为 SGD（无自适应性） |
-| **AdamW**  |          |        |        | 改进的 Adam+ 正确权重衰减 |
-| ├─ | **cfg.OPTIMIZER.BETAS**              | Tuple[float, float] | `(0.9, 0.999)` | AdamW 的 beta 参数                     |
-| ├─          | **cfg.OPTIMIZER.EPS**                | float               | `1e-8`         | 除数中的常数，避免除零错误             |
-| ├─          | **cfg.OPTIMIZER.WEIGHT_DECAY**       | float               | `0.01`         | 权重衰减                               |
-| └─          | **cfg.OPTIMIZER.WARMUP**             | int                 | `1000`         | 预热步数（在一定步数内逐步增加学习率） |
+| 优化器      | 配置项                               | 类型                | 示例         | 说明                                   |
+| ----------- | ------------------------------------ | ------------------- | ------------ | -------------------------------------- |
+| **Adam**    |                                      |                     |              | 适合大多数深度学习任务                 |
+| ├─          | **cfg.OPTIMIZER.betas**              | Tuple[float, float] | (0.9, 0.999) | Adam 的 beta 参数                      |
+| ├─          | **cfg.OPTIMIZER.eps**                | float               | 1e-8         | 除数中的常数，避免除零错误             |
+| ├─          | **cfg.OPTIMIZER.weight_decay**       | float               | 0.01         | 权重衰减                               |
+| └─          | **cfg.OPTIMIZER.amsgrad**            | bool                | False        | 是否使用 AMSGrad                       |
+| **SGD**     |                                      |                     |              | 需要精细调参但可能获得更好结果         |
+| ├─          | **cfg.OPTIMIZER.momentum**           | float               | 0.9          | 动量                                   |
+| ├─          | **cfg.OPTIMIZER.weight_decay**       | float               | 0.0005       | 权重衰减                               |
+| ├─          | **cfg.OPTIMIZER.dampening**          | float               | 0.0          | 阻尼                                   |
+| └─          | **cfg.OPTIMIZER.nesterov**           | bool                | True         | 是否使用 Nesterov 动量                 |
+| **RMSprop** |                                      |                     |              | 适合非平稳目标函数                     |
+| ├─          | **cfg.OPTIMIZER.alpha**              | float               | 0.99         | 移动平均系数                           |
+| ├─          | **cfg.OPTIMIZER.eps**                | float               | 1e-8         | 除数中的常数，避免除零错误             |
+| ├─          | **cfg.OPTIMIZER.weight_decay**       | float               | 0.0001       | 权重衰减                               |
+| ├─          | **cfg.OPTIMIZER.momentum**           | float               | 0.9          | 动量                                   |
+| └─          | **cfg.OPTIMIZER.centered**           | bool                | False        | 是否使用中心化的 RMSprop               |
+| **RAdam**   |                                      |                     |              | 自适应学习率的鲁棒版本                 |
+| ├─          | **cfg.OPTIMIZER.betas**              | Tuple[float, float] | (0.9, 0.999) | RAdam 的 beta 参数                     |
+| ├─          | **cfg.OPTIMIZER.eps**                | float               | 1e-8         | 除数中的常数，避免除零错误             |
+| ├─          | **cfg.OPTIMIZER.weight_decay**       | float               | 0.01         | 权重衰减                               |
+| └─          | **cfg.OPTIMIZER.degenerated_to_sgd** | bool                | False        | 是否将 RAdam 退化为 SGD（无自适应性）  |
+| **AdamW**   |                                      |                     |              | 改进的 Adam+ 正确权重衰减              |
+| ├─          | **cfg.OPTIMIZER.betas**              | Tuple[float, float] | (0.9, 0.999) | AdamW 的 beta 参数                     |
+| ├─          | **cfg.OPTIMIZER.eps**                | float               | 1e-8         | 除数中的常数，避免除零错误             |
+| ├─          | **cfg.OPTIMIZER.weight_decay**       | float               | 0.01         | 权重衰减                               |
+| └─          | **cfg.OPTIMIZER.warmup_steps**       | int                 | 1000         | 预热步数（在一定步数内逐步增加学习率） |
 

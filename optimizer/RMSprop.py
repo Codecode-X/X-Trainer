@@ -15,21 +15,21 @@ class RMSprop(TorchRMSprop):
         配置:
             - 优化器默认参数
                 - OPTIMIZER.LR (float): 学习率
-                - OPTIMIZER.ALPHA (float): 移动平均系数
-                - OPTIMIZER.EPS (float): 除数中的常数，避免除零错误
-                - OPTIMIZER.WEIGHT_DECAY (float): 权重衰减
-                - OPTIMIZER.MOMENTUM (float): 动量
-                - OPTIMIZER.CENTERED (bool): 是否使用中心化的 RMSprop
+                - OPTIMIZER.alpha (float): 移动平均系数
+                - OPTIMIZER.eps (float): 除数中的常数，避免除零错误
+                - OPTIMIZER.weight_decay (float): 权重衰减
+                - OPTIMIZER.momentum (float): 动量
+                - OPTIMIZER.centered (bool): 是否使用中心化的 RMSprop
         """
         
         # ---读取配置---
         # 读取优化器的默认参数
-        lr = cfg.OPTIMIZER.LR
-        alpha = cfg.OPTIMIZER.ALPHA
-        eps = cfg.OPTIMIZER.EPS
-        weight_decay = cfg.OPTIMIZER.WEIGHT_DECAY
-        momentum = cfg.OPTIMIZER.MOMENTUM
-        centered = cfg.OPTIMIZER.CENTERED
+        lr = float(cfg.OPTIMIZER.LR)
+        alpha = float(cfg.OPTIMIZER.alpha)
+        eps = float(cfg.OPTIMIZER.eps)
+        weight_decay = float(cfg.OPTIMIZER.weight_decay)
+        momentum = float(cfg.OPTIMIZER.momentum)
+        centered = bool(cfg.OPTIMIZER.centered)
 
         # ---检查参数有效性---
         if not 0.0 <= lr:

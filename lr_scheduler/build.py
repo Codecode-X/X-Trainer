@@ -27,11 +27,10 @@ def build_lr_scheduler(cfg, optimizer):
         print("Loading lr_scheduler: {}".format(lr_scheduler_name))
 
     # 实例化学习率调度器
-    lr_scheduler_name = LRSCHEDULER_REGISTRY.get(lr_scheduler_name)(cfg, optimizer)
+    lr_scheduler = LRSCHEDULER_REGISTRY.get(lr_scheduler_name)(cfg, optimizer)
 
     # 如果学习率调度器有预热调度器
     if hasattr(cfg.LR_SCHEDULER, "WARMUP") and cfg.LR_SCHEDULER.WARMUP is not None:
-        warmup = build_warmup(cfg.LR_SCHEDULER.WARMUP.NAME) # 构建预热调度器
-        lr_scheduler_name = warmup(lr_scheduler_name) # 将预热调度器应用到学习率调度器上
+        lr_scheduler = build_warmup(cfg, lr_scheduler) # 构建预热调度器, 将预热调度器应用到学习率调度器上
 
-    return lr_scheduler_name
+    return lr_scheduler

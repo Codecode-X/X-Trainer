@@ -18,12 +18,11 @@ class SingleStepLrScheduler(StepLR):
     """
     def __init__(self, cfg, optimizer):
 
-        step_size=cfg.LR_SCHEDULER.STEP_SIZE # 学习率下降的周期数 
-        assert isinstance(step_size, int), f"步长必须是整数，但得到 {type(step_size)}"
+        step_size = int(cfg.LR_SCHEDULER.STEP_SIZE) # 学习率下降的周期数 
         assert step_size > 0, "步长必须大于 0"
             
         super().__init__(
             optimizer=optimizer,
             step_size=step_size, # 学习率下降的周期数
-            gamma=cfg.LR_SCHEDULER.GAMMA # 衰减率
+            gamma=float(cfg.LR_SCHEDULER.GAMMA) # 衰减率
         )
