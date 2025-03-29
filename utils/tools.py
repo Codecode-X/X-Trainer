@@ -177,12 +177,13 @@ def tolist_if_not(x):
 
 
 
-def load_yaml_config(config_path, modify_fn=None):
+def load_yaml_config(config_path, save=False, modify_fn=None):
     """
     加载 yaml 配置文件到 CfgNode 对象，并冻结配置。
     
     参数:
         - config_path (str): 配置文件路径。
+        - save (bool, optional): 是否保存配置文件到输出目录。
         - modify_fn (callable, optional): 可选的修改函数，用于修改配置对象。
     
     返回:
@@ -193,6 +194,13 @@ def load_yaml_config(config_path, modify_fn=None):
 
     if modify_fn is not None:
         cfg = modify_fn(cfg)
+
+    if save:
+        # 保存配置文件到输出目录
+        mkdir_if_missing(cfg.OUTPUT_DIR)
+        save_path = osp.join(cfg.OUTPUT_DIR, 'config.yaml')
+        with open(save_path, 'w', encoding='utf-8') as f:
+            f.write(cfg.dump())  # 直接写入字符串
 
     # 冻结配置，防止修改   
     cfg.freeze()

@@ -1,6 +1,6 @@
 # X-Trainer 配置文件模板
 # 版本: 1.0 | 作者：Junhao Xiao | 项目地址：https://github.com/Codecode-X/X-Trainer
-# NAN
+
 # ======================= 全局配置 (Global) =======================
 VERBOSE: True  # 启用详细日志输出（如训练进度、指标等）
 SEED: 42  # 全局随机种子，确保实验可复现性
@@ -12,7 +12,7 @@ RESUME: ""  # 断点续训路径（需包含`checkpoint.pth`文件）
 TRAINER:
   NAME: "TrainerClip"  # 训练器类名
   PREC: "fp32"  # 训练精度：fp32、fp16、amp（自动混合精度）
-  FROZEN_LAYERS: False  # 冻结基础网络层（仅训练分类头）
+  FROZEN: False  # 冻结文本编码器
 
 # 训练流程
 TRAIN:
@@ -64,8 +64,7 @@ INPUT:
   AFTER_TOTENSOR_TRANSFORMS: []
 
   # 特定模型增强策略
-  StandardNoAugTransform: 
-    norm: True  # 是否标准化图像
+  StandardNoAugTransform: None # 标准无增强转换器
 
   # 是否在最后归一化图像
   NORMALIZE: True  # 是否归一化图像
@@ -88,10 +87,10 @@ LR_SCHEDULER:
 
   # 学习率预热器
   WARMUP:
-    NAME: "LinearWarmupScheduler" # 预热器类名
+    NAME: "ConstantWarmupScheduler" # 预热器类名
     WARMUP_RECOUNT: True # 是否在预热结束后重置周期
-    EPOCHS: 5 # 预热轮数
-    MIN_LR: 1e-6  # 最小学习率
+    EPOCHS: 1 # 预热轮数
+    CONS_LR: 1e-5 # 常熟学习率
 
 
 # ===================== 评估器配置 (evaluator) =====================
@@ -104,24 +103,14 @@ EVALUATOR:
 
 # ===================== 优化器配置 (Optimizer) =====================
 OPTIMIZER:
-  NAME: "Adam"  # 优化器类名
+  NAME: "SGD"  # 优化器类名
   LR: 0.002  # 学习率
 
-  # 特定于 Adam 优化器的参数
-  betas: [0.9, 0.999]  # Adam 优化器的 beta 参数
-  weight_decay: 0.01  # 权重衰减（L2 正则化）
-  eps: 1e-7  # Adam 优化器的 epsilon 参数
-  amsgrad: False  # 是否使用 AMSGrad 变体
-
-# OPTIMIZER:
-#   NAME: "SGD"  # 优化器类名
-#   LR: 0.002  # 学习率
-
-#   # 特定于 SGD 优化器的参数
-#   momentum: 0.9  # 动量
-#   weight_decay: 0.0005  # 权重衰减（L2 正则化）
-#   dampening: 0.0  # 阻尼
-#   nesterov: False  # 是否使用 Nesterov 动量
+  # 特定于 SGD 优化器的参数
+  momentum: 0.9  # 动量
+  weight_decay: 0.0005  # 权重衰减（L2 正则化）
+  dampening: 0.0  # 阻尼
+  nesterov: False  # 是否使用 Nesterov 动量
 
 
 # ===================== 使用说明 ========================

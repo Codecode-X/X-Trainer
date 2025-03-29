@@ -53,8 +53,8 @@ class Adam(TorchAdam):
         super().__init__(
             params,
             lr=lr,
-            weight_decay=weight_decay,
             betas=betas,
+            weight_decay=weight_decay,
             eps=eps,
             amsgrad=amsgrad  # 是否使用 AMSGrad
         )

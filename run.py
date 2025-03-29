@@ -15,10 +15,14 @@ def main(args):
     assert args.train or args.eval_only, "训练和评估模式至少要设置一个！"
     assert args.train != args.eval_only, "训练和评估模式不能同时设置！" 
 
-    # -----读取配置文件-----
+    # 读取配置文件 并 设置输出目录
     modify_fn = lambda cfg: setattr(cfg, "OUTPUT_DIR", osp.join(cfg.OUTPUT_DIR,  # 修正: 输出目录 = cfg.OUTPUT_DIR + 当前时间 
                 datetime.datetime.now().strftime(r"%y-%m-%d-%H-%M-%S"))) or cfg  # or cfg: 保证返回 cfg
-    cfg = load_yaml_config(args.config_path, modify_fn=modify_fn) # 读取配置
+    cfg = load_yaml_config(args.config_path, save=True, modify_fn=modify_fn) # 读取配置
+    
+    # 设置日志记录器
+    setup_logger(cfg.OUTPUT_DIR) # 设置日志记录器
+    
     print("\n=======配置信息=======\n" + str(cfg) + "\n=======配置信息=======\n") # 打印配置以验证
 
     # -----初始化-----
@@ -26,9 +30,6 @@ def main(args):
     if cfg.SEED >= 0:
         print("设置固定种子：{}".format(cfg.SEED))
         set_random_seed(cfg.SEED)
-    
-    # 设置日志记录器
-    setup_logger(cfg.OUTPUT_DIR) # 设置日志记录器
 
     # 如果支持 CUDA 且配置启用了 CUDA，则优化 CUDA 性能
     if torch.cuda.is_available() and cfg.USE_CUDA:

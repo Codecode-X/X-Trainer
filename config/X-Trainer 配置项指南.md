@@ -25,7 +25,7 @@
 | ----------------------------- | ---- | ------------- | ------------------------------------------------------------ |
 | **cfg.TRAINER.NAME**          | str  | "TrainerClip" | 训练器类名（如`TrainerClip`）                                |
 | **cfg.TRAINER.PREC**          | str  | "amp"         | 训练精度：<br>`fp32`-全精度，`fp16`-半精度，`amp`-自动混合精度（显存优化） |
-| **cfg.TRAINER.FROZEN_LAYERS** | bool | False         | 冻结基础网络层（仅训练分类头）                               |
+| **cfg.TRAINER.FROZEN** | bool | False         | 冻结基础网络层（仅训练分类头）                               |
 
 ### 训练流程
 | 配置项                        | 类型 | 示例  | 说明                                |

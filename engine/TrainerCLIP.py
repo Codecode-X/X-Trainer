@@ -46,7 +46,7 @@ class TrainerClip(TrainerBase):
         print("模型参数数量：", count_num_param(self.clip_model))
 
         # 冻结模型某些层 -> 示例：冻结 CLIP 的文本编码器，只训练图像编码器
-        if cfg.TRAINER.FROZEN_LAYERS:
+        if cfg.TRAINER.FROZEN:
             for name, param in self.clip_model.named_parameters():
                 if "visual" in name:
                     param.requires_grad = False
