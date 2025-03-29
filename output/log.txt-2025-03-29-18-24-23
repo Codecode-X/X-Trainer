@@ -1,0 +1,48 @@
+Loading trainer: TrainerClip
+构建数据加载器...
+Loading dataset: Caltech101
+Reading split from /root/autodl-tmp/caltech-101/split.json
+构建训练数据增强.....
+ToTensor 前训练数据增强：StandardNoAugTransform
+构建测试数据增强.....
+测试数据增强：
+  - 标准标准图像预处理转换: resize + RGB + toTensor + normalize
+Loading sampler: RandomSampler
+Loading sampler: SequentialSampler
+Loading sampler: SequentialSampler
+--------------  ----------
+数据集          Caltech101
+类别数量        100
+有标签训练数据  5,763
+验证数据        824
+测试数据        1,655
+--------------  ----------
+构建模型，优化器，学习率调度器...
+Loading model: Clip
+模型参数数量： 149620737
+从小到大排序后的数据集文本标签： ['face', 'leopard', 'motorbike', 'accordion', 'airplane', 'anchor', 'ant', 'barrel', 'bass', 'beaver', 'binocular', 'bonsai', 'brain', 'brontosaurus', 'buddha', 'butterfly', 'camera', 'cannon', 'car_side', 'ceiling_fan', 'cellphone', 'chair', 'chandelier', 'cougar_body', 'cougar_face', 'crab', 'crayfish', 'crocodile', 'crocodile_head', 'cup', 'dalmatian', 'dollar_bill', 'dolphin', 'dragonfly', 'electric_guitar', 'elephant', 'emu', 'euphonium', 'ewer', 'ferry', 'flamingo', 'flamingo_head', 'garfield', 'gerenuk', 'gramophone', 'grand_piano', 'hawksbill', 'headphone', 'hedgehog', 'helicopter', 'ibis', 'inline_skate', 'joshua_tree', 'kangaroo', 'ketch', 'lamp', 'laptop', 'llama', 'lobster', 'lotus', 'mandolin', 'mayfly', 'menorah', 'metronome', 'minaret', 'nautilus', 'octopus', 'okapi', 'pagoda', 'panda', 'pigeon', 'pizza', 'platypus', 'pyramid', 'revolver', 'rhino', 'rooster', 'saxophone', 'schooner', 'scissors', 'scorpion', 'sea_horse', 'snoopy', 'soccer_ball', 'stapler', 'starfish', 'stegosaurus', 'stop_sign', 'strawberry', 'sunflower', 'tick', 'trilobite', 'umbrella', 'watch', 'water_lilly', 'wheelchair', 'wild_cat', 'windsor_chair', 'wrench', 'yin_yang']
+正在提取每个类别的文本特征，并保存到 self.text_features 中...
+文本特征提取完成！
+Loading optimizer: Adam
+Loading lr_scheduler: CosineLrScheduler
+Loading warmup: LinearWarmupScheduler
+Adjusting learning rate of group 0 to 1.0000e-06.
+构建评估器...
+Loading evaluator: EvaluatorClassification
+No checkpoint found, train from scratch
+Initialize tensorboard (log_dir=./output/tensorboard)
+{'logits_per_image': tensor([[17.5469, 17.0312, 26.1719,  ..., 20.8438, 19.3906, 14.6562],
+        [19.2500, 17.6562, 17.5625,  ..., 18.8438, 19.8125, 20.8281],
+        [17.2656, 16.5781, 14.0156,  ..., 16.8594, 17.9219, 18.8281],
+        ...,
+        [21.3750, 20.8594, 18.5312,  ..., 18.2812, 19.6250, 21.6250],
+        [21.4844, 21.9375, 20.5625,  ..., 20.8750, 18.4219, 18.2344],
+        [19.6094, 14.3672, 16.9062,  ..., 17.0469, 19.9062, 16.6094]],
+       device='cuda:0', dtype=torch.float16, grad_fn=<MmBackward>), 'logits_per_text': tensor([[17.5469, 19.2500, 17.2656,  ..., 21.3750, 21.4844, 19.6094],
+        [17.0312, 17.6562, 16.5781,  ..., 20.8594, 21.9375, 14.3672],
+        [26.1719, 17.5625, 14.0156,  ..., 18.5312, 20.5625, 16.9062],
+        ...,
+        [20.8438, 18.8438, 16.8594,  ..., 18.2812, 20.8750, 17.0469],
+        [19.3906, 19.8125, 17.9219,  ..., 19.6250, 18.4219, 19.9062],
+        [14.6562, 20.8281, 18.8281,  ..., 21.6250, 18.2344, 16.6094]],
+       device='cuda:0', dtype=torch.float16, grad_fn=<TBackward>)}

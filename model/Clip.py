@@ -47,6 +47,8 @@ class Clip(ModelBase):
                  transformer_layers: int, # Transformer 的层数
                  ):
         super().__init__(cfg)
+        self.device = 'cuda' if cfg.USE_CUDA else 'cpu'
+
         self.output_logits = None  # 记录模型输出结果
         self.output_featuer = None # 记录模型输出特征
 
@@ -193,6 +195,8 @@ class Clip(ModelBase):
         with torch.no_grad():  # 关闭梯度计算
             # tokenize 文本标签，转换为 token 嵌入
             tokenized_texts = self.tokenize(label_texts, self.context_length) # [num_classes, context_length]
+            # 转移设备
+            tokenized_texts = tokenized_texts.to(self.device) # [num_classes, context_length]
             # 提取文本特征
             self.text_features = self.encode_text(tokenized_texts) # [num_classes, embed_dim]
         print("文本特征提取完成！")
@@ -235,7 +239,6 @@ class Clip(ModelBase):
             'logits_per_image': logits_per_image,
             'logits_per_text': logits_per_text
         }
-        print(self.output_logits)
         self.output_featuer = {
             'image': image_features,
             'text': text_features
