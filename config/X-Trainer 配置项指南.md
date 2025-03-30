@@ -154,6 +154,12 @@
 | **Clip** |                             |      |                 | 经典对比学习模型           |
 | ├─       | **cfg.MODEL.pretrained**    | str  | "ViT-B/16"      | Clip 的预训练模型名         |
 | └─       | **cfg.MODEL.download_root** | str  | "~/.cache/clip" | Clip 预训练权重下载保存目录 |
+| CoOpClip |  |  |  |  |
+| ├─ | **cfg.MODEL.pretrained** | str | "ViT-B/16" | Clip 的预训练模型名 |
+| ├─ | **cfg.MODEL.download_root** | str | "~/.cache/clip" | Clip 预训练权重下载保存目录 |
+| ├─ | **cfg.MODEL.init_ctx** | str | "a photo of a" | promp中的初始上下文 |
+|  |  |  |  |  |
+|  |  |  |  |  |
 
 ---
 

@@ -46,6 +46,37 @@ class Clip(ModelBase):
                  transformer_heads: int, # Transformer 的注意力头数
                  transformer_layers: int, # Transformer 的层数
                  ):
+
+        """
+        CLIP 模型的初始化函数
+
+        参数：
+            - cfg (dict): 配置
+            
+            - embed_dim (int): 嵌入维度 | CLIP 模型的输出特征维度
+            - image_resolution (int): 输入图像的分辨率 | 224
+            - vision_layers (Union[Tuple[int, int, int, int], int]): 视觉 Transformer 的层数 | ResNet: tuple(3, 4, 6, 3) | ViT: int(12)
+            - vision_width (int): 视觉 Transformer 的隐藏层宽度 | ResNet: 64 | ViT: 768
+            - vision_patch_size (int): Patch 的大小 (ViT 模型) | 32
+            
+            - context_length (int): 最大文本长度 (序列长度) | 77
+            - vocab_size (int): 词表大小 (Embedding 层的输入维度) | 49408
+            - transformer_width (int): Transformer 的隐藏层宽度 | 512
+            - transformer_heads (int): Transformer 的注意力头数 | 8
+            - transformer_layers (int): Transformer 的层数 | 12
+
+        主要步骤：
+            1. 初始化父类
+            2. 设置设备
+            3. 创建视觉 Transformer (ResNet 或 ViT)
+            4. 创建文本 Transformer
+            5. 创建词嵌入层和位置编码
+            6. 创建 LayerNorm 层
+            7. 创建投影层 (text_projection)
+            8. 创建可训练的 softmax 温度参数 τ
+            9. 初始化权重
+        
+        """
         super().__init__(cfg)
         self.device = 'cuda' if cfg.USE_CUDA else 'cpu'
 
@@ -57,7 +88,7 @@ class Clip(ModelBase):
         # 创建视觉 Transformer
         if isinstance(vision_layers, (tuple, list)):
             vision_heads = vision_width * 32 // 64
-            self.visual = ModifiedResNet(  # 基于 ResNet
+            self.image_encoder = ModifiedResNet(  # 基于 ResNet
                 layers=vision_layers,
                 output_dim=embed_dim,
                 heads=vision_heads,
@@ -66,7 +97,7 @@ class Clip(ModelBase):
             )
         else:
             vision_heads = vision_width // 64    # 计算 Transformer 头数，通常设为 width/64
-            self.visual = VisionTransformer(  # 基于 VIT
+            self.image_encoder = VisionTransformer(  # 基于 VIT
                 input_resolution=image_resolution,
                 patch_size=vision_patch_size,
                 width=vision_width,
@@ -76,11 +107,11 @@ class Clip(ModelBase):
             )
         
         # 构建文本 Transformer
-        self.transformer = Transformer(
+        self.text_encoder = Transformer(
             width=transformer_width,
             layers=transformer_layers,
             heads=transformer_heads,
-            attn_mask=self.build_attention_mask()
+            attn_mask=self.build_attention_mask(self.context_length)
         )
 
         self.vocab_size = vocab_size  # 词表大小
@@ -95,51 +126,62 @@ class Clip(ModelBase):
         self.logit_scale = nn.Parameter(torch.ones([]) * np.log(1 / τ))  # 训练时学习的是 logit_scale，而不是 τ，直接学习 τ 可能会导致梯度更新过大或过小。
 
         self.initialize_parameters() # 初始化权重
+
+    @property
+    def dtype(self):
+        return self.image_encoder.conv1.weight.dtype
     
     # 权重初始化
     def initialize_parameters(self):
+        """
+        权重初始化 
+        
+        主要步骤：
+            1. 初始化 token_embedding 和 positional_embedding 的权重
+            2. 初始化 视觉编码器 (ResNet) 的权重 | ViT 版本不需要初始化
+            3. 初始化 文本编码器 (Transformer) 的权重
+            4. 初始化 text_projection 的权重
+
+        原理:
+            - 若 W_Q, W_K, W_V 的初始化方差过大，注意力计算中的 Softmax 可能会趋向于 0 或 1，导致梯度消失。
+            - 取 std = d^{-0.5}，使得初始化时 QKV 的均值和方差合理，不至于让 Softmax 输出极端值导致梯度问题。
+            - d 是 Transformer 的隐藏层宽度。
+        """
+        # 初始化 token_embedding 和 positional_embedding 的权重为均值为 0，标准差为 0.02 的正态分布
         nn.init.normal_(self.token_embedding.weight, std=0.02)
         nn.init.normal_(self.positional_embedding, std=0.01)
 
-        if isinstance(self.visual, ModifiedResNet):
-            if self.visual.attnpool is not None:
-                std = self.visual.attnpool.c_proj.in_features ** -0.5
-                nn.init.normal_(self.visual.attnpool.q_proj.weight, std=std)
-                nn.init.normal_(self.visual.attnpool.k_proj.weight, std=std)
-                nn.init.normal_(self.visual.attnpool.v_proj.weight, std=std)
-                nn.init.normal_(self.visual.attnpool.c_proj.weight, std=std)
-
-            for resnet_block in [self.visual.layer1, self.visual.layer2, self.visual.layer3, self.visual.layer4]:
+        # 初始化 视觉编码器 (ResNet) 的权重 -  Xavier 初始化 - 针对 Softmax 激活函数 | ViT 版本不需要初始化
+        if isinstance(self.image_encoder, ModifiedResNet):
+            # 初始化 ResNet 的 attention pooling 层（类似 ViT 的 CLS token 方法，聚合全局特征）的权重
+            if self.image_encoder.attnpool is not None: 
+                std = self.image_encoder.attnpool.c_proj.in_features ** -0.5
+                nn.init.normal_(self.image_encoder.attnpool.q_proj.weight, std=std)
+                nn.init.normal_(self.image_encoder.attnpool.k_proj.weight, std=std)
+                nn.init.normal_(self.image_encoder.attnpool.v_proj.weight, std=std)
+                nn.init.normal_(self.image_encoder.attnpool.c_proj.weight, std=std)
+            # 初始化 ResNet 残差块中的 BatchNorm 为 0
+            for resnet_block in [self.image_encoder.layer1, self.image_encoder.layer2, self.image_encoder.layer3, self.image_encoder.layer4]:
                 for name, param in resnet_block.named_parameters():
-                    if name.endswith("bn3.weight"):
+                    if name.endswith("bn3.weight"): # 仅初始化最后一层的 BatchNorm
                         nn.init.zeros_(param)
 
-        proj_std = (self.transformer.width ** -0.5) * ((2 * self.transformer.layers) ** -0.5)
-        attn_std = self.transformer.width ** -0.5
-        fc_std = (2 * self.transformer.width) ** -0.5
-        for block in self.transformer.resblocks:
+        # 初始化 文本编码器 (Transformer) 的权重
+        # 计算三种标准差
+        proj_std = (self.text_encoder.width ** -0.5) * ((2 * self.text_encoder.layers) ** -0.5) # ((2L)^{-0.5}) 防止残差块累积后数值膨胀。
+        attn_std = self.text_encoder.width ** -0.5  # xavier 初始化 - 针对 Softmax 激活函数 
+        fc_std = (2 * self.text_encoder.width) ** -0.5  # Kaiming He 初始化 - 针对 ReLU 激活函数
+        for block in self.text_encoder.resblocks:
             nn.init.normal_(block.attn.in_proj_weight, std=attn_std)
             nn.init.normal_(block.attn.out_proj.weight, std=proj_std)
             nn.init.normal_(block.mlp.c_fc.weight, std=fc_std)
             nn.init.normal_(block.mlp.c_proj.weight, std=proj_std)
 
+        # 初始化 文本投影层 - Xavier 初始化
         if self.text_projection is not None:
-            nn.init.normal_(self.text_projection, std=self.transformer.width ** -0.5)
+            nn.init.normal_(self.text_projection, std=self.text_encoder.width ** -0.5)
     
-    # 构建 因果注意力掩码 (causal attention mask) - 上三角矩阵 - 仅允许 Transformer 看到 当前 Token 及其之前的 Token，防止未来信息泄露。
-    def build_attention_mask(self):
-        # lazily create causal attention mask, with full attention between the vision tokens
-        # pytorch uses additive attention mask; fill with -inf
-        mask = torch.empty(self.context_length, self.context_length)
-        mask.fill_(float("-inf"))
-        mask.triu_(1)  # zero out the lower diagonal
-        return mask
 
-    @property
-    def dtype(self):
-        return self.visual.conv1.weight.dtype
-
-    # 视觉编码器
     def encode_image(self, image):
         """ 
         视觉编码器，提取图像特征。
@@ -150,9 +192,8 @@ class Clip(ModelBase):
         返回：
             - image_features (Tensor): 图像特征 | [batch_size, embed_dim]
         """
-        return self.visual(image.type(self.dtype))
+        return self.image_encoder(image.type(self.dtype))
 
-    # 文本编码器
     def encode_text(self, text):
         """
         文本编码器，提取文本特征。
@@ -162,6 +203,14 @@ class Clip(ModelBase):
 
         返回：
             - text_features (Tensor): 文本特征 | [batch_size, embed_dim]
+        
+        主要步骤：
+            1. 将输入文本转换为 token 嵌入
+            2. 加上可训练的位置编码
+            3. 通过 Transformer 进行文本编码
+            4. 通过 layerNorm 层归一化数据
+            5. 将 EOT (End-of-Text) token 对应的特征作为整个文本序列的表示 (类似 Bert 用 [cls] token)
+            6. 通过 `text_projection` 进行线性变换，得到最终的文本特征
         """
         # 将输入文本转换为 token 嵌入，形状为 [batch_size, n_ctx(上下文长度), transformer_width]
         x = self.token_embedding(text).type(self.dtype)  # [batch_size, n_ctx, d_model]
@@ -170,7 +219,7 @@ class Clip(ModelBase):
         
         # 通过 Transformer 进行文本编码
         x = x.permute(1, 0, 2)  # 调整维度为 [n_ctx, batch_size, transformer_width] 以适配 Transformer
-        x = self.transformer(x)
+        x = self.text_encoder(x)
         x = x.permute(1, 0, 2)  # 还原维度为 [batch_size, n_ctx, transformer_width]
 
         # 通过 layerNorm 层归一化数据
@@ -194,7 +243,7 @@ class Clip(ModelBase):
         print("正在提取每个类别的文本特征，并保存到 self.text_features 中...")
         with torch.no_grad():  # 关闭梯度计算
             # tokenize 文本标签，转换为 token 嵌入
-            tokenized_texts = self.tokenize(label_texts, self.context_length) # [num_classes, context_length]
+            tokenized_texts = tokenize(label_texts, self.context_length) # [num_classes, context_length]
             # 转移设备
             tokenized_texts = tokenized_texts.to(self.device) # [num_classes, context_length]
             # 提取文本特征
@@ -255,52 +304,6 @@ class Clip(ModelBase):
         #     return self.output_logits
 
     
-    def tokenize(self, texts: Union[str, List[str]], context_length: int = 77, truncate: bool = False) -> Union[torch.IntTensor, torch.LongTensor]:
-        """
-        对输入的字符串或字符串列表进行分词（tokenize），并返回其 token 表示。
-
-        参数：
-        ----------
-        texts : Union[str, List[str]]
-            需要进行分词的文本，可以是单个字符串或字符串列表。
-
-        context_length : int
-            设定的上下文长度（context length），所有 CLIP 模型都使用 77 作为默认上下文长度。
-
-        返回：
-        -------
-        torch.LongTensor
-            一个二维张量，包含文本的 token 结果，形状为 (文本数量，context_length)。
-        """
-        # 如果输入是单个字符串，则转换为列表，确保后续处理统一
-        if isinstance(texts, str):
-            texts = [texts]
-        # 获取特殊 token：<|startoftext|>（SOT，文本起始标记） <|endoftext|>（EOT，文本结束标记）
-        sot_token = _tokenizer.encoder["<|startoftext|>"]
-        eot_token = _tokenizer.encoder["<|endoftext|>"]
-        # 对每个文本进行编码，并添加起始和结束标记 | 文本 "Hello world" -> [sot_token, tokenized("Hello"), tokenized("world"), eot_token]
-        all_tokens = [[sot_token] + _tokenizer.encode(text) + [eot_token] for text in texts]
-        
-        # 创建一个形状为 (文本数量，context_length) 的张量，初始值为 0（填充用）
-        if version.parse(torch.__version__) < version.parse("1.8.0"):
-            result = torch.zeros(len(all_tokens), context_length, dtype=torch.long)
-        else:
-            result = torch.zeros(len(all_tokens), context_length, dtype=torch.int)
-
-        # 遍历所有 token 序列，将其填充到 `result` 张量中
-        for i, tokens in enumerate(all_tokens):
-            # 如果 token 数量超过 context_length，则截断，或抛出错误
-            if len(tokens) > context_length:
-                if truncate:
-                    tokens = tokens[:context_length]
-                    tokens[-1] = eot_token
-                else:          
-                    raise RuntimeError(f"Input {texts[i]} is too long for context length {context_length}")
-            # 将 tokens 填充到 result[i]，超出部分自动填充 0
-            result[i, :len(tokens)] = torch.tensor(tokens)
-
-        return result
-    
     @staticmethod
     def build_model(cfg: dict, jit=False):
         """
@@ -347,7 +350,7 @@ class Clip(ModelBase):
 
         if jit: 
             # ---加载为 JIT 模型 ---
-            jit_model = utils.patch_jit_model(jit_model, device=device)  # 修复 JIT 模型的设备和dtype信息
+            jit_model = utils.patch_jit_model(jit_model, device=device)  # 修复 JIT 模型的设备和 dtype 信息
             return jit_model 
         else:
             # ---加载为普通模型---
@@ -397,6 +400,63 @@ class Clip(ModelBase):
 
 
 # ------以下为 CLIP 模型的子模块或辅助函数的实现------
+
+def build_attention_mask(context_length):
+    """
+    构建 因果注意力掩码 (causal attention mask) 
+        - 上三角矩阵
+        - 仅允许 Transformer 看到 当前 Token 及其之前的 Token，防止未来信息泄露。
+    """
+    mask = torch.empty(context_length, context_length)
+    mask.fill_(float("-inf"))
+    mask.triu_(1)  # zero out the lower diagonal
+    return mask
+
+def tokenize(texts: Union[str, List[str]], context_length: int = 77, truncate: bool = False) -> Union[torch.IntTensor, torch.LongTensor]:
+    """
+    对输入的字符串或字符串列表进行分词（tokenize），并返回其 token 表示。
+
+    参数：
+    ----------
+    texts : Union[str, List[str]]
+        需要进行分词的文本，可以是单个字符串或字符串列表。
+
+    context_length : int
+        设定的上下文长度（context length），所有 CLIP 模型都使用 77 作为默认上下文长度。
+
+    返回：
+    -------
+    torch.LongTensor
+        一个二维张量，包含文本的 token 结果，形状为 (文本数量，context_length)。
+    """
+    # 如果输入是单个字符串，则转换为列表，确保后续处理统一
+    if isinstance(texts, str):
+        texts = [texts]
+    # 获取特殊 token：<|startoftext|>（SOT，文本起始标记） <|endoftext|>（EOT，文本结束标记）
+    sot_token = _tokenizer.encoder["<|startoftext|>"]
+    eot_token = _tokenizer.encoder["<|endoftext|>"]
+    # 对每个文本进行编码，并添加起始和结束标记 | 文本 "Hello world" -> [sot_token, tokenized("Hello"), tokenized("world"), eot_token]
+    all_tokens = [[sot_token] + _tokenizer.encode(text) + [eot_token] for text in texts]
+    
+    # 创建一个形状为 (文本数量，context_length) 的张量，初始值为 0（填充用）
+    if version.parse(torch.__version__) < version.parse("1.8.0"):
+        result = torch.zeros(len(all_tokens), context_length, dtype=torch.long)
+    else:
+        result = torch.zeros(len(all_tokens), context_length, dtype=torch.int)
+
+    # 遍历所有 token 序列，将其填充到 `result` 张量中
+    for i, tokens in enumerate(all_tokens):
+        # 如果 token 数量超过 context_length，则截断，或抛出错误
+        if len(tokens) > context_length:
+            if truncate:
+                tokens = tokens[:context_length]
+                tokens[-1] = eot_token
+            else:          
+                raise RuntimeError(f"Input {texts[i]} is too long for context length {context_length}")
+        # 将 tokens 填充到 result[i]，超出部分自动填充 0
+        result[i, :len(tokens)] = torch.tensor(tokens)
+
+    return result
 
 def convert_weights(model: nn.Module):
     """Convert applicable model parameters to fp16"""
@@ -621,12 +681,13 @@ class ResidualAttentionBlock(nn.Module):
         x = x + self.mlp(self.ln_2(x))
         return x
 
-"""残差注意力网络"""
+
 class Transformer(nn.Module):
+    """残差注意力网络"""
     def __init__(self, width: int, layers: int, heads: int, attn_mask: torch.Tensor = None):
         super().__init__()
-        self.width = width
-        self.layers = layers
+        self.width = width # Transformer 的隐藏层维度 - 决定了 query/key/value 向量的维度
+        self.layers = layers # Transformer 的层数 - 堆叠的残差注意力块（ResidualAttentionBlock）的数量
         self.resblocks = nn.Sequential(*[ResidualAttentionBlock(width, heads, attn_mask) for _ in range(layers)])
 
     def forward(self, x: torch.Tensor, attention_maps=None):

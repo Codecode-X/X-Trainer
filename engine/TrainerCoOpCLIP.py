@@ -1,4 +1,4 @@
-from .TrainerBase import TrainerBase
+from .TrainerCLIP import TrainerClip
 from model import build_model
 from utils import count_num_param
 from torch.cuda.amp import GradScaler
@@ -12,11 +12,8 @@ from lr_scheduler import build_lr_scheduler
 from .build import TRAINER_REGISTRY
 
 @TRAINER_REGISTRY.register()
-class TrainerClip(TrainerBase):
+class TrainerCoOpCLIP(TrainerClip):
 
-    def check_cfg(self, cfg): # 检查配置文件中的 PREC 字段是否为合法值
-        """ (实现父类的方法) 检查配置文件中的 PREC 字段是否为合法值。"""
-        assert cfg.TRAINER.PREC in ["fp16", "fp32", "amp"]
 
     def init_model(self, cfg):
         """
@@ -41,24 +38,24 @@ class TrainerClip(TrainerBase):
         7. 返回模型、优化器和调度器
         """
         # 构建模型
-        assert cfg.MODEL.NAME == "Clip", f"TrainerClip 只支持 Clip 模型，但 cfg.MODEL.NAME = {cfg.MODEL.NAME}"
-        self.clip_model = build_model(cfg) # 构建模型 (此处 CLIP 模型提供了预训练模型的载入)
-        print("模型参数数量：", count_num_param(self.clip_model))
+        assert cfg.MODEL.NAME == "CoOpClip", f"TrainerCoOpClip 只支持 CoOpClip 模型，但 cfg.MODEL.NAME = {cfg.MODEL.NAME}"
+        self.CoOp_model = build_model(cfg) # 构建模型 (此处 CLIP 模型提供了预训练模型的载入)
+        print("模型参数数量：", count_num_param(self.CoOp_model))
 
-        # 冻结模型某些层 -> 示例：冻结 CLIP 的文本编码器，只训练图像编码器
+        # 冻结模型某些层 -> 示例：冻结 CLIP 的文本编码器和图像编码器，只训练 CoOp 的 PromptLearner
         if cfg.TRAINER.FROZEN:
-            for name, param in self.clip_model.named_parameters():
-                if "visual" not in name:
+            for name, param in self.CoOp_model.named_parameters():
+                if "prompt_learner" not in name:
                     param.requires_grad = False
 
         # 将模型移动到设备
-        self.clip_model.to(self.device)
+        self.CoOp_model.to(self.device)
 
         # 设置模型的文本标签，让模型提前提取好每个类别的文本特征
         sorted_labels = sorted(self.lab2cname.items(), key=lambda x: x[0]) # 将文本标签按照 label 从小到大排序，方便模型预测结果与 label 进行对齐
         label_texts = [item[1] for item in sorted_labels]  # 文本标签 tensor | [num_classes]
         print("从小到大排序后的数据集文本标签：", label_texts)
-        self.clip_model.init_text_features(label_texts)
+        self.CoOp_model.init_promptLearner(label_texts) # 初始化提示学习器
 
         # 将模型调整为精度混合训练，以减少显存占用 (如果配置了精度混合训练)
         self.scaler = GradScaler() if cfg.TRAINER.PREC == "amp" else None
@@ -67,21 +64,20 @@ class TrainerClip(TrainerBase):
         device_count = torch.cuda.device_count()
         if device_count > 1:
             print(f"Multiple GPUs detected (n_gpus={device_count}), use all of them!")
-            self.clip_model = nn.DataParallel(self.clip_model)
+            self.CoOp_model = nn.DataParallel(self.CoOp_model)
 
-        # 构建优化器和调度器并注册 -> 示例：优化器只优化 CLIP 的图像编码器
-        image_encoder = self.clip_model.visual
-        self.optim = build_optimizer(image_encoder, cfg)
+        # 构建 PromptLearner 并注册 -> 示例：优化器只优化 CLIP 的 PromptLearner
+        promptLearner = self.CoOp_model.pptLearner
+        self.optim = build_optimizer(promptLearner, cfg)
         self.sched = build_lr_scheduler(cfg, self.optim)
-        self.register_model("CLIP_image_encoder", image_encoder, self.optim, self.sched)
+        self.register_model("CLIP_promptLearner", promptLearner, self.optim, self.sched)
 
-        return self.clip_model, self.optim, self.sched
+        return self.CoOp_model, self.optim, self.sched
     
     def forward_backward(self, batch): 
         """
         (实现父类的方法) 前向传播和反向传播。
         """
-
         image, label = self.parse_batch_train(batch)  # 解析训练批次数据，获取图像和标签
         assert image is not None and label is not None, "forward_backward() 中 parse_batch_train 解析到的图像和标签不能为空"
 
@@ -90,14 +86,14 @@ class TrainerClip(TrainerBase):
             with autocast():
                 # Clip 需要传入 图像 和 文本 (初始化模型时已经加载了每个类别的文本特征)。
                 # 图像-image: [batch, 3, 224, 224]
-                output = self.clip_model(image) # 模型预测 -> output: [batch, num_classes]
+                output = self.CoOp_model(image) # 模型预测 -> output: [batch, num_classes]
                 loss = F.cross_entropy(output, label)
             self.optim.zero_grad()
             self.scaler.scale(loss).backward()
             self.scaler.step(self.optim)
             self.scaler.update()
         else:  # 默认 fp16
-            output = self.clip_model(image) # 模型预测
+            output = self.CoOp_model(image) # 模型预测
             loss = F.cross_entropy(output, label)  # 计算损失  
             self.model_backward_and_update(loss)  # 反向传播
 

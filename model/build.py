@@ -25,11 +25,14 @@ def build_model(cfg):
 
     # 实例化模型
     try:
+        print("正在调用模型构造方法构造模型....")
         model = MODEL_REGISTRY.get(model_name)(cfg) # 直接调用模型构造方法
     except TypeError as e:
+        print("直接调用模型构造方法失败，尝试使用模型的 build_model 方法....")
         model_class = MODEL_REGISTRY.get(model_name) # 获取模型类
         if hasattr(model_class, "build_model") and callable(model_class.build_model):
             model = model_class.build_model(cfg) # 调用模型类的静态方法 build_model 构造自己
         else:
+            print("该模型没有 build_model 方法")
             raise e
     return model
