@@ -5,3 +5,5 @@ from .ModelBase import ModelBase # isort:skip
 from .SimpleModel import SimpleNet
 
 from .Clip import Clip
+
+from .CoOpClip import CoOpClip

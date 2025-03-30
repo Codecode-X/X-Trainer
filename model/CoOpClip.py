@@ -2,11 +2,11 @@ from .Clip import Clip, Tokenizer, tokenize
 from torch import nn
 import warnings
 import torch
+from .build import MODEL_REGISTRY
+from .ModelBase import ModelBase
 
-_tokenizer = Tokenizer()  # 初始化分词器
-
-
-class CoOpClip(Clip):
+@MODEL_REGISTRY.register()
+class CoOpClip(ModelBase):
     """ 
     CoOpClip 模型：基于提示学习调优的图像和文本的对比学习
     该模型使用 CLIP 模型作为基础，并在其上添加了一个提示学习器（Prompt Learner），用于生成每个类别的最优提示信息。
@@ -24,18 +24,23 @@ class CoOpClip(Clip):
         参数：
         cfg: 配置文件，包含模型的超参数和训练设置
         """
-        super().__init__()
-
+        super().__init__(cfg)  # 调用父类 Clip 的构造函数
         # 读取预训练的 CLIP 模型
-        pretrained_clip = self.build_model(cfg) # 调用父类 build 得到预训练的 CLIP 模型 (读取预训练权重)
+        pretrained_clip = Clip.build_model(cfg) # 调用父类 build 得到预训练的 CLIP 模型 (读取预训练权重)
         if cfg.TRAINER.PREC == "fp32" or cfg.TRAINER.PREC == "amp": 
             warnings.warn("Clip 默认是 fp16, 已自动转为 fp16")
             pretrained_clip.float() # Clip 默认是 fp16
             
         self.image_encoder = pretrained_clip.visual  # 图像编码器
         self.text_encoder = pretrained_clip.transformer  # 文本编码器
+        self.token_embedding = pretrained_clip.token_embedding  # 词嵌入层
+        self.positional_embedding = pretrained_clip.positional_embedding  # 位置嵌入层
+        self.ln_final = pretrained_clip.ln_final  # 最终的 LayerNorm 层
+        self.text_projection = pretrained_clip.text_projection  # 文本投影层
         self.logit_scale = pretrained_clip.logit_scale  # 温度参数 τ 的倒数
+        self.device = pretrained_clip.device  # 设备
         self.dtype = pretrained_clip.dtype  # 数据类型
+        self.cfg = cfg  # 配置文件
 
         # 提示学习 - 通过训练器调用 init_promptLearner 初始化
         self.pptLearner = None  # 提示学习器
@@ -132,10 +137,10 @@ class PromptLearner(nn.Module):
         # 读取参数
         n_cls = len(classnames)  # 类别数量
         dtype = clip_model.dtype  # CLIP 模型的数据类型
-        clip_imsize = clip_model.visual.input_resolution # CLIP 模型的输入图像尺寸
+        clip_imsize = clip_model.image_encoder.input_resolution # CLIP 模型的输入图像尺寸
         # 读取配置
         ctx_init = cfg.MODEL.init_ctx  # 是否使用预设的上下文词
-        cfg_imsize = cfg.INPUT.SIZE[0] # 配置文件中设定的输入图像尺寸
+        cfg_imsize = cfg.INPUT.SIZE # 配置文件中设定的输入图像尺寸
         assert cfg_imsize == clip_imsize, f"cfg_imsize ({cfg_imsize}) 必须等于 clip_imsize ({clip_imsize})" # 确保输入尺寸匹配
         
         """初始化 上下文前缀词 以及其 嵌入向量"""
@@ -143,6 +148,7 @@ class PromptLearner(nn.Module):
         n_ctx = len(ctx_init.split(" "))  # 重新计算上下文词数量
         tokenized_ctx = tokenize(ctx_init)  # 将文字形式的 ctx_init 分词编码为 token
         with torch.no_grad():
+            tokenized_ctx = tokenized_ctx.to(clip_model.device)
             ctx_embedding = clip_model.token_embedding(tokenized_ctx).type(dtype)  # 获取嵌入表示 (batch_size, seq_len, embedding_dim)
         ctx_vectors = ctx_embedding[0, 1:1+n_ctx, :]  # 提取上下文嵌入向量 | 1:1+n_ctx: 索引 0 位置对应 [SOS]
         prompt_prefix = ctx_init  # 设定上下文前缀就是初始上下文词 ctx_init
@@ -155,6 +161,7 @@ class PromptLearner(nn.Module):
         tokenized_prompts = torch.cat([tokenize(p) for p in prompts])  # 将文字形式的 prompt 分词编码为 token
         eot_indices = tokenized_prompts.argmax(dim=-1)  # 获取 tokenized_prompts 的 [EOS] token 的 索引
         with torch.no_grad():
+            tokenized_prompts = tokenized_prompts.to(clip_model.device)  # 将 tokenized_prompts 移动到 CLIP 模型所在设备
             ctx_embedding = clip_model.token_embedding(tokenized_prompts).type(dtype)  # 得到 tokenized_prompts 的嵌入表示
 
         # 注册需持久化保存的张量。这些张量会成为模型状态字典（state_dict）的一部分，确保在模型保存和加载时被正确处理。
@@ -168,11 +175,6 @@ class PromptLearner(nn.Module):
 
         # 记录每一类的 prompt 的结尾 EOT 索引位置
         self.eot_indices = eot_indices
-
-    @property
-    def eot_indices(self):
-        """ 返回每个类别的 prompt 的结束符位置 """
-        return self.eot_indices
 
     def forward(self):
         learnable_ctx = self.learnable_ctx  # 取出上下文向量

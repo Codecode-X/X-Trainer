@@ -1,0 +1,1724 @@
+
+=======配置信息=======
+DATALOADER:
+  BATCH_SIZE_TEST: 100
+  BATCH_SIZE_TRAIN: 32
+  K_TRANSFORMS: 1
+  NUM_WORKERS: 4
+  RETURN_IMG0: False
+DATASET:
+  DATASET_DIR: /root/autodl-tmp/caltech-101
+  IMAGE_DIR: /root/autodl-tmp/caltech-101/101_ObjectCategories
+  NAME: Caltech101
+  NUM_SHOTS: -1
+  SPLIT: [0.7, 0.1, 0.2]
+EVALUATOR:
+  NAME: EvaluatorClassification
+  calc_cmat: True
+  per_class: True
+INPUT:
+  AFTER_TOTENSOR_TRANSFORMS: []
+  BEFORE_TOTENSOR_TRANSFORMS: ['StandardNoAugTransform']
+  INTERPOLATION: BICUBIC
+  NORMALIZE: True
+  PIXEL_MEAN: [0.48145466, 0.4578275, 0.40821073]
+  PIXEL_STD: [0.26862954, 0.26130258, 0.27577711]
+  SIZE: 224
+  StandardNoAugTransform: None
+LR_SCHEDULER:
+  NAME: CosineLrScheduler
+  WARMUP:
+    CONS_LR: 1e-5
+    EPOCHS: 1
+    NAME: ConstantWarmupScheduler
+    WARMUP_RECOUNT: True
+MODEL:
+  NAME: CoOpClip
+  download_root: ~/.cache/clip
+  init_ctx: a photo of a
+  pretrained: ViT-B/16
+OPTIMIZER:
+  LR: 0.002
+  NAME: SGD
+  dampening: 0.0
+  momentum: 0.9
+  nesterov: False
+  weight_decay: 0.0005
+OUTPUT_DIR: ./output/25-03-31-00-24-00
+RESUME: 
+SAMPLER:
+  TEST_SP: SequentialSampler
+  TRAIN_SP: RandomSampler
+SEED: 42
+TEST:
+  FINAL_MODEL: best_val
+  SPLIT: test
+TRAIN:
+  CHECKPOINT_FREQ: 5
+  DO_EVAL: True
+  MAX_EPOCH: 50
+  NO_TEST: False
+  PRINT_FREQ: 5
+TRAINER:
+  FROZEN: False
+  NAME: TrainerCoOpCLIP
+  PREC: fp32
+USE_CUDA: True
+VERBOSE: True
+=======配置信息=======
+
+设置固定种子：42
+Loading trainer: TrainerCoOpCLIP
+构建数据加载器...
+Loading dataset: Caltech101
+Reading split from /root/autodl-tmp/caltech-101/split.json
+构建训练数据增强.....
+ToTensor 前训练数据增强：StandardNoAugTransform
+构建测试数据增强.....
+测试数据增强：
+  - 标准标准图像预处理转换: resize + RGB + toTensor + normalize
+Loading sampler: RandomSampler
+Loading sampler: SequentialSampler
+Loading sampler: SequentialSampler
+--------------  ----------
+数据集          Caltech101
+类别数量        100
+有标签训练数据  5,763
+验证数据        824
+测试数据        1,655
+--------------  ----------
+构建模型，优化器，学习率调度器...
+Loading model: CoOpClip
+正在调用模型构造方法构造模型....
+模型参数数量： 149620737
+从小到大排序后的数据集文本标签： ['face', 'leopard', 'motorbike', 'accordion', 'airplane', 'anchor', 'ant', 'barrel', 'bass', 'beaver', 'binocular', 'bonsai', 'brain', 'brontosaurus', 'buddha', 'butterfly', 'camera', 'cannon', 'car_side', 'ceiling_fan', 'cellphone', 'chair', 'chandelier', 'cougar_body', 'cougar_face', 'crab', 'crayfish', 'crocodile', 'crocodile_head', 'cup', 'dalmatian', 'dollar_bill', 'dolphin', 'dragonfly', 'electric_guitar', 'elephant', 'emu', 'euphonium', 'ewer', 'ferry', 'flamingo', 'flamingo_head', 'garfield', 'gerenuk', 'gramophone', 'grand_piano', 'hawksbill', 'headphone', 'hedgehog', 'helicopter', 'ibis', 'inline_skate', 'joshua_tree', 'kangaroo', 'ketch', 'lamp', 'laptop', 'llama', 'lobster', 'lotus', 'mandolin', 'mayfly', 'menorah', 'metronome', 'minaret', 'nautilus', 'octopus', 'okapi', 'pagoda', 'panda', 'pigeon', 'pizza', 'platypus', 'pyramid', 'revolver', 'rhino', 'rooster', 'saxophone', 'schooner', 'scissors', 'scorpion', 'sea_horse', 'snoopy', 'soccer_ball', 'stapler', 'starfish', 'stegosaurus', 'stop_sign', 'strawberry', 'sunflower', 'tick', 'trilobite', 'umbrella', 'watch', 'water_lilly', 'wheelchair', 'wild_cat', 'windsor_chair', 'wrench', 'yin_yang']
+正在初始化 PromptLearner...
+初始上下文向量："a photo of a"
+上下文 token 数为 (tokens): 4
+Loading optimizer: SGD
+Loading lr_scheduler: CosineLrScheduler
+Loading warmup: ConstantWarmupScheduler
+Adjusting learning rate of group 0 to 1.0000e-05.
+构建评估器...
+Loading evaluator: EvaluatorClassification
+Initialize tensorboard (log_dir=./output/25-03-31-00-24-00/tensorboard)
+epoch [1/50] batch [5/180] time 0.237 (0.573) data 0.000 (0.261) loss 25.0013 (20.6651) acc 84.3750 (88.1250) lr 1.0000e-05 eta 1:25:49
+epoch [1/50] batch [10/180] time 0.238 (0.405) data 0.000 (0.131) loss 21.9270 (20.0710) acc 87.5000 (89.3750) lr 1.0000e-05 eta 1:00:38
+epoch [1/50] batch [15/180] time 0.237 (0.349) data 0.000 (0.087) loss 0.7670 (17.6005) acc 93.7500 (89.7917) lr 1.0000e-05 eta 0:52:14
+epoch [1/50] batch [20/180] time 0.237 (0.321) data 0.000 (0.065) loss 11.5781 (15.4423) acc 81.2500 (90.0000) lr 1.0000e-05 eta 0:48:00
+epoch [1/50] batch [25/180] time 0.238 (0.304) data 0.000 (0.052) loss 5.4729 (13.2643) acc 93.7500 (90.3750) lr 1.0000e-05 eta 0:45:28
+epoch [1/50] batch [30/180] time 0.236 (0.293) data 0.000 (0.044) loss 1.0383 (12.4013) acc 93.7500 (90.3125) lr 1.0000e-05 eta 0:43:46
+epoch [1/50] batch [35/180] time 0.237 (0.285) data 0.000 (0.037) loss 1.0173 (10.9642) acc 96.8750 (91.0714) lr 1.0000e-05 eta 0:42:32
+epoch [1/50] batch [40/180] time 0.237 (0.279) data 0.000 (0.033) loss 0.0010 (10.0647) acc 100.0000 (91.1719) lr 1.0000e-05 eta 0:41:37
+epoch [1/50] batch [45/180] time 0.237 (0.274) data 0.000 (0.029) loss 2.6312 (9.4565) acc 90.6250 (91.4583) lr 1.0000e-05 eta 0:40:54
+epoch [1/50] batch [50/180] time 0.237 (0.270) data 0.000 (0.026) loss 13.3385 (9.0249) acc 84.3750 (91.5625) lr 1.0000e-05 eta 0:40:19
+epoch [1/50] batch [55/180] time 0.237 (0.267) data 0.000 (0.024) loss 0.8548 (8.7394) acc 93.7500 (91.4205) lr 1.0000e-05 eta 0:39:51
+epoch [1/50] batch [60/180] time 0.237 (0.265) data 0.000 (0.022) loss 0.0490 (8.0551) acc 96.8750 (91.9271) lr 1.0000e-05 eta 0:39:26
+epoch [1/50] batch [65/180] time 0.237 (0.263) data 0.000 (0.020) loss 0.1671 (7.7594) acc 96.8750 (91.9712) lr 1.0000e-05 eta 0:39:06
+epoch [1/50] batch [70/180] time 0.237 (0.261) data 0.000 (0.019) loss 0.7968 (7.6986) acc 96.8750 (92.0536) lr 1.0000e-05 eta 0:38:48
+epoch [1/50] batch [75/180] time 0.237 (0.259) data 0.000 (0.018) loss 1.1482 (7.4880) acc 96.8750 (92.3750) lr 1.0000e-05 eta 0:38:33
+epoch [1/50] batch [80/180] time 0.237 (0.258) data 0.000 (0.016) loss 2.9100 (7.4289) acc 87.5000 (92.2656) lr 1.0000e-05 eta 0:38:19
+epoch [1/50] batch [85/180] time 0.237 (0.257) data 0.000 (0.016) loss 0.0000 (7.1919) acc 100.0000 (92.3897) lr 1.0000e-05 eta 0:38:07
+epoch [1/50] batch [90/180] time 0.237 (0.256) data 0.000 (0.015) loss 2.1397 (7.0891) acc 87.5000 (92.0833) lr 1.0000e-05 eta 0:37:56
+epoch [1/50] batch [95/180] time 0.238 (0.255) data 0.000 (0.014) loss 3.6295 (7.2175) acc 93.7500 (91.9408) lr 1.0000e-05 eta 0:37:46
+epoch [1/50] batch [100/180] time 0.237 (0.254) data 0.000 (0.013) loss 3.9819 (7.0098) acc 87.5000 (92.0938) lr 1.0000e-05 eta 0:37:37
+epoch [1/50] batch [105/180] time 0.237 (0.253) data 0.000 (0.013) loss 0.8427 (6.8463) acc 93.7500 (92.1131) lr 1.0000e-05 eta 0:37:29
+epoch [1/50] batch [110/180] time 0.237 (0.252) data 0.000 (0.012) loss 9.9299 (6.7984) acc 87.5000 (92.0170) lr 1.0000e-05 eta 0:37:21
+epoch [1/50] batch [115/180] time 0.237 (0.251) data 0.000 (0.012) loss 3.9250 (6.6942) acc 96.8750 (92.1196) lr 1.0000e-05 eta 0:37:14
+epoch [1/50] batch [120/180] time 0.237 (0.251) data 0.000 (0.011) loss 0.0000 (6.5744) acc 100.0000 (92.2917) lr 1.0000e-05 eta 0:37:07
+epoch [1/50] batch [125/180] time 0.237 (0.250) data 0.000 (0.011) loss 2.8732 (6.4006) acc 96.8750 (92.3750) lr 1.0000e-05 eta 0:37:01
+epoch [1/50] batch [130/180] time 0.237 (0.250) data 0.000 (0.010) loss 4.4643 (6.2695) acc 93.7500 (92.3558) lr 1.0000e-05 eta 0:36:55
+epoch [1/50] batch [135/180] time 0.237 (0.249) data 0.000 (0.010) loss 2.4751 (6.2063) acc 90.6250 (92.3843) lr 1.0000e-05 eta 0:36:49
+epoch [1/50] batch [140/180] time 0.237 (0.249) data 0.000 (0.009) loss 0.0125 (6.0181) acc 100.0000 (92.5223) lr 1.0000e-05 eta 0:36:44
+epoch [1/50] batch [145/180] time 0.237 (0.248) data 0.000 (0.009) loss 1.3204 (5.8435) acc 96.8750 (92.6078) lr 1.0000e-05 eta 0:36:39
+epoch [1/50] batch [150/180] time 0.237 (0.248) data 0.000 (0.009) loss 5.9303 (5.7349) acc 93.7500 (92.7083) lr 1.0000e-05 eta 0:36:35
+epoch [1/50] batch [155/180] time 0.237 (0.248) data 0.000 (0.009) loss 2.6210 (5.5999) acc 84.3750 (92.7823) lr 1.0000e-05 eta 0:36:30
+epoch [1/50] batch [160/180] time 0.237 (0.247) data 0.000 (0.008) loss 6.2172 (5.5183) acc 93.7500 (92.8516) lr 1.0000e-05 eta 0:36:26
+epoch [1/50] batch [165/180] time 0.238 (0.247) data 0.000 (0.008) loss 5.7575 (5.4851) acc 93.7500 (92.8598) lr 1.0000e-05 eta 0:36:22
+epoch [1/50] batch [170/180] time 0.237 (0.247) data 0.000 (0.008) loss 0.8978 (5.3995) acc 93.7500 (92.8309) lr 1.0000e-05 eta 0:36:18
+epoch [1/50] batch [175/180] time 0.236 (0.246) data 0.000 (0.008) loss 5.0599 (5.3071) acc 90.6250 (92.9107) lr 1.0000e-05 eta 0:36:15
+Adjusting learning rate of group 0 to 2.0000e-03.
+epoch [1/50] batch [180/180] time 0.237 (0.246) data 0.000 (0.007) loss 0.0189 (5.2635) acc 100.0000 (92.8819) lr 2.0000e-03 eta 0:36:11
+在 *val* 集上测试
+=> result
+* total: 824
+* correct: 785
+* accuracy: 95.3%
+* error: 4.7%
+* macro_f1: 92.7%
+=> per-class result
+* class: 0 (face)	total: 44	correct: 44	acc: 100.0%
+* class: 1 (leopard)	total: 20	correct: 20	acc: 100.0%
+* class: 2 (motorbike)	total: 80	correct: 80	acc: 100.0%
+* class: 3 (accordion)	total: 6	correct: 4	acc: 66.7%
+* class: 4 (airplane)	total: 80	correct: 80	acc: 100.0%
+* class: 5 (anchor)	total: 4	correct: 2	acc: 50.0%
+* class: 6 (ant)	total: 4	correct: 4	acc: 100.0%
+* class: 7 (barrel)	total: 5	correct: 4	acc: 80.0%
+* class: 8 (bass)	total: 5	correct: 5	acc: 100.0%
+* class: 9 (beaver)	total: 5	correct: 5	acc: 100.0%
+* class: 10 (binocular)	total: 3	correct: 1	acc: 33.3%
+* class: 11 (bonsai)	total: 13	correct: 13	acc: 100.0%
+* class: 12 (brain)	total: 10	correct: 10	acc: 100.0%
+* class: 13 (brontosaurus)	total: 4	correct: 4	acc: 100.0%
+* class: 14 (buddha)	total: 8	correct: 8	acc: 100.0%
+* class: 15 (butterfly)	total: 9	correct: 8	acc: 88.9%
+* class: 16 (camera)	total: 5	correct: 4	acc: 80.0%
+* class: 17 (cannon)	total: 4	correct: 4	acc: 100.0%
+* class: 18 (car_side)	total: 12	correct: 12	acc: 100.0%
+* class: 19 (ceiling_fan)	total: 5	correct: 5	acc: 100.0%
+* class: 20 (cellphone)	total: 6	correct: 6	acc: 100.0%
+* class: 21 (chair)	total: 6	correct: 6	acc: 100.0%
+* class: 22 (chandelier)	total: 11	correct: 11	acc: 100.0%
+* class: 23 (cougar_body)	total: 5	correct: 4	acc: 80.0%
+* class: 24 (cougar_face)	total: 7	correct: 6	acc: 85.7%
+* class: 25 (crab)	total: 7	correct: 7	acc: 100.0%
+* class: 26 (crayfish)	total: 7	correct: 3	acc: 42.9%
+* class: 27 (crocodile)	total: 5	correct: 5	acc: 100.0%
+* class: 28 (crocodile_head)	total: 5	correct: 4	acc: 80.0%
+* class: 29 (cup)	total: 6	correct: 6	acc: 100.0%
+* class: 30 (dalmatian)	total: 7	correct: 7	acc: 100.0%
+* class: 31 (dollar_bill)	total: 5	correct: 5	acc: 100.0%
+* class: 32 (dolphin)	total: 6	correct: 6	acc: 100.0%
+* class: 33 (dragonfly)	total: 7	correct: 6	acc: 85.7%
+* class: 34 (electric_guitar)	total: 8	correct: 7	acc: 87.5%
+* class: 35 (elephant)	total: 6	correct: 6	acc: 100.0%
+* class: 36 (emu)	total: 5	correct: 5	acc: 100.0%
+* class: 37 (euphonium)	total: 6	correct: 6	acc: 100.0%
+* class: 38 (ewer)	total: 8	correct: 8	acc: 100.0%
+* class: 39 (ferry)	total: 7	correct: 7	acc: 100.0%
+* class: 40 (flamingo)	total: 7	correct: 7	acc: 100.0%
+* class: 41 (flamingo_head)	total: 4	correct: 2	acc: 50.0%
+* class: 42 (garfield)	total: 3	correct: 3	acc: 100.0%
+* class: 43 (gerenuk)	total: 3	correct: 3	acc: 100.0%
+* class: 44 (gramophone)	total: 5	correct: 5	acc: 100.0%
+* class: 45 (grand_piano)	total: 10	correct: 10	acc: 100.0%
+* class: 46 (hawksbill)	total: 10	correct: 10	acc: 100.0%
+* class: 47 (headphone)	total: 4	correct: 4	acc: 100.0%
+* class: 48 (hedgehog)	total: 5	correct: 5	acc: 100.0%
+* class: 49 (helicopter)	total: 9	correct: 8	acc: 88.9%
+* class: 50 (ibis)	total: 8	correct: 8	acc: 100.0%
+* class: 51 (inline_skate)	total: 3	correct: 3	acc: 100.0%
+* class: 52 (joshua_tree)	total: 6	correct: 6	acc: 100.0%
+* class: 53 (kangaroo)	total: 9	correct: 9	acc: 100.0%
+* class: 54 (ketch)	total: 11	correct: 10	acc: 90.9%
+* class: 55 (lamp)	total: 6	correct: 6	acc: 100.0%
+* class: 56 (laptop)	total: 8	correct: 8	acc: 100.0%
+* class: 57 (llama)	total: 8	correct: 7	acc: 87.5%
+* class: 58 (lobster)	total: 4	correct: 4	acc: 100.0%
+* class: 59 (lotus)	total: 7	correct: 4	acc: 57.1%
+* class: 60 (mandolin)	total: 4	correct: 3	acc: 75.0%
+* class: 61 (mayfly)	total: 4	correct: 4	acc: 100.0%
+* class: 62 (menorah)	total: 9	correct: 9	acc: 100.0%
+* class: 63 (metronome)	total: 3	correct: 3	acc: 100.0%
+* class: 64 (minaret)	total: 8	correct: 6	acc: 75.0%
+* class: 65 (nautilus)	total: 6	correct: 6	acc: 100.0%
+* class: 66 (octopus)	total: 4	correct: 4	acc: 100.0%
+* class: 67 (okapi)	total: 4	correct: 4	acc: 100.0%
+* class: 68 (pagoda)	total: 5	correct: 5	acc: 100.0%
+* class: 69 (panda)	total: 4	correct: 4	acc: 100.0%
+* class: 70 (pigeon)	total: 4	correct: 4	acc: 100.0%
+* class: 71 (pizza)	total: 5	correct: 5	acc: 100.0%
+* class: 72 (platypus)	total: 3	correct: 3	acc: 100.0%
+* class: 73 (pyramid)	total: 6	correct: 6	acc: 100.0%
+* class: 74 (revolver)	total: 8	correct: 8	acc: 100.0%
+* class: 75 (rhino)	total: 6	correct: 6	acc: 100.0%
+* class: 76 (rooster)	total: 5	correct: 5	acc: 100.0%
+* class: 77 (saxophone)	total: 4	correct: 4	acc: 100.0%
+* class: 78 (schooner)	total: 6	correct: 3	acc: 50.0%
+* class: 79 (scissors)	total: 4	correct: 3	acc: 75.0%
+* class: 80 (scorpion)	total: 8	correct: 7	acc: 87.5%
+* class: 81 (sea_horse)	total: 6	correct: 5	acc: 83.3%
+* class: 82 (snoopy)	total: 4	correct: 4	acc: 100.0%
+* class: 83 (soccer_ball)	total: 6	correct: 6	acc: 100.0%
+* class: 84 (stapler)	total: 4	correct: 3	acc: 75.0%
+* class: 85 (starfish)	total: 9	correct: 9	acc: 100.0%
+* class: 86 (stegosaurus)	total: 6	correct: 6	acc: 100.0%
+* class: 87 (stop_sign)	total: 6	correct: 6	acc: 100.0%
+* class: 88 (strawberry)	total: 4	correct: 4	acc: 100.0%
+* class: 89 (sunflower)	total: 8	correct: 8	acc: 100.0%
+* class: 90 (tick)	total: 5	correct: 5	acc: 100.0%
+* class: 91 (trilobite)	total: 9	correct: 9	acc: 100.0%
+* class: 92 (umbrella)	total: 8	correct: 8	acc: 100.0%
+* class: 93 (watch)	total: 24	correct: 24	acc: 100.0%
+* class: 94 (water_lilly)	total: 4	correct: 3	acc: 75.0%
+* class: 95 (wheelchair)	total: 6	correct: 6	acc: 100.0%
+* class: 96 (wild_cat)	total: 3	correct: 3	acc: 100.0%
+* class: 97 (windsor_chair)	total: 6	correct: 5	acc: 83.3%
+* class: 98 (wrench)	total: 4	correct: 3	acc: 75.0%
+* class: 99 (yin_yang)	total: 6	correct: 6	acc: 100.0%
+* average: 92.9%
+Confusion matrix is saved to ./output/25-03-31-00-24-00/cmat.pt
+检查点已保存到 ./output/25-03-31-00-24-00/CLIP_promptLearner/model-best.pth.tar
+epoch [2/50] batch [5/180] time 0.237 (0.355) data 0.000 (0.118) loss 17.7194 (11.7812) acc 87.5000 (88.7500) lr 2.0000e-03 eta 0:52:11
+epoch [2/50] batch [10/180] time 0.240 (0.297) data 0.000 (0.059) loss 6.9975 (8.5942) acc 90.6250 (91.2500) lr 2.0000e-03 eta 0:43:34
+epoch [2/50] batch [15/180] time 0.237 (0.277) data 0.000 (0.039) loss 4.9559 (9.5432) acc 90.6250 (89.3750) lr 2.0000e-03 eta 0:40:37
+epoch [2/50] batch [20/180] time 0.237 (0.267) data 0.000 (0.030) loss 6.3968 (8.6266) acc 87.5000 (89.6875) lr 2.0000e-03 eta 0:39:08
+epoch [2/50] batch [25/180] time 0.237 (0.261) data 0.000 (0.024) loss 5.9460 (7.5386) acc 84.3750 (90.0000) lr 2.0000e-03 eta 0:38:14
+epoch [2/50] batch [30/180] time 0.237 (0.257) data 0.000 (0.020) loss 0.2974 (7.7482) acc 96.8750 (90.1042) lr 2.0000e-03 eta 0:37:37
+epoch [2/50] batch [35/180] time 0.237 (0.254) data 0.000 (0.017) loss 0.3959 (7.1053) acc 96.8750 (90.3571) lr 2.0000e-03 eta 0:37:11
+epoch [2/50] batch [40/180] time 0.237 (0.252) data 0.000 (0.015) loss 1.2257 (6.7930) acc 90.6250 (90.6250) lr 2.0000e-03 eta 0:36:51
+epoch [2/50] batch [45/180] time 0.237 (0.250) data 0.000 (0.013) loss 0.5406 (6.2469) acc 93.7500 (90.9028) lr 2.0000e-03 eta 0:36:36
+epoch [2/50] batch [50/180] time 0.237 (0.249) data 0.000 (0.012) loss 0.0000 (5.8934) acc 100.0000 (91.5000) lr 2.0000e-03 eta 0:36:23
+epoch [2/50] batch [55/180] time 0.237 (0.248) data 0.000 (0.011) loss 0.5287 (5.7346) acc 96.8750 (91.6477) lr 2.0000e-03 eta 0:36:12
+epoch [2/50] batch [60/180] time 0.238 (0.247) data 0.000 (0.010) loss 1.2504 (5.6336) acc 93.7500 (91.5625) lr 2.0000e-03 eta 0:36:04
+epoch [2/50] batch [65/180] time 0.237 (0.246) data 0.000 (0.009) loss 11.5843 (5.8388) acc 90.6250 (91.5385) lr 2.0000e-03 eta 0:35:56
+epoch [2/50] batch [70/180] time 0.237 (0.246) data 0.000 (0.009) loss 4.5834 (5.6571) acc 96.8750 (91.7857) lr 2.0000e-03 eta 0:35:49
+epoch [2/50] batch [75/180] time 0.237 (0.245) data 0.000 (0.008) loss 1.7916 (5.4610) acc 96.8750 (91.9583) lr 2.0000e-03 eta 0:35:42
+epoch [2/50] batch [80/180] time 0.237 (0.245) data 0.000 (0.007) loss 2.0220 (5.5148) acc 96.8750 (91.7969) lr 2.0000e-03 eta 0:35:37
+epoch [2/50] batch [85/180] time 0.237 (0.244) data 0.000 (0.007) loss 0.2882 (5.4477) acc 96.8750 (91.8015) lr 2.0000e-03 eta 0:35:32
+epoch [2/50] batch [90/180] time 0.237 (0.244) data 0.000 (0.007) loss 4.7826 (5.2907) acc 90.6250 (91.8056) lr 2.0000e-03 eta 0:35:27
+epoch [2/50] batch [95/180] time 0.237 (0.243) data 0.000 (0.006) loss 2.7503 (5.2288) acc 90.6250 (91.7763) lr 2.0000e-03 eta 0:35:23
+epoch [2/50] batch [100/180] time 0.237 (0.243) data 0.000 (0.006) loss 2.9335 (5.0918) acc 90.6250 (91.8125) lr 2.0000e-03 eta 0:35:19
+epoch [2/50] batch [105/180] time 0.237 (0.243) data 0.000 (0.006) loss 0.0015 (4.9745) acc 100.0000 (91.9345) lr 2.0000e-03 eta 0:35:15
+epoch [2/50] batch [110/180] time 0.237 (0.243) data 0.000 (0.005) loss 2.6235 (4.8446) acc 93.7500 (92.0739) lr 2.0000e-03 eta 0:35:12
+epoch [2/50] batch [115/180] time 0.238 (0.242) data 0.000 (0.005) loss 1.5064 (4.6779) acc 93.7500 (92.2011) lr 2.0000e-03 eta 0:35:08
+epoch [2/50] batch [120/180] time 0.237 (0.242) data 0.000 (0.005) loss 0.0006 (4.5691) acc 100.0000 (92.2396) lr 2.0000e-03 eta 0:35:05
+epoch [2/50] batch [125/180] time 0.237 (0.242) data 0.000 (0.005) loss 1.2539 (4.4700) acc 93.7500 (92.3250) lr 2.0000e-03 eta 0:35:03
+epoch [2/50] batch [130/180] time 0.238 (0.242) data 0.000 (0.005) loss 2.6265 (4.3560) acc 93.7500 (92.4760) lr 2.0000e-03 eta 0:35:00
+epoch [2/50] batch [135/180] time 0.238 (0.242) data 0.000 (0.004) loss 0.1128 (4.2322) acc 96.8750 (92.5926) lr 2.0000e-03 eta 0:34:57
+epoch [2/50] batch [140/180] time 0.237 (0.241) data 0.000 (0.004) loss 0.5325 (4.1697) acc 93.7500 (92.6339) lr 2.0000e-03 eta 0:34:55
+epoch [2/50] batch [145/180] time 0.237 (0.241) data 0.000 (0.004) loss 3.4915 (4.1173) acc 93.7500 (92.7371) lr 2.0000e-03 eta 0:34:52
+epoch [2/50] batch [150/180] time 0.237 (0.241) data 0.000 (0.004) loss 5.6567 (4.0813) acc 87.5000 (92.7500) lr 2.0000e-03 eta 0:34:50
+epoch [2/50] batch [155/180] time 0.237 (0.241) data 0.000 (0.004) loss 1.8952 (4.0526) acc 93.7500 (92.6815) lr 2.0000e-03 eta 0:34:47
+epoch [2/50] batch [160/180] time 0.237 (0.241) data 0.000 (0.004) loss 1.0227 (3.9803) acc 96.8750 (92.7539) lr 2.0000e-03 eta 0:34:45
+epoch [2/50] batch [165/180] time 0.237 (0.241) data 0.000 (0.004) loss 3.0709 (3.9535) acc 90.6250 (92.7273) lr 2.0000e-03 eta 0:34:43
+epoch [2/50] batch [170/180] time 0.237 (0.241) data 0.000 (0.004) loss 0.4722 (3.8789) acc 96.8750 (92.7574) lr 2.0000e-03 eta 0:34:41
+epoch [2/50] batch [175/180] time 0.236 (0.240) data 0.000 (0.003) loss 1.2012 (3.8197) acc 93.7500 (92.8214) lr 2.0000e-03 eta 0:34:38
+由于设置了 warmup_recount，且现在预热结束，因此重置 epoch 为 -1
+epoch [2/50] batch [180/180] time 0.237 (0.240) data 0.000 (0.003) loss 3.7745 (3.8466) acc 93.7500 (92.8125) lr 1.9980e-03 eta 0:34:36
+在 *val* 集上测试
+=> result
+* total: 824
+* correct: 761
+* accuracy: 92.4%
+* error: 7.6%
+* macro_f1: 88.4%
+=> per-class result
+* class: 0 (face)	total: 44	correct: 43	acc: 97.7%
+* class: 1 (leopard)	total: 20	correct: 20	acc: 100.0%
+* class: 2 (motorbike)	total: 80	correct: 80	acc: 100.0%
+* class: 3 (accordion)	total: 6	correct: 4	acc: 66.7%
+* class: 4 (airplane)	total: 80	correct: 80	acc: 100.0%
+* class: 5 (anchor)	total: 4	correct: 1	acc: 25.0%
+* class: 6 (ant)	total: 4	correct: 4	acc: 100.0%
+* class: 7 (barrel)	total: 5	correct: 5	acc: 100.0%
+* class: 8 (bass)	total: 5	correct: 5	acc: 100.0%
+* class: 9 (beaver)	total: 5	correct: 5	acc: 100.0%
+* class: 10 (binocular)	total: 3	correct: 1	acc: 33.3%
+* class: 11 (bonsai)	total: 13	correct: 13	acc: 100.0%
+* class: 12 (brain)	total: 10	correct: 10	acc: 100.0%
+* class: 13 (brontosaurus)	total: 4	correct: 4	acc: 100.0%
+* class: 14 (buddha)	total: 8	correct: 8	acc: 100.0%
+* class: 15 (butterfly)	total: 9	correct: 9	acc: 100.0%
+* class: 16 (camera)	total: 5	correct: 4	acc: 80.0%
+* class: 17 (cannon)	total: 4	correct: 4	acc: 100.0%
+* class: 18 (car_side)	total: 12	correct: 12	acc: 100.0%
+* class: 19 (ceiling_fan)	total: 5	correct: 5	acc: 100.0%
+* class: 20 (cellphone)	total: 6	correct: 6	acc: 100.0%
+* class: 21 (chair)	total: 6	correct: 2	acc: 33.3%
+* class: 22 (chandelier)	total: 11	correct: 9	acc: 81.8%
+* class: 23 (cougar_body)	total: 5	correct: 5	acc: 100.0%
+* class: 24 (cougar_face)	total: 7	correct: 6	acc: 85.7%
+* class: 25 (crab)	total: 7	correct: 7	acc: 100.0%
+* class: 26 (crayfish)	total: 7	correct: 7	acc: 100.0%
+* class: 27 (crocodile)	total: 5	correct: 5	acc: 100.0%
+* class: 28 (crocodile_head)	total: 5	correct: 4	acc: 80.0%
+* class: 29 (cup)	total: 6	correct: 5	acc: 83.3%
+* class: 30 (dalmatian)	total: 7	correct: 7	acc: 100.0%
+* class: 31 (dollar_bill)	total: 5	correct: 5	acc: 100.0%
+* class: 32 (dolphin)	total: 6	correct: 5	acc: 83.3%
+* class: 33 (dragonfly)	total: 7	correct: 3	acc: 42.9%
+* class: 34 (electric_guitar)	total: 8	correct: 7	acc: 87.5%
+* class: 35 (elephant)	total: 6	correct: 6	acc: 100.0%
+* class: 36 (emu)	total: 5	correct: 5	acc: 100.0%
+* class: 37 (euphonium)	total: 6	correct: 6	acc: 100.0%
+* class: 38 (ewer)	total: 8	correct: 8	acc: 100.0%
+* class: 39 (ferry)	total: 7	correct: 7	acc: 100.0%
+* class: 40 (flamingo)	total: 7	correct: 6	acc: 85.7%
+* class: 41 (flamingo_head)	total: 4	correct: 2	acc: 50.0%
+* class: 42 (garfield)	total: 3	correct: 2	acc: 66.7%
+* class: 43 (gerenuk)	total: 3	correct: 3	acc: 100.0%
+* class: 44 (gramophone)	total: 5	correct: 5	acc: 100.0%
+* class: 45 (grand_piano)	total: 10	correct: 10	acc: 100.0%
+* class: 46 (hawksbill)	total: 10	correct: 10	acc: 100.0%
+* class: 47 (headphone)	total: 4	correct: 4	acc: 100.0%
+* class: 48 (hedgehog)	total: 5	correct: 5	acc: 100.0%
+* class: 49 (helicopter)	total: 9	correct: 8	acc: 88.9%
+* class: 50 (ibis)	total: 8	correct: 8	acc: 100.0%
+* class: 51 (inline_skate)	total: 3	correct: 3	acc: 100.0%
+* class: 52 (joshua_tree)	total: 6	correct: 6	acc: 100.0%
+* class: 53 (kangaroo)	total: 9	correct: 9	acc: 100.0%
+* class: 54 (ketch)	total: 11	correct: 3	acc: 27.3%
+* class: 55 (lamp)	total: 6	correct: 6	acc: 100.0%
+* class: 56 (laptop)	total: 8	correct: 7	acc: 87.5%
+* class: 57 (llama)	total: 8	correct: 7	acc: 87.5%
+* class: 58 (lobster)	total: 4	correct: 1	acc: 25.0%
+* class: 59 (lotus)	total: 7	correct: 4	acc: 57.1%
+* class: 60 (mandolin)	total: 4	correct: 3	acc: 75.0%
+* class: 61 (mayfly)	total: 4	correct: 4	acc: 100.0%
+* class: 62 (menorah)	total: 9	correct: 9	acc: 100.0%
+* class: 63 (metronome)	total: 3	correct: 3	acc: 100.0%
+* class: 64 (minaret)	total: 8	correct: 6	acc: 75.0%
+* class: 65 (nautilus)	total: 6	correct: 6	acc: 100.0%
+* class: 66 (octopus)	total: 4	correct: 3	acc: 75.0%
+* class: 67 (okapi)	total: 4	correct: 4	acc: 100.0%
+* class: 68 (pagoda)	total: 5	correct: 5	acc: 100.0%
+* class: 69 (panda)	total: 4	correct: 4	acc: 100.0%
+* class: 70 (pigeon)	total: 4	correct: 4	acc: 100.0%
+* class: 71 (pizza)	total: 5	correct: 5	acc: 100.0%
+* class: 72 (platypus)	total: 3	correct: 2	acc: 66.7%
+* class: 73 (pyramid)	total: 6	correct: 6	acc: 100.0%
+* class: 74 (revolver)	total: 8	correct: 8	acc: 100.0%
+* class: 75 (rhino)	total: 6	correct: 6	acc: 100.0%
+* class: 76 (rooster)	total: 5	correct: 5	acc: 100.0%
+* class: 77 (saxophone)	total: 4	correct: 4	acc: 100.0%
+* class: 78 (schooner)	total: 6	correct: 3	acc: 50.0%
+* class: 79 (scissors)	total: 4	correct: 3	acc: 75.0%
+* class: 80 (scorpion)	total: 8	correct: 6	acc: 75.0%
+* class: 81 (sea_horse)	total: 6	correct: 5	acc: 83.3%
+* class: 82 (snoopy)	total: 4	correct: 4	acc: 100.0%
+* class: 83 (soccer_ball)	total: 6	correct: 6	acc: 100.0%
+* class: 84 (stapler)	total: 4	correct: 3	acc: 75.0%
+* class: 85 (starfish)	total: 9	correct: 9	acc: 100.0%
+* class: 86 (stegosaurus)	total: 6	correct: 6	acc: 100.0%
+* class: 87 (stop_sign)	total: 6	correct: 6	acc: 100.0%
+* class: 88 (strawberry)	total: 4	correct: 4	acc: 100.0%
+* class: 89 (sunflower)	total: 8	correct: 8	acc: 100.0%
+* class: 90 (tick)	total: 5	correct: 5	acc: 100.0%
+* class: 91 (trilobite)	total: 9	correct: 9	acc: 100.0%
+* class: 92 (umbrella)	total: 8	correct: 7	acc: 87.5%
+* class: 93 (watch)	total: 24	correct: 24	acc: 100.0%
+* class: 94 (water_lilly)	total: 4	correct: 2	acc: 50.0%
+* class: 95 (wheelchair)	total: 6	correct: 6	acc: 100.0%
+* class: 96 (wild_cat)	total: 3	correct: 3	acc: 100.0%
+* class: 97 (windsor_chair)	total: 6	correct: 5	acc: 83.3%
+* class: 98 (wrench)	total: 4	correct: 3	acc: 75.0%
+* class: 99 (yin_yang)	total: 6	correct: 6	acc: 100.0%
+* average: 89.0%
+Confusion matrix is saved to ./output/25-03-31-00-24-00/cmat.pt
+epoch [3/50] batch [5/180] time 0.237 (0.331) data 0.000 (0.091) loss 0.3100 (1.0301) acc 93.7500 (93.1250) lr 1.9980e-03 eta 0:47:35
+epoch [3/50] batch [10/180] time 0.237 (0.284) data 0.000 (0.045) loss 4.7734 (2.9654) acc 90.6250 (93.4375) lr 1.9980e-03 eta 0:40:49
+epoch [3/50] batch [15/180] time 0.237 (0.268) data 0.000 (0.030) loss 7.2618 (3.1243) acc 87.5000 (93.3333) lr 1.9980e-03 eta 0:38:33
+epoch [3/50] batch [20/180] time 0.237 (0.260) data 0.000 (0.023) loss 0.0002 (2.5971) acc 100.0000 (93.2812) lr 1.9980e-03 eta 0:37:25
+epoch [3/50] batch [25/180] time 0.237 (0.256) data 0.000 (0.018) loss 0.3517 (2.5517) acc 93.7500 (93.1250) lr 1.9980e-03 eta 0:36:43
+epoch [3/50] batch [30/180] time 0.237 (0.253) data 0.000 (0.015) loss 1.3710 (2.4101) acc 90.6250 (92.9167) lr 1.9980e-03 eta 0:36:15
+epoch [3/50] batch [35/180] time 0.237 (0.250) data 0.000 (0.013) loss 0.2112 (2.1585) acc 96.8750 (93.2143) lr 1.9980e-03 eta 0:35:54
+epoch [3/50] batch [40/180] time 0.237 (0.249) data 0.000 (0.011) loss 1.6703 (2.0818) acc 90.6250 (92.9688) lr 1.9980e-03 eta 0:35:41
+epoch [3/50] batch [45/180] time 0.237 (0.248) data 0.000 (0.010) loss 1.4497 (1.9865) acc 93.7500 (92.9861) lr 1.9980e-03 eta 0:35:28
+epoch [3/50] batch [50/180] time 0.237 (0.247) data 0.000 (0.009) loss 1.0209 (1.9520) acc 96.8750 (93.1875) lr 1.9980e-03 eta 0:35:18
+epoch [3/50] batch [55/180] time 0.237 (0.246) data 0.000 (0.008) loss 3.6367 (2.0713) acc 90.6250 (93.0114) lr 1.9980e-03 eta 0:35:09
+epoch [3/50] batch [60/180] time 0.237 (0.245) data 0.000 (0.008) loss 0.3465 (2.0141) acc 96.8750 (93.2292) lr 1.9980e-03 eta 0:35:02
+epoch [3/50] batch [65/180] time 0.237 (0.244) data 0.000 (0.007) loss 0.1167 (2.0055) acc 96.8750 (93.2212) lr 1.9980e-03 eta 0:34:55
+epoch [3/50] batch [70/180] time 0.237 (0.244) data 0.000 (0.007) loss 2.2802 (2.0024) acc 90.6250 (92.9911) lr 1.9980e-03 eta 0:34:49
+epoch [3/50] batch [75/180] time 0.237 (0.243) data 0.000 (0.006) loss 7.0960 (2.0184) acc 84.3750 (92.9583) lr 1.9980e-03 eta 0:34:44
+epoch [3/50] batch [80/180] time 0.237 (0.243) data 0.000 (0.006) loss 1.5775 (1.9428) acc 93.7500 (93.0859) lr 1.9980e-03 eta 0:34:40
+epoch [3/50] batch [85/180] time 0.237 (0.243) data 0.000 (0.005) loss 0.0006 (1.9241) acc 100.0000 (93.1250) lr 1.9980e-03 eta 0:34:35
+epoch [3/50] batch [90/180] time 0.237 (0.242) data 0.000 (0.005) loss 1.3838 (1.8999) acc 90.6250 (93.0556) lr 1.9980e-03 eta 0:34:31
+epoch [3/50] batch [95/180] time 0.237 (0.242) data 0.000 (0.005) loss 0.1633 (1.8501) acc 96.8750 (93.2237) lr 1.9980e-03 eta 0:34:28
+epoch [3/50] batch [100/180] time 0.237 (0.242) data 0.000 (0.005) loss 2.1741 (1.8300) acc 93.7500 (93.1875) lr 1.9980e-03 eta 0:34:25
+epoch [3/50] batch [105/180] time 0.238 (0.242) data 0.001 (0.004) loss 0.0000 (1.7959) acc 100.0000 (93.2738) lr 1.9980e-03 eta 0:34:21
+epoch [3/50] batch [110/180] time 0.238 (0.241) data 0.000 (0.004) loss 2.8691 (1.7668) acc 93.7500 (93.2955) lr 1.9980e-03 eta 0:34:19
+epoch [3/50] batch [115/180] time 0.237 (0.241) data 0.000 (0.004) loss 3.4700 (1.7763) acc 87.5000 (93.2880) lr 1.9980e-03 eta 0:34:16
+epoch [3/50] batch [120/180] time 0.237 (0.241) data 0.000 (0.004) loss 1.1942 (1.7609) acc 96.8750 (93.3594) lr 1.9980e-03 eta 0:34:13
+epoch [3/50] batch [125/180] time 0.237 (0.241) data 0.000 (0.004) loss 0.8814 (1.7387) acc 93.7500 (93.3500) lr 1.9980e-03 eta 0:34:11
+epoch [3/50] batch [130/180] time 0.237 (0.241) data 0.000 (0.004) loss 1.2714 (1.7355) acc 87.5000 (93.2933) lr 1.9980e-03 eta 0:34:08
+epoch [3/50] batch [135/180] time 0.237 (0.241) data 0.000 (0.003) loss 0.7941 (1.6936) acc 87.5000 (93.2407) lr 1.9980e-03 eta 0:34:06
+epoch [3/50] batch [140/180] time 0.237 (0.241) data 0.000 (0.003) loss 1.5372 (1.6608) acc 87.5000 (93.2143) lr 1.9980e-03 eta 0:34:04
+epoch [3/50] batch [145/180] time 0.237 (0.240) data 0.000 (0.003) loss 4.2795 (1.7019) acc 84.3750 (92.9741) lr 1.9980e-03 eta 0:34:02
+epoch [3/50] batch [150/180] time 0.237 (0.240) data 0.000 (0.003) loss 0.5944 (1.6681) acc 90.6250 (92.9583) lr 1.9980e-03 eta 0:33:59
+epoch [3/50] batch [155/180] time 0.237 (0.240) data 0.000 (0.003) loss 0.0209 (1.6347) acc 100.0000 (92.9435) lr 1.9980e-03 eta 0:33:57
+epoch [3/50] batch [160/180] time 0.237 (0.240) data 0.000 (0.003) loss 0.6554 (1.6298) acc 93.7500 (92.9492) lr 1.9980e-03 eta 0:33:55
+epoch [3/50] batch [165/180] time 0.237 (0.240) data 0.000 (0.003) loss 0.6169 (1.6178) acc 96.8750 (92.9924) lr 1.9980e-03 eta 0:33:53
+epoch [3/50] batch [170/180] time 0.237 (0.240) data 0.000 (0.003) loss 0.9756 (1.6016) acc 93.7500 (92.9963) lr 1.9980e-03 eta 0:33:51
+epoch [3/50] batch [175/180] time 0.237 (0.240) data 0.000 (0.003) loss 0.5112 (1.5749) acc 96.8750 (92.9643) lr 1.9980e-03 eta 0:33:49
+Adjusting learning rate of group 0 to 1.0000e-05.
+epoch [3/50] batch [180/180] time 0.236 (0.240) data 0.000 (0.003) loss 0.7631 (1.5641) acc 93.7500 (93.0035) lr 1.0000e-05 eta 0:33:47
+在 *val* 集上测试
+=> result
+* total: 824
+* correct: 768
+* accuracy: 93.2%
+* error: 6.8%
+* macro_f1: 89.7%
+=> per-class result
+* class: 0 (face)	total: 44	correct: 43	acc: 97.7%
+* class: 1 (leopard)	total: 20	correct: 19	acc: 95.0%
+* class: 2 (motorbike)	total: 80	correct: 80	acc: 100.0%
+* class: 3 (accordion)	total: 6	correct: 4	acc: 66.7%
+* class: 4 (airplane)	total: 80	correct: 80	acc: 100.0%
+* class: 5 (anchor)	total: 4	correct: 1	acc: 25.0%
+* class: 6 (ant)	total: 4	correct: 4	acc: 100.0%
+* class: 7 (barrel)	total: 5	correct: 5	acc: 100.0%
+* class: 8 (bass)	total: 5	correct: 5	acc: 100.0%
+* class: 9 (beaver)	total: 5	correct: 5	acc: 100.0%
+* class: 10 (binocular)	total: 3	correct: 2	acc: 66.7%
+* class: 11 (bonsai)	total: 13	correct: 13	acc: 100.0%
+* class: 12 (brain)	total: 10	correct: 10	acc: 100.0%
+* class: 13 (brontosaurus)	total: 4	correct: 4	acc: 100.0%
+* class: 14 (buddha)	total: 8	correct: 8	acc: 100.0%
+* class: 15 (butterfly)	total: 9	correct: 9	acc: 100.0%
+* class: 16 (camera)	total: 5	correct: 4	acc: 80.0%
+* class: 17 (cannon)	total: 4	correct: 4	acc: 100.0%
+* class: 18 (car_side)	total: 12	correct: 12	acc: 100.0%
+* class: 19 (ceiling_fan)	total: 5	correct: 5	acc: 100.0%
+* class: 20 (cellphone)	total: 6	correct: 6	acc: 100.0%
+* class: 21 (chair)	total: 6	correct: 5	acc: 83.3%
+* class: 22 (chandelier)	total: 11	correct: 9	acc: 81.8%
+* class: 23 (cougar_body)	total: 5	correct: 4	acc: 80.0%
+* class: 24 (cougar_face)	total: 7	correct: 6	acc: 85.7%
+* class: 25 (crab)	total: 7	correct: 6	acc: 85.7%
+* class: 26 (crayfish)	total: 7	correct: 7	acc: 100.0%
+* class: 27 (crocodile)	total: 5	correct: 5	acc: 100.0%
+* class: 28 (crocodile_head)	total: 5	correct: 4	acc: 80.0%
+* class: 29 (cup)	total: 6	correct: 5	acc: 83.3%
+* class: 30 (dalmatian)	total: 7	correct: 7	acc: 100.0%
+* class: 31 (dollar_bill)	total: 5	correct: 5	acc: 100.0%
+* class: 32 (dolphin)	total: 6	correct: 5	acc: 83.3%
+* class: 33 (dragonfly)	total: 7	correct: 3	acc: 42.9%
+* class: 34 (electric_guitar)	total: 8	correct: 6	acc: 75.0%
+* class: 35 (elephant)	total: 6	correct: 5	acc: 83.3%
+* class: 36 (emu)	total: 5	correct: 5	acc: 100.0%
+* class: 37 (euphonium)	total: 6	correct: 6	acc: 100.0%
+* class: 38 (ewer)	total: 8	correct: 8	acc: 100.0%
+* class: 39 (ferry)	total: 7	correct: 7	acc: 100.0%
+* class: 40 (flamingo)	total: 7	correct: 6	acc: 85.7%
+* class: 41 (flamingo_head)	total: 4	correct: 2	acc: 50.0%
+* class: 42 (garfield)	total: 3	correct: 2	acc: 66.7%
+* class: 43 (gerenuk)	total: 3	correct: 3	acc: 100.0%
+* class: 44 (gramophone)	total: 5	correct: 5	acc: 100.0%
+* class: 45 (grand_piano)	total: 10	correct: 10	acc: 100.0%
+* class: 46 (hawksbill)	total: 10	correct: 10	acc: 100.0%
+* class: 47 (headphone)	total: 4	correct: 4	acc: 100.0%
+* class: 48 (hedgehog)	total: 5	correct: 5	acc: 100.0%
+* class: 49 (helicopter)	total: 9	correct: 8	acc: 88.9%
+* class: 50 (ibis)	total: 8	correct: 8	acc: 100.0%
+* class: 51 (inline_skate)	total: 3	correct: 3	acc: 100.0%
+* class: 52 (joshua_tree)	total: 6	correct: 6	acc: 100.0%
+* class: 53 (kangaroo)	total: 9	correct: 9	acc: 100.0%
+* class: 54 (ketch)	total: 11	correct: 9	acc: 81.8%
+* class: 55 (lamp)	total: 6	correct: 6	acc: 100.0%
+* class: 56 (laptop)	total: 8	correct: 7	acc: 87.5%
+* class: 57 (llama)	total: 8	correct: 7	acc: 87.5%
+* class: 58 (lobster)	total: 4	correct: 2	acc: 50.0%
+* class: 59 (lotus)	total: 7	correct: 5	acc: 71.4%
+* class: 60 (mandolin)	total: 4	correct: 4	acc: 100.0%
+* class: 61 (mayfly)	total: 4	correct: 4	acc: 100.0%
+* class: 62 (menorah)	total: 9	correct: 9	acc: 100.0%
+* class: 63 (metronome)	total: 3	correct: 3	acc: 100.0%
+* class: 64 (minaret)	total: 8	correct: 6	acc: 75.0%
+* class: 65 (nautilus)	total: 6	correct: 6	acc: 100.0%
+* class: 66 (octopus)	total: 4	correct: 3	acc: 75.0%
+* class: 67 (okapi)	total: 4	correct: 4	acc: 100.0%
+* class: 68 (pagoda)	total: 5	correct: 5	acc: 100.0%
+* class: 69 (panda)	total: 4	correct: 4	acc: 100.0%
+* class: 70 (pigeon)	total: 4	correct: 4	acc: 100.0%
+* class: 71 (pizza)	total: 5	correct: 5	acc: 100.0%
+* class: 72 (platypus)	total: 3	correct: 2	acc: 66.7%
+* class: 73 (pyramid)	total: 6	correct: 6	acc: 100.0%
+* class: 74 (revolver)	total: 8	correct: 8	acc: 100.0%
+* class: 75 (rhino)	total: 6	correct: 6	acc: 100.0%
+* class: 76 (rooster)	total: 5	correct: 5	acc: 100.0%
+* class: 77 (saxophone)	total: 4	correct: 4	acc: 100.0%
+* class: 78 (schooner)	total: 6	correct: 2	acc: 33.3%
+* class: 79 (scissors)	total: 4	correct: 3	acc: 75.0%
+* class: 80 (scorpion)	total: 8	correct: 6	acc: 75.0%
+* class: 81 (sea_horse)	total: 6	correct: 5	acc: 83.3%
+* class: 82 (snoopy)	total: 4	correct: 4	acc: 100.0%
+* class: 83 (soccer_ball)	total: 6	correct: 6	acc: 100.0%
+* class: 84 (stapler)	total: 4	correct: 3	acc: 75.0%
+* class: 85 (starfish)	total: 9	correct: 9	acc: 100.0%
+* class: 86 (stegosaurus)	total: 6	correct: 6	acc: 100.0%
+* class: 87 (stop_sign)	total: 6	correct: 6	acc: 100.0%
+* class: 88 (strawberry)	total: 4	correct: 4	acc: 100.0%
+* class: 89 (sunflower)	total: 8	correct: 8	acc: 100.0%
+* class: 90 (tick)	total: 5	correct: 5	acc: 100.0%
+* class: 91 (trilobite)	total: 9	correct: 9	acc: 100.0%
+* class: 92 (umbrella)	total: 8	correct: 7	acc: 87.5%
+* class: 93 (watch)	total: 24	correct: 24	acc: 100.0%
+* class: 94 (water_lilly)	total: 4	correct: 2	acc: 50.0%
+* class: 95 (wheelchair)	total: 6	correct: 6	acc: 100.0%
+* class: 96 (wild_cat)	total: 3	correct: 3	acc: 100.0%
+* class: 97 (windsor_chair)	total: 6	correct: 5	acc: 83.3%
+* class: 98 (wrench)	total: 4	correct: 3	acc: 75.0%
+* class: 99 (yin_yang)	total: 6	correct: 6	acc: 100.0%
+* average: 90.2%
+Confusion matrix is saved to ./output/25-03-31-00-24-00/cmat.pt
+epoch [4/50] batch [5/180] time 0.237 (0.348) data 0.000 (0.111) loss 0.0000 (0.6089) acc 100.0000 (96.2500) lr 1.0000e-05 eta 0:49:02
+epoch [4/50] batch [10/180] time 0.237 (0.293) data 0.000 (0.056) loss 0.6432 (0.9261) acc 93.7500 (95.3125) lr 1.0000e-05 eta 0:41:11
+epoch [4/50] batch [15/180] time 0.238 (0.274) data 0.000 (0.037) loss 0.5447 (0.8382) acc 93.7500 (95.4167) lr 1.0000e-05 eta 0:38:34
+epoch [4/50] batch [20/180] time 0.238 (0.265) data 0.000 (0.028) loss 0.9300 (0.7285) acc 90.6250 (95.6250) lr 1.0000e-05 eta 0:37:20
+epoch [4/50] batch [25/180] time 0.237 (0.260) data 0.000 (0.022) loss 0.7552 (0.7450) acc 93.7500 (95.1250) lr 1.0000e-05 eta 0:36:31
+epoch [4/50] batch [30/180] time 0.237 (0.256) data 0.000 (0.019) loss 0.6194 (0.7784) acc 93.7500 (94.8958) lr 1.0000e-05 eta 0:35:59
+epoch [4/50] batch [35/180] time 0.237 (0.253) data 0.000 (0.016) loss 0.4405 (0.7767) acc 93.7500 (94.7321) lr 1.0000e-05 eta 0:35:35
+epoch [4/50] batch [40/180] time 0.238 (0.251) data 0.000 (0.014) loss 3.7353 (0.8541) acc 78.1250 (94.4531) lr 1.0000e-05 eta 0:35:17
+epoch [4/50] batch [45/180] time 0.238 (0.250) data 0.000 (0.013) loss 1.5339 (0.8367) acc 87.5000 (94.5139) lr 1.0000e-05 eta 0:35:03
+epoch [4/50] batch [50/180] time 0.238 (0.249) data 0.000 (0.011) loss 1.3833 (0.8238) acc 90.6250 (94.5625) lr 1.0000e-05 eta 0:34:51
+epoch [4/50] batch [55/180] time 0.237 (0.248) data 0.000 (0.010) loss 0.4059 (0.8032) acc 93.7500 (94.4318) lr 1.0000e-05 eta 0:34:41
+epoch [4/50] batch [60/180] time 0.237 (0.247) data 0.000 (0.009) loss 2.6092 (0.8709) acc 90.6250 (94.2188) lr 1.0000e-05 eta 0:34:32
+epoch [4/50] batch [65/180] time 0.237 (0.246) data 0.000 (0.009) loss 0.0316 (0.9039) acc 96.8750 (94.2308) lr 1.0000e-05 eta 0:34:25
+epoch [4/50] batch [70/180] time 0.237 (0.245) data 0.000 (0.008) loss 0.6052 (0.9048) acc 90.6250 (94.0625) lr 1.0000e-05 eta 0:34:18
+epoch [4/50] batch [75/180] time 0.237 (0.245) data 0.000 (0.008) loss 2.3584 (0.9239) acc 93.7500 (94.0000) lr 1.0000e-05 eta 0:34:12
+epoch [4/50] batch [80/180] time 0.237 (0.244) data 0.000 (0.007) loss 0.7001 (0.8991) acc 96.8750 (94.1016) lr 1.0000e-05 eta 0:34:07
+epoch [4/50] batch [85/180] time 0.237 (0.244) data 0.000 (0.007) loss 3.7903 (0.9414) acc 87.5000 (94.0074) lr 1.0000e-05 eta 0:34:02
+epoch [4/50] batch [90/180] time 0.237 (0.243) data 0.000 (0.006) loss 0.1773 (0.9247) acc 96.8750 (94.1667) lr 1.0000e-05 eta 0:33:58
+epoch [4/50] batch [95/180] time 0.237 (0.243) data 0.000 (0.006) loss 2.8062 (0.9369) acc 90.6250 (94.1776) lr 1.0000e-05 eta 0:33:54
+epoch [4/50] batch [100/180] time 0.238 (0.243) data 0.000 (0.006) loss 0.0000 (0.9013) acc 100.0000 (94.3750) lr 1.0000e-05 eta 0:33:50
+epoch [4/50] batch [105/180] time 0.237 (0.243) data 0.000 (0.005) loss 0.2403 (0.9014) acc 96.8750 (94.3750) lr 1.0000e-05 eta 0:33:46
+epoch [4/50] batch [110/180] time 0.237 (0.242) data 0.000 (0.005) loss 3.2400 (0.9445) acc 90.6250 (94.2614) lr 1.0000e-05 eta 0:33:43
+epoch [4/50] batch [115/180] time 0.237 (0.242) data 0.000 (0.005) loss 3.0650 (0.9468) acc 90.6250 (94.2663) lr 1.0000e-05 eta 0:33:40
+epoch [4/50] batch [120/180] time 0.237 (0.242) data 0.000 (0.005) loss 0.7412 (0.9226) acc 90.6250 (94.2708) lr 1.0000e-05 eta 0:33:37
+epoch [4/50] batch [125/180] time 0.237 (0.242) data 0.000 (0.005) loss 2.4800 (0.9313) acc 90.6250 (94.1500) lr 1.0000e-05 eta 0:33:34
+epoch [4/50] batch [130/180] time 0.237 (0.242) data 0.000 (0.004) loss 0.3726 (0.9956) acc 90.6250 (94.1106) lr 1.0000e-05 eta 0:33:31
+epoch [4/50] batch [135/180] time 0.237 (0.241) data 0.000 (0.004) loss 0.4427 (0.9721) acc 90.6250 (94.2130) lr 1.0000e-05 eta 0:33:29
+epoch [4/50] batch [140/180] time 0.237 (0.241) data 0.000 (0.004) loss 2.0112 (0.9839) acc 87.5000 (94.0848) lr 1.0000e-05 eta 0:33:26
+epoch [4/50] batch [145/180] time 0.237 (0.241) data 0.000 (0.004) loss 0.5243 (0.9685) acc 93.7500 (94.1379) lr 1.0000e-05 eta 0:33:24
+epoch [4/50] batch [150/180] time 0.237 (0.241) data 0.000 (0.004) loss 0.2066 (0.9768) acc 93.7500 (94.0625) lr 1.0000e-05 eta 0:33:21
+epoch [4/50] batch [155/180] time 0.238 (0.241) data 0.001 (0.004) loss 0.1189 (0.9590) acc 93.7500 (94.0524) lr 1.0000e-05 eta 0:33:19
+epoch [4/50] batch [160/180] time 0.238 (0.241) data 0.000 (0.004) loss 0.0028 (0.9448) acc 100.0000 (94.1211) lr 1.0000e-05 eta 0:33:17
+epoch [4/50] batch [165/180] time 0.237 (0.241) data 0.000 (0.004) loss 0.6313 (0.9346) acc 93.7500 (94.1288) lr 1.0000e-05 eta 0:33:15
+epoch [4/50] batch [170/180] time 0.237 (0.240) data 0.000 (0.003) loss 0.1513 (0.9634) acc 96.8750 (94.0809) lr 1.0000e-05 eta 0:33:13
+epoch [4/50] batch [175/180] time 0.237 (0.240) data 0.000 (0.003) loss 3.3249 (0.9786) acc 90.6250 (94.0536) lr 1.0000e-05 eta 0:33:11
+Adjusting learning rate of group 0 to 1.9980e-03.
+epoch [4/50] batch [180/180] time 0.237 (0.240) data 0.000 (0.003) loss 0.3866 (0.9749) acc 90.6250 (94.0278) lr 1.9980e-03 eta 0:33:09
+在 *val* 集上测试
+=> result
+* total: 824
+* correct: 767
+* accuracy: 93.1%
+* error: 6.9%
+* macro_f1: 89.6%
+=> per-class result
+* class: 0 (face)	total: 44	correct: 43	acc: 97.7%
+* class: 1 (leopard)	total: 20	correct: 19	acc: 95.0%
+* class: 2 (motorbike)	total: 80	correct: 80	acc: 100.0%
+* class: 3 (accordion)	total: 6	correct: 4	acc: 66.7%
+* class: 4 (airplane)	total: 80	correct: 80	acc: 100.0%
+* class: 5 (anchor)	total: 4	correct: 1	acc: 25.0%
+* class: 6 (ant)	total: 4	correct: 4	acc: 100.0%
+* class: 7 (barrel)	total: 5	correct: 5	acc: 100.0%
+* class: 8 (bass)	total: 5	correct: 5	acc: 100.0%
+* class: 9 (beaver)	total: 5	correct: 5	acc: 100.0%
+* class: 10 (binocular)	total: 3	correct: 2	acc: 66.7%
+* class: 11 (bonsai)	total: 13	correct: 13	acc: 100.0%
+* class: 12 (brain)	total: 10	correct: 10	acc: 100.0%
+* class: 13 (brontosaurus)	total: 4	correct: 4	acc: 100.0%
+* class: 14 (buddha)	total: 8	correct: 8	acc: 100.0%
+* class: 15 (butterfly)	total: 9	correct: 9	acc: 100.0%
+* class: 16 (camera)	total: 5	correct: 4	acc: 80.0%
+* class: 17 (cannon)	total: 4	correct: 4	acc: 100.0%
+* class: 18 (car_side)	total: 12	correct: 12	acc: 100.0%
+* class: 19 (ceiling_fan)	total: 5	correct: 5	acc: 100.0%
+* class: 20 (cellphone)	total: 6	correct: 6	acc: 100.0%
+* class: 21 (chair)	total: 6	correct: 5	acc: 83.3%
+* class: 22 (chandelier)	total: 11	correct: 9	acc: 81.8%
+* class: 23 (cougar_body)	total: 5	correct: 4	acc: 80.0%
+* class: 24 (cougar_face)	total: 7	correct: 6	acc: 85.7%
+* class: 25 (crab)	total: 7	correct: 6	acc: 85.7%
+* class: 26 (crayfish)	total: 7	correct: 7	acc: 100.0%
+* class: 27 (crocodile)	total: 5	correct: 5	acc: 100.0%
+* class: 28 (crocodile_head)	total: 5	correct: 4	acc: 80.0%
+* class: 29 (cup)	total: 6	correct: 5	acc: 83.3%
+* class: 30 (dalmatian)	total: 7	correct: 7	acc: 100.0%
+* class: 31 (dollar_bill)	total: 5	correct: 5	acc: 100.0%
+* class: 32 (dolphin)	total: 6	correct: 5	acc: 83.3%
+* class: 33 (dragonfly)	total: 7	correct: 3	acc: 42.9%
+* class: 34 (electric_guitar)	total: 8	correct: 6	acc: 75.0%
+* class: 35 (elephant)	total: 6	correct: 5	acc: 83.3%
+* class: 36 (emu)	total: 5	correct: 5	acc: 100.0%
+* class: 37 (euphonium)	total: 6	correct: 6	acc: 100.0%
+* class: 38 (ewer)	total: 8	correct: 8	acc: 100.0%
+* class: 39 (ferry)	total: 7	correct: 7	acc: 100.0%
+* class: 40 (flamingo)	total: 7	correct: 5	acc: 71.4%
+* class: 41 (flamingo_head)	total: 4	correct: 2	acc: 50.0%
+* class: 42 (garfield)	total: 3	correct: 2	acc: 66.7%
+* class: 43 (gerenuk)	total: 3	correct: 3	acc: 100.0%
+* class: 44 (gramophone)	total: 5	correct: 5	acc: 100.0%
+* class: 45 (grand_piano)	total: 10	correct: 10	acc: 100.0%
+* class: 46 (hawksbill)	total: 10	correct: 10	acc: 100.0%
+* class: 47 (headphone)	total: 4	correct: 4	acc: 100.0%
+* class: 48 (hedgehog)	total: 5	correct: 5	acc: 100.0%
+* class: 49 (helicopter)	total: 9	correct: 8	acc: 88.9%
+* class: 50 (ibis)	total: 8	correct: 8	acc: 100.0%
+* class: 51 (inline_skate)	total: 3	correct: 3	acc: 100.0%
+* class: 52 (joshua_tree)	total: 6	correct: 6	acc: 100.0%
+* class: 53 (kangaroo)	total: 9	correct: 9	acc: 100.0%
+* class: 54 (ketch)	total: 11	correct: 9	acc: 81.8%
+* class: 55 (lamp)	total: 6	correct: 6	acc: 100.0%
+* class: 56 (laptop)	total: 8	correct: 7	acc: 87.5%
+* class: 57 (llama)	total: 8	correct: 7	acc: 87.5%
+* class: 58 (lobster)	total: 4	correct: 2	acc: 50.0%
+* class: 59 (lotus)	total: 7	correct: 5	acc: 71.4%
+* class: 60 (mandolin)	total: 4	correct: 4	acc: 100.0%
+* class: 61 (mayfly)	total: 4	correct: 4	acc: 100.0%
+* class: 62 (menorah)	total: 9	correct: 9	acc: 100.0%
+* class: 63 (metronome)	total: 3	correct: 3	acc: 100.0%
+* class: 64 (minaret)	total: 8	correct: 6	acc: 75.0%
+* class: 65 (nautilus)	total: 6	correct: 6	acc: 100.0%
+* class: 66 (octopus)	total: 4	correct: 3	acc: 75.0%
+* class: 67 (okapi)	total: 4	correct: 4	acc: 100.0%
+* class: 68 (pagoda)	total: 5	correct: 5	acc: 100.0%
+* class: 69 (panda)	total: 4	correct: 4	acc: 100.0%
+* class: 70 (pigeon)	total: 4	correct: 4	acc: 100.0%
+* class: 71 (pizza)	total: 5	correct: 5	acc: 100.0%
+* class: 72 (platypus)	total: 3	correct: 2	acc: 66.7%
+* class: 73 (pyramid)	total: 6	correct: 6	acc: 100.0%
+* class: 74 (revolver)	total: 8	correct: 8	acc: 100.0%
+* class: 75 (rhino)	total: 6	correct: 6	acc: 100.0%
+* class: 76 (rooster)	total: 5	correct: 5	acc: 100.0%
+* class: 77 (saxophone)	total: 4	correct: 4	acc: 100.0%
+* class: 78 (schooner)	total: 6	correct: 2	acc: 33.3%
+* class: 79 (scissors)	total: 4	correct: 3	acc: 75.0%
+* class: 80 (scorpion)	total: 8	correct: 6	acc: 75.0%
+* class: 81 (sea_horse)	total: 6	correct: 5	acc: 83.3%
+* class: 82 (snoopy)	total: 4	correct: 4	acc: 100.0%
+* class: 83 (soccer_ball)	total: 6	correct: 6	acc: 100.0%
+* class: 84 (stapler)	total: 4	correct: 3	acc: 75.0%
+* class: 85 (starfish)	total: 9	correct: 9	acc: 100.0%
+* class: 86 (stegosaurus)	total: 6	correct: 6	acc: 100.0%
+* class: 87 (stop_sign)	total: 6	correct: 6	acc: 100.0%
+* class: 88 (strawberry)	total: 4	correct: 4	acc: 100.0%
+* class: 89 (sunflower)	total: 8	correct: 8	acc: 100.0%
+* class: 90 (tick)	total: 5	correct: 5	acc: 100.0%
+* class: 91 (trilobite)	total: 9	correct: 9	acc: 100.0%
+* class: 92 (umbrella)	total: 8	correct: 7	acc: 87.5%
+* class: 93 (watch)	total: 24	correct: 24	acc: 100.0%
+* class: 94 (water_lilly)	total: 4	correct: 2	acc: 50.0%
+* class: 95 (wheelchair)	total: 6	correct: 6	acc: 100.0%
+* class: 96 (wild_cat)	total: 3	correct: 3	acc: 100.0%
+* class: 97 (windsor_chair)	total: 6	correct: 5	acc: 83.3%
+* class: 98 (wrench)	total: 4	correct: 3	acc: 75.0%
+* class: 99 (yin_yang)	total: 6	correct: 6	acc: 100.0%
+* average: 90.0%
+Confusion matrix is saved to ./output/25-03-31-00-24-00/cmat.pt
+epoch [5/50] batch [5/180] time 0.237 (0.339) data 0.000 (0.101) loss 0.2904 (0.5799) acc 96.8750 (93.7500) lr 1.9980e-03 eta 0:46:47
+epoch [5/50] batch [10/180] time 0.237 (0.288) data 0.000 (0.051) loss 0.2290 (0.6331) acc 96.8750 (93.4375) lr 1.9980e-03 eta 0:39:41
+epoch [5/50] batch [15/180] time 0.237 (0.271) data 0.000 (0.034) loss 1.1858 (0.7022) acc 87.5000 (93.3333) lr 1.9980e-03 eta 0:37:22
+epoch [5/50] batch [20/180] time 0.236 (0.263) data 0.000 (0.025) loss 0.6449 (0.6031) acc 93.7500 (93.7500) lr 1.9980e-03 eta 0:36:09
+epoch [5/50] batch [25/180] time 0.237 (0.258) data 0.000 (0.020) loss 0.6314 (0.7561) acc 96.8750 (93.3750) lr 1.9980e-03 eta 0:35:26
+epoch [5/50] batch [30/180] time 0.237 (0.254) data 0.000 (0.017) loss 1.4535 (0.7783) acc 87.5000 (92.9167) lr 1.9980e-03 eta 0:34:56
+epoch [5/50] batch [35/180] time 0.237 (0.252) data 0.000 (0.015) loss 0.2847 (0.8152) acc 96.8750 (92.8571) lr 1.9980e-03 eta 0:34:35
+epoch [5/50] batch [40/180] time 0.237 (0.250) data 0.000 (0.013) loss 2.2228 (0.8139) acc 84.3750 (93.0469) lr 1.9980e-03 eta 0:34:18
+epoch [5/50] batch [45/180] time 0.237 (0.248) data 0.000 (0.011) loss 1.1874 (0.8063) acc 90.6250 (92.9861) lr 1.9980e-03 eta 0:34:05
+epoch [5/50] batch [50/180] time 0.237 (0.247) data 0.000 (0.010) loss 0.0000 (0.7772) acc 100.0000 (93.1250) lr 1.9980e-03 eta 0:33:55
+epoch [5/50] batch [55/180] time 0.237 (0.246) data 0.000 (0.009) loss 0.5850 (0.7865) acc 96.8750 (93.4091) lr 1.9980e-03 eta 0:33:46
+epoch [5/50] batch [60/180] time 0.237 (0.246) data 0.000 (0.009) loss 0.0740 (0.7769) acc 96.8750 (93.4896) lr 1.9980e-03 eta 0:33:39
+epoch [5/50] batch [65/180] time 0.237 (0.245) data 0.000 (0.008) loss 0.4397 (0.7324) acc 93.7500 (93.7019) lr 1.9980e-03 eta 0:33:32
+epoch [5/50] batch [70/180] time 0.237 (0.244) data 0.000 (0.007) loss 0.3187 (0.8215) acc 93.7500 (93.5268) lr 1.9980e-03 eta 0:33:26
+epoch [5/50] batch [75/180] time 0.237 (0.244) data 0.000 (0.007) loss 0.0567 (0.8116) acc 96.8750 (93.4167) lr 1.9980e-03 eta 0:33:21
+epoch [5/50] batch [80/180] time 0.238 (0.244) data 0.000 (0.006) loss 0.0018 (0.7817) acc 100.0000 (93.4766) lr 1.9980e-03 eta 0:33:16
+epoch [5/50] batch [85/180] time 0.237 (0.243) data 0.000 (0.006) loss 0.0127 (0.8357) acc 100.0000 (93.4926) lr 1.9980e-03 eta 0:33:12
+epoch [5/50] batch [90/180] time 0.237 (0.243) data 0.000 (0.006) loss 0.2773 (0.8304) acc 93.7500 (93.4375) lr 1.9980e-03 eta 0:33:08
+epoch [5/50] batch [95/180] time 0.237 (0.243) data 0.000 (0.005) loss 0.0775 (0.8272) acc 96.8750 (93.3882) lr 1.9980e-03 eta 0:33:04
+epoch [5/50] batch [100/180] time 0.237 (0.242) data 0.000 (0.005) loss 0.4478 (0.8791) acc 96.8750 (93.3438) lr 1.9980e-03 eta 0:33:01
+epoch [5/50] batch [105/180] time 0.237 (0.242) data 0.000 (0.005) loss 0.5889 (0.8720) acc 90.6250 (93.3036) lr 1.9980e-03 eta 0:32:58
+epoch [5/50] batch [110/180] time 0.237 (0.242) data 0.000 (0.005) loss 0.5395 (0.8706) acc 93.7500 (93.2102) lr 1.9980e-03 eta 0:32:55
+epoch [5/50] batch [115/180] time 0.237 (0.242) data 0.000 (0.005) loss 0.3282 (0.8707) acc 93.7500 (93.1250) lr 1.9980e-03 eta 0:32:52
+epoch [5/50] batch [120/180] time 0.237 (0.241) data 0.000 (0.004) loss 0.5030 (0.8678) acc 96.8750 (93.1510) lr 1.9980e-03 eta 0:32:49
+epoch [5/50] batch [125/180] time 0.237 (0.241) data 0.000 (0.004) loss 0.0226 (0.8461) acc 100.0000 (93.2500) lr 1.9980e-03 eta 0:32:46
+epoch [5/50] batch [130/180] time 0.237 (0.241) data 0.000 (0.004) loss 1.7830 (0.8604) acc 93.7500 (93.2212) lr 1.9980e-03 eta 0:32:44
+epoch [5/50] batch [135/180] time 0.237 (0.241) data 0.000 (0.004) loss 0.2315 (0.8552) acc 96.8750 (93.3102) lr 1.9980e-03 eta 0:32:41
+epoch [5/50] batch [140/180] time 0.237 (0.241) data 0.000 (0.004) loss 1.2063 (0.8399) acc 93.7500 (93.3482) lr 1.9980e-03 eta 0:32:39
+epoch [5/50] batch [145/180] time 0.237 (0.241) data 0.000 (0.004) loss 0.6687 (0.8311) acc 96.8750 (93.4052) lr 1.9980e-03 eta 0:32:37
+epoch [5/50] batch [150/180] time 0.237 (0.240) data 0.000 (0.003) loss 0.2702 (0.8205) acc 93.7500 (93.3958) lr 1.9980e-03 eta 0:32:35
+epoch [5/50] batch [155/180] time 0.237 (0.240) data 0.000 (0.003) loss 0.0009 (0.8161) acc 100.0000 (93.3065) lr 1.9980e-03 eta 0:32:33
+epoch [5/50] batch [160/180] time 0.238 (0.240) data 0.000 (0.003) loss 0.7031 (0.8360) acc 90.6250 (93.1836) lr 1.9980e-03 eta 0:32:31
+epoch [5/50] batch [165/180] time 0.238 (0.240) data 0.000 (0.003) loss 0.4239 (0.8226) acc 93.7500 (93.2386) lr 1.9980e-03 eta 0:32:29
+epoch [5/50] batch [170/180] time 0.238 (0.240) data 0.000 (0.003) loss 0.4758 (0.8222) acc 90.6250 (93.2721) lr 1.9980e-03 eta 0:32:27
+epoch [5/50] batch [175/180] time 0.237 (0.240) data 0.000 (0.003) loss 0.3794 (0.8144) acc 93.7500 (93.2500) lr 1.9980e-03 eta 0:32:26
+由于设置了 warmup_recount，且现在预热结束，因此重置 epoch 为 -1
+epoch [5/50] batch [180/180] time 0.237 (0.240) data 0.000 (0.003) loss 1.0197 (0.8060) acc 90.6250 (93.3160) lr 1.9921e-03 eta 0:32:24
+在 *val* 集上测试
+=> result
+* total: 824
+* correct: 765
+* accuracy: 92.8%
+* error: 7.2%
+* macro_f1: 89.5%
+=> per-class result
+* class: 0 (face)	total: 44	correct: 42	acc: 95.5%
+* class: 1 (leopard)	total: 20	correct: 19	acc: 95.0%
+* class: 2 (motorbike)	total: 80	correct: 80	acc: 100.0%
+* class: 3 (accordion)	total: 6	correct: 4	acc: 66.7%
+* class: 4 (airplane)	total: 80	correct: 80	acc: 100.0%
+* class: 5 (anchor)	total: 4	correct: 2	acc: 50.0%
+* class: 6 (ant)	total: 4	correct: 4	acc: 100.0%
+* class: 7 (barrel)	total: 5	correct: 5	acc: 100.0%
+* class: 8 (bass)	total: 5	correct: 5	acc: 100.0%
+* class: 9 (beaver)	total: 5	correct: 5	acc: 100.0%
+* class: 10 (binocular)	total: 3	correct: 2	acc: 66.7%
+* class: 11 (bonsai)	total: 13	correct: 13	acc: 100.0%
+* class: 12 (brain)	total: 10	correct: 10	acc: 100.0%
+* class: 13 (brontosaurus)	total: 4	correct: 4	acc: 100.0%
+* class: 14 (buddha)	total: 8	correct: 8	acc: 100.0%
+* class: 15 (butterfly)	total: 9	correct: 8	acc: 88.9%
+* class: 16 (camera)	total: 5	correct: 4	acc: 80.0%
+* class: 17 (cannon)	total: 4	correct: 4	acc: 100.0%
+* class: 18 (car_side)	total: 12	correct: 12	acc: 100.0%
+* class: 19 (ceiling_fan)	total: 5	correct: 5	acc: 100.0%
+* class: 20 (cellphone)	total: 6	correct: 6	acc: 100.0%
+* class: 21 (chair)	total: 6	correct: 4	acc: 66.7%
+* class: 22 (chandelier)	total: 11	correct: 9	acc: 81.8%
+* class: 23 (cougar_body)	total: 5	correct: 5	acc: 100.0%
+* class: 24 (cougar_face)	total: 7	correct: 6	acc: 85.7%
+* class: 25 (crab)	total: 7	correct: 6	acc: 85.7%
+* class: 26 (crayfish)	total: 7	correct: 7	acc: 100.0%
+* class: 27 (crocodile)	total: 5	correct: 5	acc: 100.0%
+* class: 28 (crocodile_head)	total: 5	correct: 4	acc: 80.0%
+* class: 29 (cup)	total: 6	correct: 5	acc: 83.3%
+* class: 30 (dalmatian)	total: 7	correct: 7	acc: 100.0%
+* class: 31 (dollar_bill)	total: 5	correct: 5	acc: 100.0%
+* class: 32 (dolphin)	total: 6	correct: 5	acc: 83.3%
+* class: 33 (dragonfly)	total: 7	correct: 2	acc: 28.6%
+* class: 34 (electric_guitar)	total: 8	correct: 6	acc: 75.0%
+* class: 35 (elephant)	total: 6	correct: 5	acc: 83.3%
+* class: 36 (emu)	total: 5	correct: 5	acc: 100.0%
+* class: 37 (euphonium)	total: 6	correct: 6	acc: 100.0%
+* class: 38 (ewer)	total: 8	correct: 8	acc: 100.0%
+* class: 39 (ferry)	total: 7	correct: 7	acc: 100.0%
+* class: 40 (flamingo)	total: 7	correct: 5	acc: 71.4%
+* class: 41 (flamingo_head)	total: 4	correct: 2	acc: 50.0%
+* class: 42 (garfield)	total: 3	correct: 2	acc: 66.7%
+* class: 43 (gerenuk)	total: 3	correct: 3	acc: 100.0%
+* class: 44 (gramophone)	total: 5	correct: 5	acc: 100.0%
+* class: 45 (grand_piano)	total: 10	correct: 10	acc: 100.0%
+* class: 46 (hawksbill)	total: 10	correct: 10	acc: 100.0%
+* class: 47 (headphone)	total: 4	correct: 4	acc: 100.0%
+* class: 48 (hedgehog)	total: 5	correct: 5	acc: 100.0%
+* class: 49 (helicopter)	total: 9	correct: 8	acc: 88.9%
+* class: 50 (ibis)	total: 8	correct: 8	acc: 100.0%
+* class: 51 (inline_skate)	total: 3	correct: 3	acc: 100.0%
+* class: 52 (joshua_tree)	total: 6	correct: 6	acc: 100.0%
+* class: 53 (kangaroo)	total: 9	correct: 9	acc: 100.0%
+* class: 54 (ketch)	total: 11	correct: 7	acc: 63.6%
+* class: 55 (lamp)	total: 6	correct: 6	acc: 100.0%
+* class: 56 (laptop)	total: 8	correct: 8	acc: 100.0%
+* class: 57 (llama)	total: 8	correct: 7	acc: 87.5%
+* class: 58 (lobster)	total: 4	correct: 1	acc: 25.0%
+* class: 59 (lotus)	total: 7	correct: 4	acc: 57.1%
+* class: 60 (mandolin)	total: 4	correct: 4	acc: 100.0%
+* class: 61 (mayfly)	total: 4	correct: 4	acc: 100.0%
+* class: 62 (menorah)	total: 9	correct: 9	acc: 100.0%
+* class: 63 (metronome)	total: 3	correct: 3	acc: 100.0%
+* class: 64 (minaret)	total: 8	correct: 6	acc: 75.0%
+* class: 65 (nautilus)	total: 6	correct: 6	acc: 100.0%
+* class: 66 (octopus)	total: 4	correct: 3	acc: 75.0%
+* class: 67 (okapi)	total: 4	correct: 4	acc: 100.0%
+* class: 68 (pagoda)	total: 5	correct: 5	acc: 100.0%
+* class: 69 (panda)	total: 4	correct: 4	acc: 100.0%
+* class: 70 (pigeon)	total: 4	correct: 4	acc: 100.0%
+* class: 71 (pizza)	total: 5	correct: 5	acc: 100.0%
+* class: 72 (platypus)	total: 3	correct: 2	acc: 66.7%
+* class: 73 (pyramid)	total: 6	correct: 6	acc: 100.0%
+* class: 74 (revolver)	total: 8	correct: 8	acc: 100.0%
+* class: 75 (rhino)	total: 6	correct: 6	acc: 100.0%
+* class: 76 (rooster)	total: 5	correct: 5	acc: 100.0%
+* class: 77 (saxophone)	total: 4	correct: 4	acc: 100.0%
+* class: 78 (schooner)	total: 6	correct: 5	acc: 83.3%
+* class: 79 (scissors)	total: 4	correct: 3	acc: 75.0%
+* class: 80 (scorpion)	total: 8	correct: 6	acc: 75.0%
+* class: 81 (sea_horse)	total: 6	correct: 5	acc: 83.3%
+* class: 82 (snoopy)	total: 4	correct: 4	acc: 100.0%
+* class: 83 (soccer_ball)	total: 6	correct: 6	acc: 100.0%
+* class: 84 (stapler)	total: 4	correct: 3	acc: 75.0%
+* class: 85 (starfish)	total: 9	correct: 9	acc: 100.0%
+* class: 86 (stegosaurus)	total: 6	correct: 6	acc: 100.0%
+* class: 87 (stop_sign)	total: 6	correct: 6	acc: 100.0%
+* class: 88 (strawberry)	total: 4	correct: 4	acc: 100.0%
+* class: 89 (sunflower)	total: 8	correct: 8	acc: 100.0%
+* class: 90 (tick)	total: 5	correct: 5	acc: 100.0%
+* class: 91 (trilobite)	total: 9	correct: 9	acc: 100.0%
+* class: 92 (umbrella)	total: 8	correct: 7	acc: 87.5%
+* class: 93 (watch)	total: 24	correct: 24	acc: 100.0%
+* class: 94 (water_lilly)	total: 4	correct: 2	acc: 50.0%
+* class: 95 (wheelchair)	total: 6	correct: 6	acc: 100.0%
+* class: 96 (wild_cat)	total: 3	correct: 3	acc: 100.0%
+* class: 97 (windsor_chair)	total: 6	correct: 5	acc: 83.3%
+* class: 98 (wrench)	total: 4	correct: 3	acc: 75.0%
+* class: 99 (yin_yang)	total: 6	correct: 6	acc: 100.0%
+* average: 90.1%
+Confusion matrix is saved to ./output/25-03-31-00-24-00/cmat.pt
+检查点已保存到 ./output/25-03-31-00-24-00/CLIP_promptLearner/model.pth.tar-5
+epoch [6/50] batch [5/180] time 0.237 (0.350) data 0.000 (0.112) loss 0.1013 (0.3420) acc 96.8750 (93.7500) lr 1.9921e-03 eta 0:47:10
+epoch [6/50] batch [10/180] time 0.237 (0.294) data 0.000 (0.056) loss 1.6359 (0.7017) acc 87.5000 (92.1875) lr 1.9921e-03 eta 0:39:34
+epoch [6/50] batch [15/180] time 0.237 (0.275) data 0.000 (0.037) loss 1.4302 (0.6981) acc 93.7500 (93.1250) lr 1.9921e-03 eta 0:37:01
+epoch [6/50] batch [20/180] time 0.238 (0.265) data 0.000 (0.028) loss 0.3230 (0.5760) acc 90.6250 (93.7500) lr 1.9921e-03 eta 0:35:44
+epoch [6/50] batch [25/180] time 0.237 (0.260) data 0.000 (0.022) loss 1.9567 (0.5606) acc 87.5000 (94.1250) lr 1.9921e-03 eta 0:34:58
+epoch [6/50] batch [30/180] time 0.237 (0.256) data 0.000 (0.019) loss 0.0014 (0.6394) acc 100.0000 (93.7500) lr 1.9921e-03 eta 0:34:26
+epoch [6/50] batch [35/180] time 0.237 (0.253) data 0.000 (0.016) loss 0.6652 (0.6274) acc 90.6250 (93.6607) lr 1.9921e-03 eta 0:34:03
+epoch [6/50] batch [40/180] time 0.238 (0.251) data 0.000 (0.014) loss 0.8430 (0.6435) acc 96.8750 (93.5938) lr 1.9921e-03 eta 0:33:46
+epoch [6/50] batch [45/180] time 0.237 (0.250) data 0.000 (0.013) loss 0.9240 (0.6715) acc 87.5000 (93.3333) lr 1.9921e-03 eta 0:33:32
+epoch [6/50] batch [50/180] time 0.238 (0.249) data 0.000 (0.011) loss 1.1165 (0.6470) acc 87.5000 (93.5000) lr 1.9921e-03 eta 0:33:21
+epoch [6/50] batch [55/180] time 0.238 (0.248) data 0.000 (0.010) loss 0.0797 (0.6121) acc 96.8750 (93.7500) lr 1.9921e-03 eta 0:33:12
+epoch [6/50] batch [60/180] time 0.237 (0.247) data 0.000 (0.009) loss 1.8565 (0.6473) acc 84.3750 (93.4375) lr 1.9921e-03 eta 0:33:04
+epoch [6/50] batch [65/180] time 0.237 (0.246) data 0.000 (0.009) loss 0.4707 (0.6206) acc 90.6250 (93.4135) lr 1.9921e-03 eta 0:32:57
+epoch [6/50] batch [70/180] time 0.237 (0.245) data 0.000 (0.008) loss 0.5009 (0.6131) acc 96.8750 (93.4821) lr 1.9921e-03 eta 0:32:50
+epoch [6/50] batch [75/180] time 0.237 (0.245) data 0.000 (0.008) loss 0.1362 (0.5930) acc 90.6250 (93.5417) lr 1.9921e-03 eta 0:32:45
+epoch [6/50] batch [80/180] time 0.238 (0.244) data 0.000 (0.007) loss 0.4245 (0.5768) acc 90.6250 (93.5156) lr 1.9921e-03 eta 0:32:40
+epoch [6/50] batch [85/180] time 0.237 (0.244) data 0.000 (0.007) loss 0.8127 (0.5601) acc 90.6250 (93.4191) lr 1.9921e-03 eta 0:32:35
+epoch [6/50] batch [90/180] time 0.237 (0.244) data 0.000 (0.006) loss 1.8982 (0.5850) acc 87.5000 (93.3333) lr 1.9921e-03 eta 0:32:31
+epoch [6/50] batch [95/180] time 0.237 (0.243) data 0.000 (0.006) loss 0.2197 (0.5735) acc 96.8750 (93.3882) lr 1.9921e-03 eta 0:32:27
+epoch [6/50] batch [100/180] time 0.237 (0.243) data 0.000 (0.006) loss 2.2261 (0.5794) acc 87.5000 (93.4375) lr 1.9921e-03 eta 0:32:24
+epoch [6/50] batch [105/180] time 0.237 (0.243) data 0.000 (0.005) loss 2.5984 (0.6124) acc 84.3750 (93.3333) lr 1.9921e-03 eta 0:32:20
+epoch [6/50] batch [110/180] time 0.237 (0.242) data 0.000 (0.005) loss 0.9754 (0.6230) acc 90.6250 (93.1818) lr 1.9921e-03 eta 0:32:17
+epoch [6/50] batch [115/180] time 0.238 (0.242) data 0.000 (0.005) loss 1.2530 (0.6267) acc 87.5000 (93.0978) lr 1.9921e-03 eta 0:32:14
+epoch [6/50] batch [120/180] time 0.237 (0.242) data 0.000 (0.005) loss 0.0038 (0.6084) acc 100.0000 (93.1510) lr 1.9921e-03 eta 0:32:11
+epoch [6/50] batch [125/180] time 0.237 (0.242) data 0.000 (0.005) loss 0.6258 (0.5952) acc 90.6250 (93.2250) lr 1.9921e-03 eta 0:32:08
+epoch [6/50] batch [130/180] time 0.237 (0.242) data 0.000 (0.004) loss 1.2545 (0.5931) acc 93.7500 (93.2692) lr 1.9921e-03 eta 0:32:06
+epoch [6/50] batch [135/180] time 0.238 (0.242) data 0.000 (0.004) loss 0.3178 (0.5756) acc 93.7500 (93.4028) lr 1.9921e-03 eta 0:32:03
+epoch [6/50] batch [140/180] time 0.238 (0.241) data 0.000 (0.004) loss 0.3084 (0.5594) acc 96.8750 (93.5714) lr 1.9921e-03 eta 0:32:01
+epoch [6/50] batch [145/180] time 0.238 (0.241) data 0.000 (0.004) loss 0.7184 (0.5689) acc 90.6250 (93.5560) lr 1.9921e-03 eta 0:31:59
+epoch [6/50] batch [150/180] time 0.237 (0.241) data 0.000 (0.004) loss 1.3575 (0.5737) acc 90.6250 (93.4792) lr 1.9921e-03 eta 0:31:57
+epoch [6/50] batch [155/180] time 0.238 (0.241) data 0.000 (0.004) loss 0.0064 (0.5627) acc 100.0000 (93.5484) lr 1.9921e-03 eta 0:31:55
+epoch [6/50] batch [160/180] time 0.237 (0.241) data 0.000 (0.004) loss 0.4846 (0.5564) acc 90.6250 (93.5156) lr 1.9921e-03 eta 0:31:53
+epoch [6/50] batch [165/180] time 0.238 (0.241) data 0.000 (0.004) loss 0.1024 (0.5520) acc 93.7500 (93.5417) lr 1.9921e-03 eta 0:31:51
+epoch [6/50] batch [170/180] time 0.237 (0.241) data 0.000 (0.003) loss 0.4331 (0.5500) acc 93.7500 (93.5478) lr 1.9921e-03 eta 0:31:49
+epoch [6/50] batch [175/180] time 0.237 (0.241) data 0.000 (0.003) loss 0.3607 (0.5493) acc 96.8750 (93.5714) lr 1.9921e-03 eta 0:31:47
+Adjusting learning rate of group 0 to 1.0000e-05.
+epoch [6/50] batch [180/180] time 0.237 (0.241) data 0.000 (0.003) loss 0.2890 (0.5447) acc 93.7500 (93.5069) lr 1.0000e-05 eta 0:31:45
+在 *val* 集上测试
+=> result
+* total: 824
+* correct: 765
+* accuracy: 92.8%
+* error: 7.2%
+* macro_f1: 89.1%
+=> per-class result
+* class: 0 (face)	total: 44	correct: 43	acc: 97.7%
+* class: 1 (leopard)	total: 20	correct: 19	acc: 95.0%
+* class: 2 (motorbike)	total: 80	correct: 80	acc: 100.0%
+* class: 3 (accordion)	total: 6	correct: 4	acc: 66.7%
+* class: 4 (airplane)	total: 80	correct: 80	acc: 100.0%
+* class: 5 (anchor)	total: 4	correct: 3	acc: 75.0%
+* class: 6 (ant)	total: 4	correct: 3	acc: 75.0%
+* class: 7 (barrel)	total: 5	correct: 5	acc: 100.0%
+* class: 8 (bass)	total: 5	correct: 5	acc: 100.0%
+* class: 9 (beaver)	total: 5	correct: 5	acc: 100.0%
+* class: 10 (binocular)	total: 3	correct: 2	acc: 66.7%
+* class: 11 (bonsai)	total: 13	correct: 13	acc: 100.0%
+* class: 12 (brain)	total: 10	correct: 10	acc: 100.0%
+* class: 13 (brontosaurus)	total: 4	correct: 4	acc: 100.0%
+* class: 14 (buddha)	total: 8	correct: 8	acc: 100.0%
+* class: 15 (butterfly)	total: 9	correct: 8	acc: 88.9%
+* class: 16 (camera)	total: 5	correct: 4	acc: 80.0%
+* class: 17 (cannon)	total: 4	correct: 4	acc: 100.0%
+* class: 18 (car_side)	total: 12	correct: 12	acc: 100.0%
+* class: 19 (ceiling_fan)	total: 5	correct: 5	acc: 100.0%
+* class: 20 (cellphone)	total: 6	correct: 6	acc: 100.0%
+* class: 21 (chair)	total: 6	correct: 3	acc: 50.0%
+* class: 22 (chandelier)	total: 11	correct: 10	acc: 90.9%
+* class: 23 (cougar_body)	total: 5	correct: 5	acc: 100.0%
+* class: 24 (cougar_face)	total: 7	correct: 6	acc: 85.7%
+* class: 25 (crab)	total: 7	correct: 7	acc: 100.0%
+* class: 26 (crayfish)	total: 7	correct: 6	acc: 85.7%
+* class: 27 (crocodile)	total: 5	correct: 5	acc: 100.0%
+* class: 28 (crocodile_head)	total: 5	correct: 3	acc: 60.0%
+* class: 29 (cup)	total: 6	correct: 5	acc: 83.3%
+* class: 30 (dalmatian)	total: 7	correct: 7	acc: 100.0%
+* class: 31 (dollar_bill)	total: 5	correct: 5	acc: 100.0%
+* class: 32 (dolphin)	total: 6	correct: 5	acc: 83.3%
+* class: 33 (dragonfly)	total: 7	correct: 4	acc: 57.1%
+* class: 34 (electric_guitar)	total: 8	correct: 6	acc: 75.0%
+* class: 35 (elephant)	total: 6	correct: 5	acc: 83.3%
+* class: 36 (emu)	total: 5	correct: 5	acc: 100.0%
+* class: 37 (euphonium)	total: 6	correct: 6	acc: 100.0%
+* class: 38 (ewer)	total: 8	correct: 8	acc: 100.0%
+* class: 39 (ferry)	total: 7	correct: 7	acc: 100.0%
+* class: 40 (flamingo)	total: 7	correct: 5	acc: 71.4%
+* class: 41 (flamingo_head)	total: 4	correct: 2	acc: 50.0%
+* class: 42 (garfield)	total: 3	correct: 2	acc: 66.7%
+* class: 43 (gerenuk)	total: 3	correct: 3	acc: 100.0%
+* class: 44 (gramophone)	total: 5	correct: 4	acc: 80.0%
+* class: 45 (grand_piano)	total: 10	correct: 10	acc: 100.0%
+* class: 46 (hawksbill)	total: 10	correct: 10	acc: 100.0%
+* class: 47 (headphone)	total: 4	correct: 4	acc: 100.0%
+* class: 48 (hedgehog)	total: 5	correct: 5	acc: 100.0%
+* class: 49 (helicopter)	total: 9	correct: 9	acc: 100.0%
+* class: 50 (ibis)	total: 8	correct: 8	acc: 100.0%
+* class: 51 (inline_skate)	total: 3	correct: 3	acc: 100.0%
+* class: 52 (joshua_tree)	total: 6	correct: 6	acc: 100.0%
+* class: 53 (kangaroo)	total: 9	correct: 9	acc: 100.0%
+* class: 54 (ketch)	total: 11	correct: 6	acc: 54.5%
+* class: 55 (lamp)	total: 6	correct: 6	acc: 100.0%
+* class: 56 (laptop)	total: 8	correct: 8	acc: 100.0%
+* class: 57 (llama)	total: 8	correct: 8	acc: 100.0%
+* class: 58 (lobster)	total: 4	correct: 1	acc: 25.0%
+* class: 59 (lotus)	total: 7	correct: 6	acc: 85.7%
+* class: 60 (mandolin)	total: 4	correct: 4	acc: 100.0%
+* class: 61 (mayfly)	total: 4	correct: 4	acc: 100.0%
+* class: 62 (menorah)	total: 9	correct: 9	acc: 100.0%
+* class: 63 (metronome)	total: 3	correct: 3	acc: 100.0%
+* class: 64 (minaret)	total: 8	correct: 6	acc: 75.0%
+* class: 65 (nautilus)	total: 6	correct: 6	acc: 100.0%
+* class: 66 (octopus)	total: 4	correct: 3	acc: 75.0%
+* class: 67 (okapi)	total: 4	correct: 4	acc: 100.0%
+* class: 68 (pagoda)	total: 5	correct: 5	acc: 100.0%
+* class: 69 (panda)	total: 4	correct: 4	acc: 100.0%
+* class: 70 (pigeon)	total: 4	correct: 4	acc: 100.0%
+* class: 71 (pizza)	total: 5	correct: 5	acc: 100.0%
+* class: 72 (platypus)	total: 3	correct: 1	acc: 33.3%
+* class: 73 (pyramid)	total: 6	correct: 6	acc: 100.0%
+* class: 74 (revolver)	total: 8	correct: 8	acc: 100.0%
+* class: 75 (rhino)	total: 6	correct: 6	acc: 100.0%
+* class: 76 (rooster)	total: 5	correct: 5	acc: 100.0%
+* class: 77 (saxophone)	total: 4	correct: 4	acc: 100.0%
+* class: 78 (schooner)	total: 6	correct: 4	acc: 66.7%
+* class: 79 (scissors)	total: 4	correct: 3	acc: 75.0%
+* class: 80 (scorpion)	total: 8	correct: 6	acc: 75.0%
+* class: 81 (sea_horse)	total: 6	correct: 5	acc: 83.3%
+* class: 82 (snoopy)	total: 4	correct: 4	acc: 100.0%
+* class: 83 (soccer_ball)	total: 6	correct: 6	acc: 100.0%
+* class: 84 (stapler)	total: 4	correct: 3	acc: 75.0%
+* class: 85 (starfish)	total: 9	correct: 9	acc: 100.0%
+* class: 86 (stegosaurus)	total: 6	correct: 6	acc: 100.0%
+* class: 87 (stop_sign)	total: 6	correct: 6	acc: 100.0%
+* class: 88 (strawberry)	total: 4	correct: 4	acc: 100.0%
+* class: 89 (sunflower)	total: 8	correct: 8	acc: 100.0%
+* class: 90 (tick)	total: 5	correct: 4	acc: 80.0%
+* class: 91 (trilobite)	total: 9	correct: 8	acc: 88.9%
+* class: 92 (umbrella)	total: 8	correct: 7	acc: 87.5%
+* class: 93 (watch)	total: 24	correct: 24	acc: 100.0%
+* class: 94 (water_lilly)	total: 4	correct: 2	acc: 50.0%
+* class: 95 (wheelchair)	total: 6	correct: 6	acc: 100.0%
+* class: 96 (wild_cat)	total: 3	correct: 3	acc: 100.0%
+* class: 97 (windsor_chair)	total: 6	correct: 5	acc: 83.3%
+* class: 98 (wrench)	total: 4	correct: 3	acc: 75.0%
+* class: 99 (yin_yang)	total: 6	correct: 6	acc: 100.0%
+* average: 89.6%
+Confusion matrix is saved to ./output/25-03-31-00-24-00/cmat.pt
+epoch [7/50] batch [5/180] time 0.237 (0.339) data 0.000 (0.101) loss 0.6520 (0.3593) acc 96.8750 (95.6250) lr 1.0000e-05 eta 0:44:45
+epoch [7/50] batch [10/180] time 0.238 (0.288) data 0.000 (0.050) loss 1.1119 (0.5190) acc 87.5000 (95.3125) lr 1.0000e-05 eta 0:38:00
+epoch [7/50] batch [15/180] time 0.238 (0.271) data 0.000 (0.034) loss 0.0495 (0.4516) acc 96.8750 (94.5833) lr 1.0000e-05 eta 0:35:44
+epoch [7/50] batch [20/180] time 0.237 (0.263) data 0.000 (0.025) loss 0.1080 (0.3996) acc 96.8750 (94.6875) lr 1.0000e-05 eta 0:34:35
+epoch [7/50] batch [25/180] time 0.237 (0.258) data 0.000 (0.020) loss 0.0223 (0.3408) acc 100.0000 (95.3750) lr 1.0000e-05 eta 0:33:54
+epoch [7/50] batch [30/180] time 0.238 (0.254) data 0.000 (0.017) loss 1.5302 (0.4195) acc 84.3750 (94.6875) lr 1.0000e-05 eta 0:33:26
+epoch [7/50] batch [35/180] time 0.237 (0.252) data 0.000 (0.015) loss 0.9477 (0.4310) acc 90.6250 (94.3750) lr 1.0000e-05 eta 0:33:06
+epoch [7/50] batch [40/180] time 0.237 (0.250) data 0.000 (0.013) loss 0.0322 (0.4603) acc 96.8750 (94.1406) lr 1.0000e-05 eta 0:32:50
+epoch [7/50] batch [45/180] time 0.237 (0.249) data 0.000 (0.011) loss 1.4485 (0.4920) acc 90.6250 (94.0278) lr 1.0000e-05 eta 0:32:37
+epoch [7/50] batch [50/180] time 0.238 (0.247) data 0.000 (0.010) loss 0.2739 (0.4753) acc 93.7500 (94.0625) lr 1.0000e-05 eta 0:32:27
+epoch [7/50] batch [55/180] time 0.237 (0.247) data 0.000 (0.009) loss 1.0676 (0.4758) acc 87.5000 (93.9773) lr 1.0000e-05 eta 0:32:19
+epoch [7/50] batch [60/180] time 0.238 (0.246) data 0.000 (0.009) loss 0.2549 (0.4819) acc 93.7500 (93.8542) lr 1.0000e-05 eta 0:32:11
+epoch [7/50] batch [65/180] time 0.237 (0.245) data 0.000 (0.008) loss 0.1086 (0.4801) acc 96.8750 (93.7981) lr 1.0000e-05 eta 0:32:05
+epoch [7/50] batch [70/180] time 0.238 (0.245) data 0.000 (0.007) loss 0.2810 (0.4772) acc 96.8750 (93.9732) lr 1.0000e-05 eta 0:32:00
+epoch [7/50] batch [75/180] time 0.237 (0.244) data 0.000 (0.007) loss 0.0002 (0.4626) acc 100.0000 (94.2500) lr 1.0000e-05 eta 0:31:55
+epoch [7/50] batch [80/180] time 0.237 (0.244) data 0.000 (0.006) loss 0.5426 (0.4582) acc 93.7500 (94.2578) lr 1.0000e-05 eta 0:31:50
+epoch [7/50] batch [85/180] time 0.237 (0.243) data 0.000 (0.006) loss 0.2539 (0.4436) acc 90.6250 (94.1176) lr 1.0000e-05 eta 0:31:46
+epoch [7/50] batch [90/180] time 0.238 (0.243) data 0.000 (0.006) loss 1.1868 (0.4595) acc 90.6250 (94.1319) lr 1.0000e-05 eta 0:31:43
+epoch [7/50] batch [95/180] time 0.238 (0.243) data 0.000 (0.005) loss 0.0269 (0.4601) acc 100.0000 (94.1776) lr 1.0000e-05 eta 0:31:39
+epoch [7/50] batch [100/180] time 0.238 (0.243) data 0.000 (0.005) loss 1.3102 (0.4666) acc 93.7500 (94.1250) lr 1.0000e-05 eta 0:31:36
+epoch [7/50] batch [105/180] time 0.238 (0.242) data 0.000 (0.005) loss 1.0030 (0.4640) acc 96.8750 (94.1964) lr 1.0000e-05 eta 0:31:33
+epoch [7/50] batch [110/180] time 0.238 (0.242) data 0.000 (0.005) loss 0.5000 (0.4613) acc 90.6250 (94.2045) lr 1.0000e-05 eta 0:31:31
+epoch [7/50] batch [115/180] time 0.238 (0.242) data 0.000 (0.005) loss 0.2964 (0.4575) acc 93.7500 (94.1848) lr 1.0000e-05 eta 0:31:28
+epoch [7/50] batch [120/180] time 0.238 (0.242) data 0.000 (0.004) loss 0.6816 (0.4598) acc 87.5000 (94.0625) lr 1.0000e-05 eta 0:31:26
+epoch [7/50] batch [125/180] time 0.238 (0.242) data 0.000 (0.004) loss 0.1222 (0.4604) acc 93.7500 (94.0500) lr 1.0000e-05 eta 0:31:23
+epoch [7/50] batch [130/180] time 0.238 (0.242) data 0.000 (0.004) loss 0.2647 (0.4503) acc 96.8750 (94.1346) lr 1.0000e-05 eta 0:31:21
+epoch [7/50] batch [135/180] time 0.238 (0.241) data 0.000 (0.004) loss 0.0230 (0.4442) acc 96.8750 (94.0972) lr 1.0000e-05 eta 0:31:19
+epoch [7/50] batch [140/180] time 0.238 (0.241) data 0.000 (0.004) loss 0.0001 (0.4457) acc 100.0000 (94.1295) lr 1.0000e-05 eta 0:31:17
+epoch [7/50] batch [145/180] time 0.238 (0.241) data 0.000 (0.004) loss 1.0227 (0.4481) acc 93.7500 (94.0733) lr 1.0000e-05 eta 0:31:15
+epoch [7/50] batch [150/180] time 0.238 (0.241) data 0.000 (0.004) loss 0.2591 (0.4477) acc 96.8750 (94.0625) lr 1.0000e-05 eta 0:31:12
+epoch [7/50] batch [155/180] time 0.238 (0.241) data 0.000 (0.003) loss 1.2644 (0.4445) acc 81.2500 (94.0323) lr 1.0000e-05 eta 0:31:10
+epoch [7/50] batch [160/180] time 0.238 (0.241) data 0.000 (0.003) loss 0.2994 (0.4406) acc 96.8750 (94.0430) lr 1.0000e-05 eta 0:31:08
+epoch [7/50] batch [165/180] time 0.238 (0.241) data 0.000 (0.003) loss 0.1020 (0.4341) acc 96.8750 (94.0720) lr 1.0000e-05 eta 0:31:07
+epoch [7/50] batch [170/180] time 0.238 (0.241) data 0.000 (0.003) loss 0.7088 (0.4355) acc 90.6250 (94.0625) lr 1.0000e-05 eta 0:31:05
+epoch [7/50] batch [175/180] time 0.237 (0.241) data 0.000 (0.003) loss 0.4326 (0.4303) acc 90.6250 (94.0536) lr 1.0000e-05 eta 0:31:03
+Adjusting learning rate of group 0 to 1.9921e-03.
+epoch [7/50] batch [180/180] time 0.238 (0.240) data 0.000 (0.003) loss 0.3146 (0.4383) acc 87.5000 (93.8368) lr 1.9921e-03 eta 0:31:01
+在 *val* 集上测试
+=> result
+* total: 824
+* correct: 763
+* accuracy: 92.6%
+* error: 7.4%
+* macro_f1: 88.8%
+=> per-class result
+* class: 0 (face)	total: 44	correct: 43	acc: 97.7%
+* class: 1 (leopard)	total: 20	correct: 19	acc: 95.0%
+* class: 2 (motorbike)	total: 80	correct: 80	acc: 100.0%
+* class: 3 (accordion)	total: 6	correct: 4	acc: 66.7%
+* class: 4 (airplane)	total: 80	correct: 80	acc: 100.0%
+* class: 5 (anchor)	total: 4	correct: 3	acc: 75.0%
+* class: 6 (ant)	total: 4	correct: 3	acc: 75.0%
+* class: 7 (barrel)	total: 5	correct: 5	acc: 100.0%
+* class: 8 (bass)	total: 5	correct: 5	acc: 100.0%
+* class: 9 (beaver)	total: 5	correct: 5	acc: 100.0%
+* class: 10 (binocular)	total: 3	correct: 2	acc: 66.7%
+* class: 11 (bonsai)	total: 13	correct: 13	acc: 100.0%
+* class: 12 (brain)	total: 10	correct: 10	acc: 100.0%
+* class: 13 (brontosaurus)	total: 4	correct: 4	acc: 100.0%
+* class: 14 (buddha)	total: 8	correct: 8	acc: 100.0%
+* class: 15 (butterfly)	total: 9	correct: 8	acc: 88.9%
+* class: 16 (camera)	total: 5	correct: 4	acc: 80.0%
+* class: 17 (cannon)	total: 4	correct: 4	acc: 100.0%
+* class: 18 (car_side)	total: 12	correct: 12	acc: 100.0%
+* class: 19 (ceiling_fan)	total: 5	correct: 5	acc: 100.0%
+* class: 20 (cellphone)	total: 6	correct: 6	acc: 100.0%
+* class: 21 (chair)	total: 6	correct: 3	acc: 50.0%
+* class: 22 (chandelier)	total: 11	correct: 10	acc: 90.9%
+* class: 23 (cougar_body)	total: 5	correct: 5	acc: 100.0%
+* class: 24 (cougar_face)	total: 7	correct: 6	acc: 85.7%
+* class: 25 (crab)	total: 7	correct: 7	acc: 100.0%
+* class: 26 (crayfish)	total: 7	correct: 6	acc: 85.7%
+* class: 27 (crocodile)	total: 5	correct: 5	acc: 100.0%
+* class: 28 (crocodile_head)	total: 5	correct: 4	acc: 80.0%
+* class: 29 (cup)	total: 6	correct: 5	acc: 83.3%
+* class: 30 (dalmatian)	total: 7	correct: 7	acc: 100.0%
+* class: 31 (dollar_bill)	total: 5	correct: 5	acc: 100.0%
+* class: 32 (dolphin)	total: 6	correct: 5	acc: 83.3%
+* class: 33 (dragonfly)	total: 7	correct: 3	acc: 42.9%
+* class: 34 (electric_guitar)	total: 8	correct: 6	acc: 75.0%
+* class: 35 (elephant)	total: 6	correct: 5	acc: 83.3%
+* class: 36 (emu)	total: 5	correct: 5	acc: 100.0%
+* class: 37 (euphonium)	total: 6	correct: 5	acc: 83.3%
+* class: 38 (ewer)	total: 8	correct: 8	acc: 100.0%
+* class: 39 (ferry)	total: 7	correct: 7	acc: 100.0%
+* class: 40 (flamingo)	total: 7	correct: 5	acc: 71.4%
+* class: 41 (flamingo_head)	total: 4	correct: 2	acc: 50.0%
+* class: 42 (garfield)	total: 3	correct: 2	acc: 66.7%
+* class: 43 (gerenuk)	total: 3	correct: 3	acc: 100.0%
+* class: 44 (gramophone)	total: 5	correct: 4	acc: 80.0%
+* class: 45 (grand_piano)	total: 10	correct: 10	acc: 100.0%
+* class: 46 (hawksbill)	total: 10	correct: 10	acc: 100.0%
+* class: 47 (headphone)	total: 4	correct: 4	acc: 100.0%
+* class: 48 (hedgehog)	total: 5	correct: 5	acc: 100.0%
+* class: 49 (helicopter)	total: 9	correct: 8	acc: 88.9%
+* class: 50 (ibis)	total: 8	correct: 8	acc: 100.0%
+* class: 51 (inline_skate)	total: 3	correct: 3	acc: 100.0%
+* class: 52 (joshua_tree)	total: 6	correct: 6	acc: 100.0%
+* class: 53 (kangaroo)	total: 9	correct: 9	acc: 100.0%
+* class: 54 (ketch)	total: 11	correct: 6	acc: 54.5%
+* class: 55 (lamp)	total: 6	correct: 6	acc: 100.0%
+* class: 56 (laptop)	total: 8	correct: 8	acc: 100.0%
+* class: 57 (llama)	total: 8	correct: 8	acc: 100.0%
+* class: 58 (lobster)	total: 4	correct: 1	acc: 25.0%
+* class: 59 (lotus)	total: 7	correct: 6	acc: 85.7%
+* class: 60 (mandolin)	total: 4	correct: 4	acc: 100.0%
+* class: 61 (mayfly)	total: 4	correct: 4	acc: 100.0%
+* class: 62 (menorah)	total: 9	correct: 9	acc: 100.0%
+* class: 63 (metronome)	total: 3	correct: 3	acc: 100.0%
+* class: 64 (minaret)	total: 8	correct: 6	acc: 75.0%
+* class: 65 (nautilus)	total: 6	correct: 6	acc: 100.0%
+* class: 66 (octopus)	total: 4	correct: 3	acc: 75.0%
+* class: 67 (okapi)	total: 4	correct: 4	acc: 100.0%
+* class: 68 (pagoda)	total: 5	correct: 5	acc: 100.0%
+* class: 69 (panda)	total: 4	correct: 4	acc: 100.0%
+* class: 70 (pigeon)	total: 4	correct: 4	acc: 100.0%
+* class: 71 (pizza)	total: 5	correct: 5	acc: 100.0%
+* class: 72 (platypus)	total: 3	correct: 1	acc: 33.3%
+* class: 73 (pyramid)	total: 6	correct: 6	acc: 100.0%
+* class: 74 (revolver)	total: 8	correct: 8	acc: 100.0%
+* class: 75 (rhino)	total: 6	correct: 6	acc: 100.0%
+* class: 76 (rooster)	total: 5	correct: 5	acc: 100.0%
+* class: 77 (saxophone)	total: 4	correct: 4	acc: 100.0%
+* class: 78 (schooner)	total: 6	correct: 4	acc: 66.7%
+* class: 79 (scissors)	total: 4	correct: 3	acc: 75.0%
+* class: 80 (scorpion)	total: 8	correct: 6	acc: 75.0%
+* class: 81 (sea_horse)	total: 6	correct: 5	acc: 83.3%
+* class: 82 (snoopy)	total: 4	correct: 4	acc: 100.0%
+* class: 83 (soccer_ball)	total: 6	correct: 6	acc: 100.0%
+* class: 84 (stapler)	total: 4	correct: 3	acc: 75.0%
+* class: 85 (starfish)	total: 9	correct: 9	acc: 100.0%
+* class: 86 (stegosaurus)	total: 6	correct: 6	acc: 100.0%
+* class: 87 (stop_sign)	total: 6	correct: 6	acc: 100.0%
+* class: 88 (strawberry)	total: 4	correct: 4	acc: 100.0%
+* class: 89 (sunflower)	total: 8	correct: 8	acc: 100.0%
+* class: 90 (tick)	total: 5	correct: 4	acc: 80.0%
+* class: 91 (trilobite)	total: 9	correct: 8	acc: 88.9%
+* class: 92 (umbrella)	total: 8	correct: 7	acc: 87.5%
+* class: 93 (watch)	total: 24	correct: 24	acc: 100.0%
+* class: 94 (water_lilly)	total: 4	correct: 2	acc: 50.0%
+* class: 95 (wheelchair)	total: 6	correct: 6	acc: 100.0%
+* class: 96 (wild_cat)	total: 3	correct: 3	acc: 100.0%
+* class: 97 (windsor_chair)	total: 6	correct: 5	acc: 83.3%
+* class: 98 (wrench)	total: 4	correct: 3	acc: 75.0%
+* class: 99 (yin_yang)	total: 6	correct: 6	acc: 100.0%
+* average: 89.3%
+Confusion matrix is saved to ./output/25-03-31-00-24-00/cmat.pt
+epoch [8/50] batch [5/180] time 0.238 (0.347) data 0.000 (0.109) loss 0.0031 (0.1946) acc 100.0000 (94.3750) lr 1.9921e-03 eta 0:44:46
+epoch [8/50] batch [10/180] time 0.238 (0.293) data 0.000 (0.055) loss 0.8577 (0.2169) acc 87.5000 (94.3750) lr 1.9921e-03 eta 0:37:42
+epoch [8/50] batch [15/180] time 0.238 (0.274) data 0.000 (0.036) loss 0.6090 (0.2962) acc 96.8750 (94.7917) lr 1.9921e-03 eta 0:35:19
+epoch [8/50] batch [20/180] time 0.238 (0.265) data 0.000 (0.027) loss 0.1468 (0.2834) acc 93.7500 (94.2188) lr 1.9921e-03 eta 0:34:08
+epoch [8/50] batch [25/180] time 0.238 (0.260) data 0.000 (0.022) loss 0.0489 (0.2986) acc 96.8750 (94.3750) lr 1.9921e-03 eta 0:33:24
+epoch [8/50] batch [30/180] time 0.238 (0.256) data 0.000 (0.018) loss 0.2962 (0.3325) acc 90.6250 (93.8542) lr 1.9921e-03 eta 0:32:55
+epoch [8/50] batch [35/180] time 0.238 (0.254) data 0.000 (0.016) loss 0.3352 (0.3198) acc 96.8750 (94.1964) lr 1.9921e-03 eta 0:32:33
+epoch [8/50] batch [40/180] time 0.238 (0.252) data 0.000 (0.014) loss 0.2878 (0.3104) acc 96.8750 (94.2969) lr 1.9921e-03 eta 0:32:17
+epoch [8/50] batch [45/180] time 0.238 (0.250) data 0.000 (0.012) loss 0.0002 (0.3317) acc 100.0000 (94.2361) lr 1.9921e-03 eta 0:32:04
+epoch [8/50] batch [50/180] time 0.238 (0.249) data 0.000 (0.011) loss 0.2599 (0.3500) acc 87.5000 (94.1875) lr 1.9921e-03 eta 0:31:53
+epoch [8/50] batch [55/180] time 0.238 (0.248) data 0.000 (0.010) loss 0.5029 (0.3559) acc 90.6250 (94.0909) lr 1.9921e-03 eta 0:31:44
+epoch [8/50] batch [60/180] time 0.238 (0.247) data 0.000 (0.009) loss 1.6233 (0.3867) acc 93.7500 (94.1667) lr 1.9921e-03 eta 0:31:37
+epoch [8/50] batch [65/180] time 0.238 (0.246) data 0.000 (0.009) loss 0.1082 (0.3982) acc 96.8750 (94.1346) lr 1.9921e-03 eta 0:31:30
+epoch [8/50] batch [70/180] time 0.238 (0.246) data 0.000 (0.008) loss 0.5765 (0.4035) acc 90.6250 (93.9732) lr 1.9921e-03 eta 0:31:24
+epoch [8/50] batch [75/180] time 0.238 (0.245) data 0.000 (0.007) loss 0.3712 (0.4018) acc 90.6250 (93.8750) lr 1.9921e-03 eta 0:31:19
+epoch [8/50] batch [80/180] time 0.238 (0.245) data 0.000 (0.007) loss 0.3625 (0.4202) acc 90.6250 (93.7500) lr 1.9921e-03 eta 0:31:14
+epoch [8/50] batch [85/180] time 0.238 (0.244) data 0.000 (0.007) loss 0.0550 (0.4310) acc 96.8750 (93.6765) lr 1.9921e-03 eta 0:31:10
+epoch [8/50] batch [90/180] time 0.238 (0.244) data 0.000 (0.006) loss 0.0020 (0.4381) acc 100.0000 (93.6111) lr 1.9921e-03 eta 0:31:06
+epoch [8/50] batch [95/180] time 0.238 (0.244) data 0.000 (0.006) loss 0.0160 (0.4232) acc 100.0000 (93.6842) lr 1.9921e-03 eta 0:31:02
+epoch [8/50] batch [100/180] time 0.237 (0.243) data 0.000 (0.006) loss 0.0379 (0.4165) acc 96.8750 (93.6562) lr 1.9921e-03 eta 0:30:59
+epoch [8/50] batch [105/180] time 0.238 (0.243) data 0.000 (0.005) loss 1.3673 (0.4500) acc 90.6250 (93.3929) lr 1.9921e-03 eta 0:30:56
+epoch [8/50] batch [110/180] time 0.237 (0.243) data 0.000 (0.005) loss 0.3626 (0.4486) acc 90.6250 (93.3523) lr 1.9921e-03 eta 0:30:52
+epoch [8/50] batch [115/180] time 0.238 (0.243) data 0.000 (0.005) loss 1.3893 (0.4492) acc 87.5000 (93.2880) lr 1.9921e-03 eta 0:30:50
+epoch [8/50] batch [120/180] time 0.238 (0.242) data 0.000 (0.005) loss 0.2493 (0.4432) acc 93.7500 (93.2812) lr 1.9921e-03 eta 0:30:47
+epoch [8/50] batch [125/180] time 0.238 (0.242) data 0.000 (0.004) loss 0.3487 (0.4450) acc 93.7500 (93.2000) lr 1.9921e-03 eta 0:30:44
+epoch [8/50] batch [130/180] time 0.237 (0.242) data 0.000 (0.004) loss 1.3698 (0.4462) acc 90.6250 (93.2212) lr 1.9921e-03 eta 0:30:41
+epoch [8/50] batch [135/180] time 0.238 (0.242) data 0.000 (0.004) loss 0.0143 (0.4498) acc 100.0000 (93.2407) lr 1.9921e-03 eta 0:30:39
+epoch [8/50] batch [140/180] time 0.237 (0.242) data 0.000 (0.004) loss 0.3120 (0.4444) acc 96.8750 (93.2812) lr 1.9921e-03 eta 0:30:37
+epoch [8/50] batch [145/180] time 0.237 (0.242) data 0.000 (0.004) loss 0.0023 (0.4341) acc 100.0000 (93.3836) lr 1.9921e-03 eta 0:30:34
+epoch [8/50] batch [150/180] time 0.237 (0.241) data 0.000 (0.004) loss 0.6781 (0.4283) acc 96.8750 (93.4583) lr 1.9921e-03 eta 0:30:32
+epoch [8/50] batch [155/180] time 0.238 (0.241) data 0.000 (0.004) loss 0.3279 (0.4233) acc 90.6250 (93.4879) lr 1.9921e-03 eta 0:30:30
+epoch [8/50] batch [160/180] time 0.238 (0.241) data 0.000 (0.004) loss 0.1189 (0.4197) acc 93.7500 (93.5156) lr 1.9921e-03 eta 0:30:28
+epoch [8/50] batch [165/180] time 0.237 (0.241) data 0.000 (0.003) loss 1.4381 (0.4217) acc 84.3750 (93.5038) lr 1.9921e-03 eta 0:30:26
+epoch [8/50] batch [170/180] time 0.238 (0.241) data 0.000 (0.003) loss 1.1079 (0.4295) acc 87.5000 (93.4926) lr 1.9921e-03 eta 0:30:24
+epoch [8/50] batch [175/180] time 0.237 (0.241) data 0.000 (0.003) loss 0.3300 (0.4330) acc 90.6250 (93.5179) lr 1.9921e-03 eta 0:30:22
+由于设置了 warmup_recount，且现在预热结束，因此重置 epoch 为 -1
+epoch [8/50] batch [180/180] time 0.237 (0.241) data 0.000 (0.003) loss 0.5886 (0.4309) acc 93.7500 (93.5764) lr 1.9823e-03 eta 0:30:20
+在 *val* 集上测试
+=> result
+* total: 824
+* correct: 750
+* accuracy: 91.0%
+* error: 9.0%
+* macro_f1: 86.3%
+=> per-class result
+* class: 0 (face)	total: 44	correct: 43	acc: 97.7%
+* class: 1 (leopard)	total: 20	correct: 18	acc: 90.0%
+* class: 2 (motorbike)	total: 80	correct: 80	acc: 100.0%
+* class: 3 (accordion)	total: 6	correct: 4	acc: 66.7%
+* class: 4 (airplane)	total: 80	correct: 79	acc: 98.8%
+* class: 5 (anchor)	total: 4	correct: 3	acc: 75.0%
+* class: 6 (ant)	total: 4	correct: 2	acc: 50.0%
+* class: 7 (barrel)	total: 5	correct: 5	acc: 100.0%
+* class: 8 (bass)	total: 5	correct: 5	acc: 100.0%
+* class: 9 (beaver)	total: 5	correct: 5	acc: 100.0%
+* class: 10 (binocular)	total: 3	correct: 2	acc: 66.7%
+* class: 11 (bonsai)	total: 13	correct: 13	acc: 100.0%
+* class: 12 (brain)	total: 10	correct: 10	acc: 100.0%
+* class: 13 (brontosaurus)	total: 4	correct: 4	acc: 100.0%
+* class: 14 (buddha)	total: 8	correct: 8	acc: 100.0%
+* class: 15 (butterfly)	total: 9	correct: 8	acc: 88.9%
+* class: 16 (camera)	total: 5	correct: 4	acc: 80.0%
+* class: 17 (cannon)	total: 4	correct: 4	acc: 100.0%
+* class: 18 (car_side)	total: 12	correct: 12	acc: 100.0%
+* class: 19 (ceiling_fan)	total: 5	correct: 4	acc: 80.0%
+* class: 20 (cellphone)	total: 6	correct: 6	acc: 100.0%
+* class: 21 (chair)	total: 6	correct: 5	acc: 83.3%
+* class: 22 (chandelier)	total: 11	correct: 11	acc: 100.0%
+* class: 23 (cougar_body)	total: 5	correct: 5	acc: 100.0%
+* class: 24 (cougar_face)	total: 7	correct: 6	acc: 85.7%
+* class: 25 (crab)	total: 7	correct: 7	acc: 100.0%
+* class: 26 (crayfish)	total: 7	correct: 6	acc: 85.7%
+* class: 27 (crocodile)	total: 5	correct: 5	acc: 100.0%
+* class: 28 (crocodile_head)	total: 5	correct: 3	acc: 60.0%
+* class: 29 (cup)	total: 6	correct: 5	acc: 83.3%
+* class: 30 (dalmatian)	total: 7	correct: 7	acc: 100.0%
+* class: 31 (dollar_bill)	total: 5	correct: 5	acc: 100.0%
+* class: 32 (dolphin)	total: 6	correct: 5	acc: 83.3%
+* class: 33 (dragonfly)	total: 7	correct: 5	acc: 71.4%
+* class: 34 (electric_guitar)	total: 8	correct: 8	acc: 100.0%
+* class: 35 (elephant)	total: 6	correct: 5	acc: 83.3%
+* class: 36 (emu)	total: 5	correct: 4	acc: 80.0%
+* class: 37 (euphonium)	total: 6	correct: 3	acc: 50.0%
+* class: 38 (ewer)	total: 8	correct: 6	acc: 75.0%
+* class: 39 (ferry)	total: 7	correct: 7	acc: 100.0%
+* class: 40 (flamingo)	total: 7	correct: 5	acc: 71.4%
+* class: 41 (flamingo_head)	total: 4	correct: 2	acc: 50.0%
+* class: 42 (garfield)	total: 3	correct: 2	acc: 66.7%
+* class: 43 (gerenuk)	total: 3	correct: 2	acc: 66.7%
+* class: 44 (gramophone)	total: 5	correct: 4	acc: 80.0%
+* class: 45 (grand_piano)	total: 10	correct: 10	acc: 100.0%
+* class: 46 (hawksbill)	total: 10	correct: 9	acc: 90.0%
+* class: 47 (headphone)	total: 4	correct: 4	acc: 100.0%
+* class: 48 (hedgehog)	total: 5	correct: 5	acc: 100.0%
+* class: 49 (helicopter)	total: 9	correct: 8	acc: 88.9%
+* class: 50 (ibis)	total: 8	correct: 7	acc: 87.5%
+* class: 51 (inline_skate)	total: 3	correct: 3	acc: 100.0%
+* class: 52 (joshua_tree)	total: 6	correct: 6	acc: 100.0%
+* class: 53 (kangaroo)	total: 9	correct: 9	acc: 100.0%
+* class: 54 (ketch)	total: 11	correct: 9	acc: 81.8%
+* class: 55 (lamp)	total: 6	correct: 6	acc: 100.0%
+* class: 56 (laptop)	total: 8	correct: 8	acc: 100.0%
+* class: 57 (llama)	total: 8	correct: 8	acc: 100.0%
+* class: 58 (lobster)	total: 4	correct: 1	acc: 25.0%
+* class: 59 (lotus)	total: 7	correct: 4	acc: 57.1%
+* class: 60 (mandolin)	total: 4	correct: 3	acc: 75.0%
+* class: 61 (mayfly)	total: 4	correct: 3	acc: 75.0%
+* class: 62 (menorah)	total: 9	correct: 9	acc: 100.0%
+* class: 63 (metronome)	total: 3	correct: 3	acc: 100.0%
+* class: 64 (minaret)	total: 8	correct: 6	acc: 75.0%
+* class: 65 (nautilus)	total: 6	correct: 6	acc: 100.0%
+* class: 66 (octopus)	total: 4	correct: 3	acc: 75.0%
+* class: 67 (okapi)	total: 4	correct: 4	acc: 100.0%
+* class: 68 (pagoda)	total: 5	correct: 5	acc: 100.0%
+* class: 69 (panda)	total: 4	correct: 4	acc: 100.0%
+* class: 70 (pigeon)	total: 4	correct: 4	acc: 100.0%
+* class: 71 (pizza)	total: 5	correct: 5	acc: 100.0%
+* class: 72 (platypus)	total: 3	correct: 1	acc: 33.3%
+* class: 73 (pyramid)	total: 6	correct: 6	acc: 100.0%
+* class: 74 (revolver)	total: 8	correct: 8	acc: 100.0%
+* class: 75 (rhino)	total: 6	correct: 6	acc: 100.0%
+* class: 76 (rooster)	total: 5	correct: 5	acc: 100.0%
+* class: 77 (saxophone)	total: 4	correct: 4	acc: 100.0%
+* class: 78 (schooner)	total: 6	correct: 0	acc: 0.0%
+* class: 79 (scissors)	total: 4	correct: 3	acc: 75.0%
+* class: 80 (scorpion)	total: 8	correct: 5	acc: 62.5%
+* class: 81 (sea_horse)	total: 6	correct: 6	acc: 100.0%
+* class: 82 (snoopy)	total: 4	correct: 4	acc: 100.0%
+* class: 83 (soccer_ball)	total: 6	correct: 6	acc: 100.0%
+* class: 84 (stapler)	total: 4	correct: 3	acc: 75.0%
+* class: 85 (starfish)	total: 9	correct: 9	acc: 100.0%
+* class: 86 (stegosaurus)	total: 6	correct: 6	acc: 100.0%
+* class: 87 (stop_sign)	total: 6	correct: 6	acc: 100.0%
+* class: 88 (strawberry)	total: 4	correct: 4	acc: 100.0%
+* class: 89 (sunflower)	total: 8	correct: 8	acc: 100.0%
+* class: 90 (tick)	total: 5	correct: 4	acc: 80.0%
+* class: 91 (trilobite)	total: 9	correct: 8	acc: 88.9%
+* class: 92 (umbrella)	total: 8	correct: 7	acc: 87.5%
+* class: 93 (watch)	total: 24	correct: 24	acc: 100.0%
+* class: 94 (water_lilly)	total: 4	correct: 2	acc: 50.0%
+* class: 95 (wheelchair)	total: 6	correct: 6	acc: 100.0%
+* class: 96 (wild_cat)	total: 3	correct: 3	acc: 100.0%
+* class: 97 (windsor_chair)	total: 6	correct: 4	acc: 66.7%
+* class: 98 (wrench)	total: 4	correct: 2	acc: 50.0%
+* class: 99 (yin_yang)	total: 6	correct: 6	acc: 100.0%
+* average: 86.7%
+Confusion matrix is saved to ./output/25-03-31-00-24-00/cmat.pt
+epoch [9/50] batch [5/180] time 0.239 (0.348) data 0.000 (0.109) loss 0.3639 (0.2724) acc 90.6250 (92.5000) lr 1.9823e-03 eta 0:43:45
+epoch [9/50] batch [10/180] time 0.238 (0.293) data 0.000 (0.055) loss 0.2506 (0.2357) acc 93.7500 (94.0625) lr 1.9823e-03 eta 0:36:50
+epoch [9/50] batch [15/180] time 0.238 (0.274) data 0.000 (0.036) loss 0.0017 (0.2409) acc 100.0000 (93.9583) lr 1.9823e-03 eta 0:34:30
+epoch [9/50] batch [20/180] time 0.238 (0.265) data 0.000 (0.027) loss 0.0858 (0.3556) acc 96.8750 (92.9688) lr 1.9823e-03 eta 0:33:19
+epoch [9/50] batch [25/180] time 0.237 (0.260) data 0.000 (0.022) loss 0.0874 (0.3626) acc 96.8750 (93.1250) lr 1.9823e-03 eta 0:32:37
+epoch [9/50] batch [30/180] time 0.238 (0.256) data 0.000 (0.018) loss 0.4676 (0.4020) acc 87.5000 (92.3958) lr 1.9823e-03 eta 0:32:08
+epoch [9/50] batch [35/180] time 0.238 (0.253) data 0.000 (0.016) loss 0.4339 (0.3889) acc 96.8750 (92.4107) lr 1.9823e-03 eta 0:31:47
+epoch [9/50] batch [40/180] time 0.238 (0.251) data 0.000 (0.014) loss 0.0000 (0.4168) acc 100.0000 (92.6562) lr 1.9823e-03 eta 0:31:31
+epoch [9/50] batch [45/180] time 0.237 (0.250) data 0.000 (0.012) loss 1.3077 (0.4292) acc 90.6250 (92.8472) lr 1.9823e-03 eta 0:31:18
+epoch [9/50] batch [50/180] time 0.237 (0.249) data 0.000 (0.011) loss 0.2648 (0.4526) acc 93.7500 (92.9375) lr 1.9823e-03 eta 0:31:07
+epoch [9/50] batch [55/180] time 0.238 (0.248) data 0.000 (0.010) loss 0.7427 (0.4380) acc 84.3750 (92.8977) lr 1.9823e-03 eta 0:30:58
+epoch [9/50] batch [60/180] time 0.238 (0.247) data 0.000 (0.009) loss 0.2113 (0.4210) acc 96.8750 (92.9688) lr 1.9823e-03 eta 0:30:51
+epoch [9/50] batch [65/180] time 0.237 (0.246) data 0.000 (0.009) loss 0.0482 (0.3987) acc 96.8750 (93.1250) lr 1.9823e-03 eta 0:30:45
+epoch [9/50] batch [70/180] time 0.237 (0.246) data 0.000 (0.008) loss 0.9250 (0.4177) acc 87.5000 (92.9911) lr 1.9823e-03 eta 0:30:39
+epoch [9/50] batch [75/180] time 0.238 (0.245) data 0.000 (0.007) loss 0.5983 (0.4097) acc 87.5000 (93.0000) lr 1.9823e-03 eta 0:30:34
+epoch [9/50] batch [80/180] time 0.238 (0.245) data 0.000 (0.007) loss 0.3572 (0.4177) acc 96.8750 (93.1250) lr 1.9823e-03 eta 0:30:29
+epoch [9/50] batch [85/180] time 0.238 (0.244) data 0.000 (0.007) loss 0.1980 (0.4227) acc 96.8750 (93.1618) lr 1.9823e-03 eta 0:30:25
+epoch [9/50] batch [90/180] time 0.238 (0.244) data 0.000 (0.006) loss 0.4533 (0.4277) acc 96.8750 (93.1944) lr 1.9823e-03 eta 0:30:21
+epoch [9/50] batch [95/180] time 0.237 (0.243) data 0.000 (0.006) loss 0.6155 (0.4177) acc 93.7500 (93.2895) lr 1.9823e-03 eta 0:30:17
+epoch [9/50] batch [100/180] time 0.238 (0.243) data 0.000 (0.006) loss 0.0128 (0.4069) acc 100.0000 (93.3750) lr 1.9823e-03 eta 0:30:14
+epoch [9/50] batch [105/180] time 0.238 (0.243) data 0.000 (0.005) loss 0.3482 (0.4016) acc 90.6250 (93.2738) lr 1.9823e-03 eta 0:30:11
+epoch [9/50] batch [110/180] time 0.237 (0.243) data 0.000 (0.005) loss 0.1149 (0.3943) acc 96.8750 (93.3807) lr 1.9823e-03 eta 0:30:08
+epoch [9/50] batch [115/180] time 0.238 (0.242) data 0.000 (0.005) loss 0.7745 (0.3962) acc 90.6250 (93.4511) lr 1.9823e-03 eta 0:30:05
+epoch [9/50] batch [120/180] time 0.237 (0.242) data 0.000 (0.005) loss 0.3375 (0.3958) acc 93.7500 (93.5677) lr 1.9823e-03 eta 0:30:02
+epoch [9/50] batch [125/180] time 0.238 (0.242) data 0.000 (0.004) loss 0.8562 (0.3901) acc 96.8750 (93.7000) lr 1.9823e-03 eta 0:30:00
+epoch [9/50] batch [130/180] time 0.237 (0.242) data 0.000 (0.004) loss 0.2474 (0.3879) acc 90.6250 (93.7740) lr 1.9823e-03 eta 0:29:57
+epoch [9/50] batch [135/180] time 0.238 (0.242) data 0.000 (0.004) loss 0.3487 (0.3821) acc 93.7500 (93.7963) lr 1.9823e-03 eta 0:29:55
+epoch [9/50] batch [140/180] time 0.238 (0.242) data 0.000 (0.004) loss 0.0696 (0.3806) acc 96.8750 (93.7500) lr 1.9823e-03 eta 0:29:52
+epoch [9/50] batch [145/180] time 0.238 (0.241) data 0.000 (0.004) loss 0.4051 (0.3778) acc 87.5000 (93.7716) lr 1.9823e-03 eta 0:29:50
+epoch [9/50] batch [150/180] time 0.237 (0.241) data 0.000 (0.004) loss 0.4317 (0.3873) acc 93.7500 (93.7500) lr 1.9823e-03 eta 0:29:48
+epoch [9/50] batch [155/180] time 0.237 (0.241) data 0.000 (0.004) loss 0.1443 (0.3837) acc 96.8750 (93.7298) lr 1.9823e-03 eta 0:29:46
+epoch [9/50] batch [160/180] time 0.237 (0.241) data 0.000 (0.004) loss 0.1520 (0.3825) acc 90.6250 (93.6719) lr 1.9823e-03 eta 0:29:44
+epoch [9/50] batch [165/180] time 0.238 (0.241) data 0.000 (0.003) loss 0.3436 (0.3826) acc 93.7500 (93.6364) lr 1.9823e-03 eta 0:29:42
+epoch [9/50] batch [170/180] time 0.238 (0.241) data 0.000 (0.003) loss 0.0082 (0.3797) acc 100.0000 (93.6581) lr 1.9823e-03 eta 0:29:40
+epoch [9/50] batch [175/180] time 0.237 (0.241) data 0.000 (0.003) loss 0.0537 (0.3800) acc 96.8750 (93.6786) lr 1.9823e-03 eta 0:29:38
+Adjusting learning rate of group 0 to 1.0000e-05.
+epoch [9/50] batch [180/180] time 0.237 (0.241) data 0.000 (0.003) loss 0.1388 (0.3777) acc 96.8750 (93.7674) lr 1.0000e-05 eta 0:29:36
+在 *val* 集上测试
+=> result
+* total: 824
+* correct: 767
+* accuracy: 93.1%
+* error: 6.9%
+* macro_f1: 89.4%
+=> per-class result
+* class: 0 (face)	total: 44	correct: 44	acc: 100.0%
+* class: 1 (leopard)	total: 20	correct: 19	acc: 95.0%
+* class: 2 (motorbike)	total: 80	correct: 80	acc: 100.0%
+* class: 3 (accordion)	total: 6	correct: 4	acc: 66.7%
+* class: 4 (airplane)	total: 80	correct: 80	acc: 100.0%
+* class: 5 (anchor)	total: 4	correct: 3	acc: 75.0%
+* class: 6 (ant)	total: 4	correct: 3	acc: 75.0%
+* class: 7 (barrel)	total: 5	correct: 5	acc: 100.0%
+* class: 8 (bass)	total: 5	correct: 5	acc: 100.0%
+* class: 9 (beaver)	total: 5	correct: 5	acc: 100.0%
+* class: 10 (binocular)	total: 3	correct: 2	acc: 66.7%
+* class: 11 (bonsai)	total: 13	correct: 13	acc: 100.0%
+* class: 12 (brain)	total: 10	correct: 10	acc: 100.0%
+* class: 13 (brontosaurus)	total: 4	correct: 4	acc: 100.0%
+* class: 14 (buddha)	total: 8	correct: 8	acc: 100.0%
+* class: 15 (butterfly)	total: 9	correct: 8	acc: 88.9%
+* class: 16 (camera)	total: 5	correct: 4	acc: 80.0%
+* class: 17 (cannon)	total: 4	correct: 4	acc: 100.0%
+* class: 18 (car_side)	total: 12	correct: 12	acc: 100.0%
+* class: 19 (ceiling_fan)	total: 5	correct: 5	acc: 100.0%
+* class: 20 (cellphone)	total: 6	correct: 6	acc: 100.0%
+* class: 21 (chair)	total: 6	correct: 3	acc: 50.0%
+* class: 22 (chandelier)	total: 11	correct: 10	acc: 90.9%
+* class: 23 (cougar_body)	total: 5	correct: 5	acc: 100.0%
+* class: 24 (cougar_face)	total: 7	correct: 6	acc: 85.7%
+* class: 25 (crab)	total: 7	correct: 7	acc: 100.0%
+* class: 26 (crayfish)	total: 7	correct: 7	acc: 100.0%
+* class: 27 (crocodile)	total: 5	correct: 5	acc: 100.0%
+* class: 28 (crocodile_head)	total: 5	correct: 3	acc: 60.0%
+* class: 29 (cup)	total: 6	correct: 5	acc: 83.3%
+* class: 30 (dalmatian)	total: 7	correct: 7	acc: 100.0%
+* class: 31 (dollar_bill)	total: 5	correct: 5	acc: 100.0%
+* class: 32 (dolphin)	total: 6	correct: 5	acc: 83.3%
+* class: 33 (dragonfly)	total: 7	correct: 6	acc: 85.7%
+* class: 34 (electric_guitar)	total: 8	correct: 6	acc: 75.0%
+* class: 35 (elephant)	total: 6	correct: 5	acc: 83.3%
+* class: 36 (emu)	total: 5	correct: 4	acc: 80.0%
+* class: 37 (euphonium)	total: 6	correct: 6	acc: 100.0%
+* class: 38 (ewer)	total: 8	correct: 8	acc: 100.0%
+* class: 39 (ferry)	total: 7	correct: 7	acc: 100.0%
+* class: 40 (flamingo)	total: 7	correct: 5	acc: 71.4%
+* class: 41 (flamingo_head)	total: 4	correct: 3	acc: 75.0%
+* class: 42 (garfield)	total: 3	correct: 2	acc: 66.7%
+* class: 43 (gerenuk)	total: 3	correct: 3	acc: 100.0%
+* class: 44 (gramophone)	total: 5	correct: 4	acc: 80.0%
+* class: 45 (grand_piano)	total: 10	correct: 10	acc: 100.0%
+* class: 46 (hawksbill)	total: 10	correct: 10	acc: 100.0%
+* class: 47 (headphone)	total: 4	correct: 4	acc: 100.0%
+* class: 48 (hedgehog)	total: 5	correct: 5	acc: 100.0%
+* class: 49 (helicopter)	total: 9	correct: 8	acc: 88.9%
+* class: 50 (ibis)	total: 8	correct: 8	acc: 100.0%
+* class: 51 (inline_skate)	total: 3	correct: 3	acc: 100.0%
+* class: 52 (joshua_tree)	total: 6	correct: 6	acc: 100.0%
+* class: 53 (kangaroo)	total: 9	correct: 9	acc: 100.0%
+* class: 54 (ketch)	total: 11	correct: 9	acc: 81.8%
+* class: 55 (lamp)	total: 6	correct: 6	acc: 100.0%
+* class: 56 (laptop)	total: 8	correct: 8	acc: 100.0%
+* class: 57 (llama)	total: 8	correct: 7	acc: 87.5%
+* class: 58 (lobster)	total: 4	correct: 1	acc: 25.0%
+* class: 59 (lotus)	total: 7	correct: 4	acc: 57.1%
+* class: 60 (mandolin)	total: 4	correct: 4	acc: 100.0%
+* class: 61 (mayfly)	total: 4	correct: 4	acc: 100.0%
+* class: 62 (menorah)	total: 9	correct: 9	acc: 100.0%
+* class: 63 (metronome)	total: 3	correct: 3	acc: 100.0%
+* class: 64 (minaret)	total: 8	correct: 6	acc: 75.0%
+* class: 65 (nautilus)	total: 6	correct: 6	acc: 100.0%
+* class: 66 (octopus)	total: 4	correct: 3	acc: 75.0%
+* class: 67 (okapi)	total: 4	correct: 4	acc: 100.0%
+* class: 68 (pagoda)	total: 5	correct: 5	acc: 100.0%
+* class: 69 (panda)	total: 4	correct: 4	acc: 100.0%
+* class: 70 (pigeon)	total: 4	correct: 4	acc: 100.0%
+* class: 71 (pizza)	total: 5	correct: 5	acc: 100.0%
+* class: 72 (platypus)	total: 3	correct: 2	acc: 66.7%
+* class: 73 (pyramid)	total: 6	correct: 6	acc: 100.0%
+* class: 74 (revolver)	total: 8	correct: 8	acc: 100.0%
+* class: 75 (rhino)	total: 6	correct: 6	acc: 100.0%
+* class: 76 (rooster)	total: 5	correct: 5	acc: 100.0%
+* class: 77 (saxophone)	total: 4	correct: 4	acc: 100.0%
+* class: 78 (schooner)	total: 6	correct: 2	acc: 33.3%
+* class: 79 (scissors)	total: 4	correct: 3	acc: 75.0%
+* class: 80 (scorpion)	total: 8	correct: 6	acc: 75.0%
+* class: 81 (sea_horse)	total: 6	correct: 5	acc: 83.3%
+* class: 82 (snoopy)	total: 4	correct: 4	acc: 100.0%
+* class: 83 (soccer_ball)	total: 6	correct: 6	acc: 100.0%
+* class: 84 (stapler)	total: 4	correct: 3	acc: 75.0%
+* class: 85 (starfish)	total: 9	correct: 9	acc: 100.0%
+* class: 86 (stegosaurus)	total: 6	correct: 6	acc: 100.0%
+* class: 87 (stop_sign)	total: 6	correct: 6	acc: 100.0%
+* class: 88 (strawberry)	total: 4	correct: 4	acc: 100.0%
+* class: 89 (sunflower)	total: 8	correct: 8	acc: 100.0%
+* class: 90 (tick)	total: 5	correct: 5	acc: 100.0%
+* class: 91 (trilobite)	total: 9	correct: 9	acc: 100.0%
+* class: 92 (umbrella)	total: 8	correct: 7	acc: 87.5%
+* class: 93 (watch)	total: 24	correct: 23	acc: 95.8%
+* class: 94 (water_lilly)	total: 4	correct: 2	acc: 50.0%
+* class: 95 (wheelchair)	total: 6	correct: 6	acc: 100.0%
+* class: 96 (wild_cat)	total: 3	correct: 3	acc: 100.0%
+* class: 97 (windsor_chair)	total: 6	correct: 5	acc: 83.3%
+* class: 98 (wrench)	total: 4	correct: 2	acc: 50.0%
+* class: 99 (yin_yang)	total: 6	correct: 6	acc: 100.0%
+* average: 89.8%
+Confusion matrix is saved to ./output/25-03-31-00-24-00/cmat.pt
+epoch [10/50] batch [5/180] time 0.238 (0.342) data 0.000 (0.101) loss 0.1900 (0.3346) acc 96.8750 (95.0000) lr 1.0000e-05 eta 0:42:04
+epoch [10/50] batch [10/180] time 0.237 (0.290) data 0.000 (0.050) loss 0.0425 (0.2855) acc 96.8750 (95.3125) lr 1.0000e-05 eta 0:35:36
+epoch [10/50] batch [15/180] time 0.237 (0.272) data 0.000 (0.034) loss 0.2412 (0.3092) acc 93.7500 (95.0000) lr 1.0000e-05 eta 0:33:25
+epoch [10/50] batch [20/180] time 0.238 (0.264) data 0.000 (0.025) loss 1.1911 (0.3341) acc 87.5000 (94.3750) lr 1.0000e-05 eta 0:32:20
+epoch [10/50] batch [25/180] time 0.237 (0.258) data 0.000 (0.020) loss 0.3527 (0.2843) acc 93.7500 (95.0000) lr 1.0000e-05 eta 0:31:40
+epoch [10/50] batch [30/180] time 0.237 (0.255) data 0.000 (0.017) loss 0.3620 (0.3316) acc 96.8750 (94.3750) lr 1.0000e-05 eta 0:31:13
+epoch [10/50] batch [35/180] time 0.237 (0.252) data 0.000 (0.014) loss 0.7515 (0.3372) acc 87.5000 (94.5536) lr 1.0000e-05 eta 0:30:53
+epoch [10/50] batch [40/180] time 0.237 (0.251) data 0.000 (0.013) loss 0.2700 (0.3100) acc 96.8750 (94.7656) lr 1.0000e-05 eta 0:30:39
+epoch [10/50] batch [45/180] time 0.237 (0.249) data 0.000 (0.011) loss 0.3139 (0.2985) acc 90.6250 (94.9306) lr 1.0000e-05 eta 0:30:27
+epoch [10/50] batch [50/180] time 0.238 (0.248) data 0.000 (0.010) loss 0.0005 (0.3036) acc 100.0000 (95.0625) lr 1.0000e-05 eta 0:30:17
+epoch [10/50] batch [55/180] time 0.238 (0.247) data 0.000 (0.009) loss 0.1513 (0.3195) acc 96.8750 (95.0568) lr 1.0000e-05 eta 0:30:09
+epoch [10/50] batch [60/180] time 0.238 (0.246) data 0.000 (0.008) loss 0.2413 (0.3121) acc 93.7500 (94.9479) lr 1.0000e-05 eta 0:30:02
+epoch [10/50] batch [65/180] time 0.238 (0.246) data 0.000 (0.008) loss 0.6447 (0.3017) acc 93.7500 (95.0481) lr 1.0000e-05 eta 0:29:56
+epoch [10/50] batch [70/180] time 0.237 (0.245) data 0.000 (0.007) loss 0.2761 (0.3086) acc 90.6250 (94.9554) lr 1.0000e-05 eta 0:29:51
+epoch [10/50] batch [75/180] time 0.238 (0.245) data 0.000 (0.007) loss 0.5342 (0.3113) acc 93.7500 (94.9583) lr 1.0000e-05 eta 0:29:46
+epoch [10/50] batch [80/180] time 0.237 (0.244) data 0.000 (0.006) loss 0.3815 (0.3260) acc 96.8750 (94.9219) lr 1.0000e-05 eta 0:29:42
+epoch [10/50] batch [85/180] time 0.237 (0.244) data 0.000 (0.006) loss 0.0343 (0.3268) acc 96.8750 (94.8897) lr 1.0000e-05 eta 0:29:37
+epoch [10/50] batch [90/180] time 0.238 (0.243) data 0.000 (0.006) loss 0.1426 (0.3228) acc 93.7500 (94.8264) lr 1.0000e-05 eta 0:29:34
+epoch [10/50] batch [95/180] time 0.238 (0.243) data 0.000 (0.005) loss 0.7980 (0.3354) acc 93.7500 (94.8026) lr 1.0000e-05 eta 0:29:30
+epoch [10/50] batch [100/180] time 0.238 (0.243) data 0.000 (0.005) loss 0.0747 (0.3578) acc 96.8750 (94.5938) lr 1.0000e-05 eta 0:29:27
+epoch [10/50] batch [105/180] time 0.238 (0.243) data 0.000 (0.005) loss 0.3626 (0.3554) acc 93.7500 (94.4940) lr 1.0000e-05 eta 0:29:24
+epoch [10/50] batch [110/180] time 0.237 (0.242) data 0.000 (0.005) loss 0.4400 (0.3470) acc 87.5000 (94.5455) lr 1.0000e-05 eta 0:29:21
+epoch [10/50] batch [115/180] time 0.238 (0.242) data 0.001 (0.004) loss 0.0088 (0.3477) acc 100.0000 (94.5652) lr 1.0000e-05 eta 0:29:18
+epoch [10/50] batch [120/180] time 0.237 (0.242) data 0.000 (0.004) loss 0.3234 (0.3425) acc 96.8750 (94.6354) lr 1.0000e-05 eta 0:29:16
+epoch [10/50] batch [125/180] time 0.238 (0.242) data 0.000 (0.004) loss 0.2224 (0.3319) acc 93.7500 (94.7250) lr 1.0000e-05 eta 0:29:13
+epoch [10/50] batch [130/180] time 0.237 (0.242) data 0.000 (0.004) loss 0.3382 (0.3309) acc 93.7500 (94.7356) lr 1.0000e-05 eta 0:29:11
+epoch [10/50] batch [135/180] time 0.238 (0.241) data 0.000 (0.004) loss 0.8625 (0.3361) acc 96.8750 (94.6991) lr 1.0000e-05 eta 0:29:09
+epoch [10/50] batch [140/180] time 0.238 (0.241) data 0.000 (0.004) loss 0.1999 (0.3371) acc 93.7500 (94.6875) lr 1.0000e-05 eta 0:29:07
+epoch [10/50] batch [145/180] time 0.238 (0.241) data 0.000 (0.004) loss 0.0981 (0.3290) acc 96.8750 (94.7845) lr 1.0000e-05 eta 0:29:04
+epoch [10/50] batch [150/180] time 0.237 (0.241) data 0.000 (0.003) loss 0.2765 (0.3231) acc 90.6250 (94.7292) lr 1.0000e-05 eta 0:29:02
+epoch [10/50] batch [155/180] time 0.238 (0.241) data 0.000 (0.003) loss 1.7049 (0.3305) acc 93.7500 (94.7177) lr 1.0000e-05 eta 0:29:00
+epoch [10/50] batch [160/180] time 0.237 (0.241) data 0.000 (0.003) loss 0.1195 (0.3387) acc 93.7500 (94.6289) lr 1.0000e-05 eta 0:28:58
+epoch [10/50] batch [165/180] time 0.237 (0.241) data 0.000 (0.003) loss 0.3219 (0.3354) acc 90.6250 (94.6212) lr 1.0000e-05 eta 0:28:56
+epoch [10/50] batch [170/180] time 0.237 (0.241) data 0.000 (0.003) loss 0.0003 (0.3325) acc 100.0000 (94.6507) lr 1.0000e-05 eta 0:28:54
+epoch [10/50] batch [175/180] time 0.238 (0.241) data 0.000 (0.003) loss 0.2187 (0.3457) acc 96.8750 (94.5536) lr 1.0000e-05 eta 0:28:53
+Adjusting learning rate of group 0 to 1.9823e-03.
+epoch [10/50] batch [180/180] time 0.237 (0.240) data 0.000 (0.003) loss 0.4676 (0.3447) acc 87.5000 (94.5139) lr 1.9823e-03 eta 0:28:51
+在 *val* 集上测试
+=> result
+* total: 824
+* correct: 766
+* accuracy: 93.0%
+* error: 7.0%
+* macro_f1: 89.2%
+=> per-class result
+* class: 0 (face)	total: 44	correct: 44	acc: 100.0%
+* class: 1 (leopard)	total: 20	correct: 19	acc: 95.0%
+* class: 2 (motorbike)	total: 80	correct: 80	acc: 100.0%
+* class: 3 (accordion)	total: 6	correct: 4	acc: 66.7%
+* class: 4 (airplane)	total: 80	correct: 80	acc: 100.0%
+* class: 5 (anchor)	total: 4	correct: 3	acc: 75.0%
+* class: 6 (ant)	total: 4	correct: 3	acc: 75.0%
+* class: 7 (barrel)	total: 5	correct: 5	acc: 100.0%
+* class: 8 (bass)	total: 5	correct: 5	acc: 100.0%
+* class: 9 (beaver)	total: 5	correct: 5	acc: 100.0%
+* class: 10 (binocular)	total: 3	correct: 2	acc: 66.7%
+* class: 11 (bonsai)	total: 13	correct: 13	acc: 100.0%
+* class: 12 (brain)	total: 10	correct: 10	acc: 100.0%
+* class: 13 (brontosaurus)	total: 4	correct: 4	acc: 100.0%
+* class: 14 (buddha)	total: 8	correct: 8	acc: 100.0%
+* class: 15 (butterfly)	total: 9	correct: 8	acc: 88.9%
+* class: 16 (camera)	total: 5	correct: 4	acc: 80.0%
+* class: 17 (cannon)	total: 4	correct: 4	acc: 100.0%
+* class: 18 (car_side)	total: 12	correct: 12	acc: 100.0%
+* class: 19 (ceiling_fan)	total: 5	correct: 5	acc: 100.0%
+* class: 20 (cellphone)	total: 6	correct: 6	acc: 100.0%
+* class: 21 (chair)	total: 6	correct: 3	acc: 50.0%
+* class: 22 (chandelier)	total: 11	correct: 10	acc: 90.9%
+* class: 23 (cougar_body)	total: 5	correct: 5	acc: 100.0%
+* class: 24 (cougar_face)	total: 7	correct: 6	acc: 85.7%
+* class: 25 (crab)	total: 7	correct: 7	acc: 100.0%
+* class: 26 (crayfish)	total: 7	correct: 7	acc: 100.0%
+* class: 27 (crocodile)	total: 5	correct: 5	acc: 100.0%
+* class: 28 (crocodile_head)	total: 5	correct: 3	acc: 60.0%
+* class: 29 (cup)	total: 6	correct: 5	acc: 83.3%
+* class: 30 (dalmatian)	total: 7	correct: 7	acc: 100.0%
+* class: 31 (dollar_bill)	total: 5	correct: 5	acc: 100.0%
+* class: 32 (dolphin)	total: 6	correct: 5	acc: 83.3%
+* class: 33 (dragonfly)	total: 7	correct: 5	acc: 71.4%
+* class: 34 (electric_guitar)	total: 8	correct: 6	acc: 75.0%
+* class: 35 (elephant)	total: 6	correct: 5	acc: 83.3%
+* class: 36 (emu)	total: 5	correct: 4	acc: 80.0%
+* class: 37 (euphonium)	total: 6	correct: 6	acc: 100.0%
+* class: 38 (ewer)	total: 8	correct: 8	acc: 100.0%
+* class: 39 (ferry)	total: 7	correct: 7	acc: 100.0%
+* class: 40 (flamingo)	total: 7	correct: 5	acc: 71.4%
+* class: 41 (flamingo_head)	total: 4	correct: 3	acc: 75.0%
+* class: 42 (garfield)	total: 3	correct: 2	acc: 66.7%
+* class: 43 (gerenuk)	total: 3	correct: 3	acc: 100.0%
+* class: 44 (gramophone)	total: 5	correct: 4	acc: 80.0%
+* class: 45 (grand_piano)	total: 10	correct: 10	acc: 100.0%
+* class: 46 (hawksbill)	total: 10	correct: 10	acc: 100.0%
+* class: 47 (headphone)	total: 4	correct: 4	acc: 100.0%
+* class: 48 (hedgehog)	total: 5	correct: 5	acc: 100.0%
+* class: 49 (helicopter)	total: 9	correct: 8	acc: 88.9%
+* class: 50 (ibis)	total: 8	correct: 8	acc: 100.0%
+* class: 51 (inline_skate)	total: 3	correct: 3	acc: 100.0%
+* class: 52 (joshua_tree)	total: 6	correct: 6	acc: 100.0%
+* class: 53 (kangaroo)	total: 9	correct: 9	acc: 100.0%
+* class: 54 (ketch)	total: 11	correct: 9	acc: 81.8%
+* class: 55 (lamp)	total: 6	correct: 6	acc: 100.0%
+* class: 56 (laptop)	total: 8	correct: 8	acc: 100.0%
+* class: 57 (llama)	total: 8	correct: 7	acc: 87.5%
+* class: 58 (lobster)	total: 4	correct: 1	acc: 25.0%
+* class: 59 (lotus)	total: 7	correct: 4	acc: 57.1%
+* class: 60 (mandolin)	total: 4	correct: 4	acc: 100.0%
+* class: 61 (mayfly)	total: 4	correct: 4	acc: 100.0%
+* class: 62 (menorah)	total: 9	correct: 9	acc: 100.0%
+* class: 63 (metronome)	total: 3	correct: 3	acc: 100.0%
+* class: 64 (minaret)	total: 8	correct: 6	acc: 75.0%
+* class: 65 (nautilus)	total: 6	correct: 6	acc: 100.0%
+* class: 66 (octopus)	total: 4	correct: 3	acc: 75.0%
+* class: 67 (okapi)	total: 4	correct: 4	acc: 100.0%
+* class: 68 (pagoda)	total: 5	correct: 5	acc: 100.0%
+* class: 69 (panda)	total: 4	correct: 4	acc: 100.0%
+* class: 70 (pigeon)	total: 4	correct: 4	acc: 100.0%
+* class: 71 (pizza)	total: 5	correct: 5	acc: 100.0%
+* class: 72 (platypus)	total: 3	correct: 2	acc: 66.7%
+* class: 73 (pyramid)	total: 6	correct: 6	acc: 100.0%
+* class: 74 (revolver)	total: 8	correct: 8	acc: 100.0%
+* class: 75 (rhino)	total: 6	correct: 6	acc: 100.0%
+* class: 76 (rooster)	total: 5	correct: 5	acc: 100.0%
+* class: 77 (saxophone)	total: 4	correct: 4	acc: 100.0%
+* class: 78 (schooner)	total: 6	correct: 2	acc: 33.3%
+* class: 79 (scissors)	total: 4	correct: 3	acc: 75.0%
+* class: 80 (scorpion)	total: 8	correct: 6	acc: 75.0%
+* class: 81 (sea_horse)	total: 6	correct: 5	acc: 83.3%
+* class: 82 (snoopy)	total: 4	correct: 4	acc: 100.0%
+* class: 83 (soccer_ball)	total: 6	correct: 6	acc: 100.0%
+* class: 84 (stapler)	total: 4	correct: 3	acc: 75.0%
+* class: 85 (starfish)	total: 9	correct: 9	acc: 100.0%
+* class: 86 (stegosaurus)	total: 6	correct: 6	acc: 100.0%
+* class: 87 (stop_sign)	total: 6	correct: 6	acc: 100.0%
+* class: 88 (strawberry)	total: 4	correct: 4	acc: 100.0%
+* class: 89 (sunflower)	total: 8	correct: 8	acc: 100.0%
+* class: 90 (tick)	total: 5	correct: 5	acc: 100.0%
+* class: 91 (trilobite)	total: 9	correct: 9	acc: 100.0%
+* class: 92 (umbrella)	total: 8	correct: 7	acc: 87.5%
+* class: 93 (watch)	total: 24	correct: 23	acc: 95.8%
+* class: 94 (water_lilly)	total: 4	correct: 2	acc: 50.0%
+* class: 95 (wheelchair)	total: 6	correct: 6	acc: 100.0%
+* class: 96 (wild_cat)	total: 3	correct: 3	acc: 100.0%
+* class: 97 (windsor_chair)	total: 6	correct: 5	acc: 83.3%
+* class: 98 (wrench)	total: 4	correct: 2	acc: 50.0%
+* class: 99 (yin_yang)	total: 6	correct: 6	acc: 100.0%
+* average: 89.7%
+Confusion matrix is saved to ./output/25-03-31-00-24-00/cmat.pt
+检查点已保存到 ./output/25-03-31-00-24-00/CLIP_promptLearner/model.pth.tar-10
+epoch [11/50] batch [5/180] time 0.237 (0.339) data 0.000 (0.099) loss 0.0470 (0.3743) acc 96.8750 (91.8750) lr 1.9823e-03 eta 0:40:35
+epoch [11/50] batch [10/180] time 0.238 (0.288) data 0.000 (0.050) loss 0.6693 (0.4474) acc 84.3750 (91.2500) lr 1.9823e-03 eta 0:34:31
+epoch [11/50] batch [15/180] time 0.238 (0.271) data 0.000 (0.033) loss 0.3661 (0.4230) acc 93.7500 (91.2500) lr 1.9823e-03 eta 0:32:28
+epoch [11/50] batch [20/180] time 0.237 (0.263) data 0.000 (0.025) loss 0.0283 (0.3643) acc 96.8750 (92.0312) lr 1.9823e-03 eta 0:31:26
+epoch [11/50] batch [25/180] time 0.237 (0.258) data 0.000 (0.020) loss 0.7845 (0.3589) acc 93.7500 (92.3750) lr 1.9823e-03 eta 0:30:49
+epoch [11/50] batch [30/180] time 0.237 (0.254) data 0.000 (0.017) loss 0.0681 (0.3088) acc 96.8750 (93.1250) lr 1.9823e-03 eta 0:30:23
+epoch [11/50] batch [35/180] time 0.238 (0.252) data 0.000 (0.014) loss 0.0036 (0.2751) acc 100.0000 (93.7500) lr 1.9823e-03 eta 0:30:05
+epoch [11/50] batch [40/180] time 0.237 (0.250) data 0.000 (0.013) loss 0.0725 (0.2781) acc 96.8750 (94.0625) lr 1.9823e-03 eta 0:29:51
+epoch [11/50] batch [45/180] time 0.238 (0.249) data 0.000 (0.011) loss 0.0750 (0.2853) acc 96.8750 (94.3750) lr 1.9823e-03 eta 0:29:39
+epoch [11/50] batch [50/180] time 0.237 (0.248) data 0.000 (0.010) loss 0.3114 (0.3013) acc 87.5000 (94.1250) lr 1.9823e-03 eta 0:29:30
+epoch [11/50] batch [55/180] time 0.237 (0.247) data 0.000 (0.009) loss 0.6916 (0.3056) acc 93.7500 (94.2614) lr 1.9823e-03 eta 0:29:22
+epoch [11/50] batch [60/180] time 0.237 (0.246) data 0.000 (0.008) loss 0.6406 (0.3113) acc 90.6250 (94.0625) lr 1.9823e-03 eta 0:29:15
+epoch [11/50] batch [65/180] time 0.237 (0.245) data 0.000 (0.008) loss 0.0135 (0.3105) acc 100.0000 (94.2788) lr 1.9823e-03 eta 0:29:09
+epoch [11/50] batch [70/180] time 0.238 (0.245) data 0.000 (0.007) loss 0.0298 (0.2980) acc 96.8750 (94.3304) lr 1.9823e-03 eta 0:29:04
+epoch [11/50] batch [75/180] time 0.237 (0.244) data 0.000 (0.007) loss 0.0288 (0.3037) acc 96.8750 (94.2083) lr 1.9823e-03 eta 0:29:00
+epoch [11/50] batch [80/180] time 0.237 (0.244) data 0.000 (0.006) loss 0.2436 (0.2958) acc 93.7500 (94.2969) lr 1.9823e-03 eta 0:28:55
+epoch [11/50] batch [85/180] time 0.237 (0.243) data 0.000 (0.006) loss 0.0970 (0.2845) acc 96.8750 (94.3750) lr 1.9823e-03 eta 0:28:51
+epoch [11/50] batch [90/180] time 0.237 (0.243) data 0.000 (0.006) loss 0.8712 (0.2952) acc 87.5000 (94.1667) lr 1.9823e-03 eta 0:28:48
+epoch [11/50] batch [95/180] time 0.237 (0.243) data 0.000 (0.005) loss 0.3005 (0.2936) acc 96.8750 (94.3092) lr 1.9823e-03 eta 0:28:44
+epoch [11/50] batch [100/180] time 0.237 (0.243) data 0.000 (0.005) loss 0.2166 (0.2911) acc 96.8750 (94.3125) lr 1.9823e-03 eta 0:28:41
+epoch [11/50] batch [105/180] time 0.238 (0.242) data 0.000 (0.005) loss 0.0537 (0.2941) acc 96.8750 (94.1964) lr 1.9823e-03 eta 0:28:38
+epoch [11/50] batch [110/180] time 0.237 (0.242) data 0.000 (0.005) loss 0.0780 (0.2928) acc 96.8750 (94.1477) lr 1.9823e-03 eta 0:28:36
+epoch [11/50] batch [115/180] time 0.238 (0.242) data 0.000 (0.004) loss 0.2908 (0.3050) acc 93.7500 (93.9674) lr 1.9823e-03 eta 0:28:33
+epoch [11/50] batch [120/180] time 0.237 (0.242) data 0.000 (0.004) loss 1.1978 (0.3172) acc 90.6250 (93.9062) lr 1.9823e-03 eta 0:28:31
+epoch [11/50] batch [125/180] time 0.237 (0.242) data 0.000 (0.004) loss 0.2035 (0.3164) acc 93.7500 (93.9500) lr 1.9823e-03 eta 0:28:28
+epoch [11/50] batch [130/180] time 0.237 (0.241) data 0.000 (0.004) loss 0.6860 (0.3158) acc 90.6250 (93.9423) lr 1.9823e-03 eta 0:28:26
+epoch [11/50] batch [135/180] time 0.238 (0.241) data 0.000 (0.004) loss 0.1189 (0.3202) acc 93.7500 (93.8426) lr 1.9823e-03 eta 0:28:24
+epoch [11/50] batch [140/180] time 0.237 (0.241) data 0.000 (0.004) loss 0.4439 (0.3199) acc 93.7500 (93.8393) lr 1.9823e-03 eta 0:28:21
+epoch [11/50] batch [145/180] time 0.238 (0.241) data 0.000 (0.004) loss 0.0922 (0.3139) acc 96.8750 (93.9009) lr 1.9823e-03 eta 0:28:19
+epoch [11/50] batch [150/180] time 0.237 (0.241) data 0.000 (0.003) loss 0.4672 (0.3126) acc 93.7500 (93.9167) lr 1.9823e-03 eta 0:28:17
+epoch [11/50] batch [155/180] time 0.238 (0.241) data 0.000 (0.003) loss 0.1073 (0.3086) acc 93.7500 (93.9516) lr 1.9823e-03 eta 0:28:15
+epoch [11/50] batch [160/180] time 0.237 (0.241) data 0.000 (0.003) loss 0.1694 (0.3097) acc 96.8750 (94.0234) lr 1.9823e-03 eta 0:28:13
+epoch [11/50] batch [165/180] time 0.238 (0.241) data 0.000 (0.003) loss 0.2906 (0.3104) acc 90.6250 (94.0341) lr 1.9823e-03 eta 0:28:11
+epoch [11/50] batch [170/180] time 0.237 (0.240) data 0.000 (0.003) loss 0.2609 (0.3095) acc 93.7500 (93.9890) lr 1.9823e-03 eta 0:28:10
+epoch [11/50] batch [175/180] time 0.237 (0.240) data 0.000 (0.003) loss 1.1268 (0.3292) acc 90.6250 (93.9286) lr 1.9823e-03 eta 0:28:08
+由于设置了 warmup_recount，且现在预热结束，因此重置 epoch 为 -1
+epoch [11/50] batch [180/180] time 0.237 (0.240) data 0.000 (0.003) loss 0.4418 (0.3313) acc 90.6250 (93.9236) lr 1.9686e-03 eta 0:28:06
+在 *val* 集上测试
+=> result
+* total: 824
+* correct: 755
+* accuracy: 91.6%
+* error: 8.4%
+* macro_f1: 87.4%
+=> per-class result
+* class: 0 (face)	total: 44	correct: 44	acc: 100.0%
+* class: 1 (leopard)	total: 20	correct: 19	acc: 95.0%
+* class: 2 (motorbike)	total: 80	correct: 80	acc: 100.0%
+* class: 3 (accordion)	total: 6	correct: 4	acc: 66.7%
+* class: 4 (airplane)	total: 80	correct: 80	acc: 100.0%
+* class: 5 (anchor)	total: 4	correct: 3	acc: 75.0%
+* class: 6 (ant)	total: 4	correct: 2	acc: 50.0%
+* class: 7 (barrel)	total: 5	correct: 5	acc: 100.0%
+* class: 8 (bass)	total: 5	correct: 5	acc: 100.0%
+* class: 9 (beaver)	total: 5	correct: 5	acc: 100.0%
+* class: 10 (binocular)	total: 3	correct: 2	acc: 66.7%
+* class: 11 (bonsai)	total: 13	correct: 13	acc: 100.0%
+* class: 12 (brain)	total: 10	correct: 10	acc: 100.0%
+* class: 13 (brontosaurus)	total: 4	correct: 4	acc: 100.0%
+* class: 14 (buddha)	total: 8	correct: 8	acc: 100.0%
+* class: 15 (butterfly)	total: 9	correct: 8	acc: 88.9%
+* class: 16 (camera)	total: 5	correct: 4	acc: 80.0%
+* class: 17 (cannon)	total: 4	correct: 4	acc: 100.0%
+* class: 18 (car_side)	total: 12	correct: 12	acc: 100.0%
+* class: 19 (ceiling_fan)	total: 5	correct: 4	acc: 80.0%
+* class: 20 (cellphone)	total: 6	correct: 6	acc: 100.0%
+* class: 21 (chair)	total: 6	correct: 3	acc: 50.0%
+* class: 22 (chandelier)	total: 11	correct: 11	acc: 100.0%
+* class: 23 (cougar_body)	total: 5	correct: 5	acc: 100.0%
+* class: 24 (cougar_face)	total: 7	correct: 6	acc: 85.7%
+* class: 25 (crab)	total: 7	correct: 7	acc: 100.0%
+* class: 26 (crayfish)	total: 7	correct: 7	acc: 100.0%
+* class: 27 (crocodile)	total: 5	correct: 5	acc: 100.0%
+* class: 28 (crocodile_head)	total: 5	correct: 3	acc: 60.0%
+* class: 29 (cup)	total: 6	correct: 5	acc: 83.3%
+* class: 30 (dalmatian)	total: 7	correct: 7	acc: 100.0%
+* class: 31 (dollar_bill)	total: 5	correct: 5	acc: 100.0%
+* class: 32 (dolphin)	total: 6	correct: 5	acc: 83.3%
+* class: 33 (dragonfly)	total: 7	correct: 3	acc: 42.9%
+* class: 34 (electric_guitar)	total: 8	correct: 7	acc: 87.5%
+* class: 35 (elephant)	total: 6	correct: 5	acc: 83.3%
+* class: 36 (emu)	total: 5	correct: 4	acc: 80.0%
+* class: 37 (euphonium)	total: 6	correct: 5	acc: 83.3%
+* class: 38 (ewer)	total: 8	correct: 7	acc: 87.5%
+* class: 39 (ferry)	total: 7	correct: 7	acc: 100.0%
+* class: 40 (flamingo)	total: 7	correct: 5	acc: 71.4%
+* class: 41 (flamingo_head)	total: 4	correct: 3	acc: 75.0%
+* class: 42 (garfield)	total: 3	correct: 2	acc: 66.7%
+* class: 43 (gerenuk)	total: 3	correct: 2	acc: 66.7%
+* class: 44 (gramophone)	total: 5	correct: 4	acc: 80.0%
+* class: 45 (grand_piano)	total: 10	correct: 10	acc: 100.0%
+* class: 46 (hawksbill)	total: 10	correct: 10	acc: 100.0%
+* class: 47 (headphone)	total: 4	correct: 4	acc: 100.0%
+* class: 48 (hedgehog)	total: 5	correct: 5	acc: 100.0%
+* class: 49 (helicopter)	total: 9	correct: 8	acc: 88.9%
+* class: 50 (ibis)	total: 8	correct: 8	acc: 100.0%
+* class: 51 (inline_skate)	total: 3	correct: 3	acc: 100.0%
+* class: 52 (joshua_tree)	total: 6	correct: 6	acc: 100.0%
+* class: 53 (kangaroo)	total: 9	correct: 9	acc: 100.0%
+* class: 54 (ketch)	total: 11	correct: 2	acc: 18.2%
+* class: 55 (lamp)	total: 6	correct: 6	acc: 100.0%
+* class: 56 (laptop)	total: 8	correct: 8	acc: 100.0%
+* class: 57 (llama)	total: 8	correct: 8	acc: 100.0%
+* class: 58 (lobster)	total: 4	correct: 1	acc: 25.0%
+* class: 59 (lotus)	total: 7	correct: 4	acc: 57.1%
+* class: 60 (mandolin)	total: 4	correct: 3	acc: 75.0%
+* class: 61 (mayfly)	total: 4	correct: 4	acc: 100.0%
+* class: 62 (menorah)	total: 9	correct: 9	acc: 100.0%
+* class: 63 (metronome)	total: 3	correct: 3	acc: 100.0%
+* class: 64 (minaret)	total: 8	correct: 6	acc: 75.0%
+* class: 65 (nautilus)	total: 6	correct: 6	acc: 100.0%
+* class: 66 (octopus)	total: 4	correct: 3	acc: 75.0%
+* class: 67 (okapi)	total: 4	correct: 4	acc: 100.0%
+* class: 68 (pagoda)	total: 5	correct: 5	acc: 100.0%
+* class: 69 (panda)	total: 4	correct: 4	acc: 100.0%
+* class: 70 (pigeon)	total: 4	correct: 4	acc: 100.0%
+* class: 71 (pizza)	total: 5	correct: 5	acc: 100.0%
+* class: 72 (platypus)	total: 3	correct: 2	acc: 66.7%
+* class: 73 (pyramid)	total: 6	correct: 5	acc: 83.3%
+* class: 74 (revolver)	total: 8	correct: 8	acc: 100.0%
+* class: 75 (rhino)	total: 6	correct: 6	acc: 100.0%
+* class: 76 (rooster)	total: 5	correct: 5	acc: 100.0%
+* class: 77 (saxophone)	total: 4	correct: 4	acc: 100.0%
+* class: 78 (schooner)	total: 6	correct: 5	acc: 83.3%
+* class: 79 (scissors)	total: 4	correct: 3	acc: 75.0%
+* class: 80 (scorpion)	total: 8	correct: 6	acc: 75.0%
+* class: 81 (sea_horse)	total: 6	correct: 6	acc: 100.0%
+* class: 82 (snoopy)	total: 4	correct: 4	acc: 100.0%
+* class: 83 (soccer_ball)	total: 6	correct: 6	acc: 100.0%
+* class: 84 (stapler)	total: 4	correct: 3	acc: 75.0%
+* class: 85 (starfish)	total: 9	correct: 9	acc: 100.0%
+* class: 86 (stegosaurus)	total: 6	correct: 6	acc: 100.0%
+* class: 87 (stop_sign)	total: 6	correct: 6	acc: 100.0%
+* class: 88 (strawberry)	total: 4	correct: 4	acc: 100.0%
+* class: 89 (sunflower)	total: 8	correct: 8	acc: 100.0%
+* class: 90 (tick)	total: 5	correct: 4	acc: 80.0%
+* class: 91 (trilobite)	total: 9	correct: 8	acc: 88.9%
+* class: 92 (umbrella)	total: 8	correct: 7	acc: 87.5%
+* class: 93 (watch)	total: 24	correct: 23	acc: 95.8%
+* class: 94 (water_lilly)	total: 4	correct: 2	acc: 50.0%
+* class: 95 (wheelchair)	total: 6	correct: 6	acc: 100.0%
+* class: 96 (wild_cat)	total: 3	correct: 3	acc: 100.0%
+* class: 97 (windsor_chair)	total: 6	correct: 5	acc: 83.3%
+* class: 98 (wrench)	total: 4	correct: 2	acc: 50.0%
+* class: 99 (yin_yang)	total: 6	correct: 6	acc: 100.0%
+* average: 88.0%
+Confusion matrix is saved to ./output/25-03-31-00-24-00/cmat.pt

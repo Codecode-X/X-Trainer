@@ -14,7 +14,6 @@ from .build import TRAINER_REGISTRY
 @TRAINER_REGISTRY.register()
 class TrainerCoOpCLIP(TrainerClip):
 
-
     def init_model(self, cfg):
         """
         (实现父类的方法) 初始化模型。
@@ -30,11 +29,11 @@ class TrainerCoOpCLIP(TrainerClip):
 
         主要步骤：
         1. 构建模型
-        2. 冻结模型的文本编码器，只训练图像编码器
+        2. 冻结 CLIP 的文本编码器和图像编码器，只训练 CoOp 的 PromptLearner
         3. 将模型移动到设备
-        4. 将模型调整为精度混合训练
-        5. 多 GPU 并行训练情况，则将模型部署到多个 GPU 上
-        6. 构建优化器和调度器，只优化图像编码器，并注册
+        4. 将模型调整为精度混合训练 (如果配置了精度混合训练)
+        5. 多 GPU 并行训练情况，则将模型部署到多个 GPU 上 (如果有多个 GPU)
+        6. 构建优化器和调度器，只优化 CLIP 的 PromptLearner，并注册
         7. 返回模型、优化器和调度器
         """
         # 构建模型

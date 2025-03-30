@@ -88,7 +88,7 @@ class Clip(ModelBase):
         # 创建视觉 Transformer
         if isinstance(vision_layers, (tuple, list)):
             vision_heads = vision_width * 32 // 64
-            self.image_encoder = ModifiedResNet(  # 基于 ResNet
+            self.visual = ModifiedResNet(  # 基于 ResNet
                 layers=vision_layers,
                 output_dim=embed_dim,
                 heads=vision_heads,
@@ -97,7 +97,7 @@ class Clip(ModelBase):
             )
         else:
             vision_heads = vision_width // 64    # 计算 Transformer 头数，通常设为 width/64
-            self.image_encoder = VisionTransformer(  # 基于 VIT
+            self.visual = VisionTransformer(  # 基于 VIT
                 input_resolution=image_resolution,
                 patch_size=vision_patch_size,
                 width=vision_width,
@@ -107,11 +107,11 @@ class Clip(ModelBase):
             )
         
         # 构建文本 Transformer
-        self.text_encoder = Transformer(
+        self.transformer = Transformer(
             width=transformer_width,
             layers=transformer_layers,
             heads=transformer_heads,
-            attn_mask=self.build_attention_mask(self.context_length)
+            attn_mask=build_attention_mask(self.context_length)
         )
 
         self.vocab_size = vocab_size  # 词表大小
@@ -129,7 +129,7 @@ class Clip(ModelBase):
 
     @property
     def dtype(self):
-        return self.image_encoder.conv1.weight.dtype
+        return self.visual.conv1.weight.dtype
     
     # 权重初始化
     def initialize_parameters(self):
@@ -152,26 +152,26 @@ class Clip(ModelBase):
         nn.init.normal_(self.positional_embedding, std=0.01)
 
         # 初始化 视觉编码器 (ResNet) 的权重 -  Xavier 初始化 - 针对 Softmax 激活函数 | ViT 版本不需要初始化
-        if isinstance(self.image_encoder, ModifiedResNet):
+        if isinstance(self.visual, ModifiedResNet):
             # 初始化 ResNet 的 attention pooling 层（类似 ViT 的 CLS token 方法，聚合全局特征）的权重
-            if self.image_encoder.attnpool is not None: 
-                std = self.image_encoder.attnpool.c_proj.in_features ** -0.5
-                nn.init.normal_(self.image_encoder.attnpool.q_proj.weight, std=std)
-                nn.init.normal_(self.image_encoder.attnpool.k_proj.weight, std=std)
-                nn.init.normal_(self.image_encoder.attnpool.v_proj.weight, std=std)
-                nn.init.normal_(self.image_encoder.attnpool.c_proj.weight, std=std)
+            if self.visual.attnpool is not None: 
+                std = self.visual.attnpool.c_proj.in_features ** -0.5
+                nn.init.normal_(self.visual.attnpool.q_proj.weight, std=std)
+                nn.init.normal_(self.visual.attnpool.k_proj.weight, std=std)
+                nn.init.normal_(self.visual.attnpool.v_proj.weight, std=std)
+                nn.init.normal_(self.visual.attnpool.c_proj.weight, std=std)
             # 初始化 ResNet 残差块中的 BatchNorm 为 0
-            for resnet_block in [self.image_encoder.layer1, self.image_encoder.layer2, self.image_encoder.layer3, self.image_encoder.layer4]:
+            for resnet_block in [self.visual.layer1, self.visual.layer2, self.visual.layer3, self.visual.layer4]:
                 for name, param in resnet_block.named_parameters():
                     if name.endswith("bn3.weight"): # 仅初始化最后一层的 BatchNorm
                         nn.init.zeros_(param)
 
         # 初始化 文本编码器 (Transformer) 的权重
         # 计算三种标准差
-        proj_std = (self.text_encoder.width ** -0.5) * ((2 * self.text_encoder.layers) ** -0.5) # ((2L)^{-0.5}) 防止残差块累积后数值膨胀。
-        attn_std = self.text_encoder.width ** -0.5  # xavier 初始化 - 针对 Softmax 激活函数 
-        fc_std = (2 * self.text_encoder.width) ** -0.5  # Kaiming He 初始化 - 针对 ReLU 激活函数
-        for block in self.text_encoder.resblocks:
+        proj_std = (self.transformer.width ** -0.5) * ((2 * self.transformer.layers) ** -0.5) # ((2L)^{-0.5}) 防止残差块累积后数值膨胀。
+        attn_std = self.transformer.width ** -0.5  # xavier 初始化 - 针对 Softmax 激活函数 
+        fc_std = (2 * self.transformer.width) ** -0.5  # Kaiming He 初始化 - 针对 ReLU 激活函数
+        for block in self.transformer.resblocks:
             nn.init.normal_(block.attn.in_proj_weight, std=attn_std)
             nn.init.normal_(block.attn.out_proj.weight, std=proj_std)
             nn.init.normal_(block.mlp.c_fc.weight, std=fc_std)
@@ -179,7 +179,7 @@ class Clip(ModelBase):
 
         # 初始化 文本投影层 - Xavier 初始化
         if self.text_projection is not None:
-            nn.init.normal_(self.text_projection, std=self.text_encoder.width ** -0.5)
+            nn.init.normal_(self.text_projection, std=self.transformer.width ** -0.5)
     
 
     def encode_image(self, image):
@@ -192,7 +192,7 @@ class Clip(ModelBase):
         返回：
             - image_features (Tensor): 图像特征 | [batch_size, embed_dim]
         """
-        return self.image_encoder(image.type(self.dtype))
+        return self.visual(image.type(self.dtype))
 
     def encode_text(self, text):
         """
@@ -219,7 +219,7 @@ class Clip(ModelBase):
         
         # 通过 Transformer 进行文本编码
         x = x.permute(1, 0, 2)  # 调整维度为 [n_ctx, batch_size, transformer_width] 以适配 Transformer
-        x = self.text_encoder(x)
+        x = self.transformer(x)
         x = x.permute(1, 0, 2)  # 还原维度为 [batch_size, n_ctx, transformer_width]
 
         # 通过 layerNorm 层归一化数据

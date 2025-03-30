@@ -70,3 +70,4 @@ if __name__ == "__main__":
     main(args)
 
     # python run.py --train --config_path config/defaults.yaml --output-dir output
+    # python run.py --train --config_path config/CoOpClip-VitB16-ep50-Caltech101-SGD.yaml --output-dir output
