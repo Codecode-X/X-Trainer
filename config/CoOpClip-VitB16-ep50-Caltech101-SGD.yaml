@@ -74,6 +74,7 @@ INPUT:
 # ===================== 模型配置 (Model) =====================
 MODEL:
   NAME: "CoOpClip"  # 模型类名
+  # INIT_WEIGHTS_PATH: "/root/NP-CLIP/X-Trainer/output/pptlearner_imagenet_pretrained"  # prompt_learner 的imagenet预训练权重(可选) - 请仅使用相同数据集的预训练权重，否则没有意义
   
   # 特定 Clip 模型配置
   pretrained: "ViT-B/16"  # 预训练模型名称（如 ViT-B/16）

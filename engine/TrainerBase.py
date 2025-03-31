@@ -264,7 +264,7 @@ class TrainerBase:
             * epoch: epoch
         
         返回：
-            * None
+            * epoch: 训练轮数
 
         加载内容：
             * 模型状态字典
@@ -290,6 +290,8 @@ class TrainerBase:
             state_dict = checkpoint["state_dict"] # 获取状态字典
             epoch = checkpoint["epoch"] # 获取 epoch
             self._models[name].load_state_dict(state_dict) # 加载模型状态字典
+        
+        return epoch
 
 
     def resume_model_if_exist(self, directory):
@@ -505,8 +507,8 @@ class TrainerBase:
         do_test = not self.cfg.TRAIN.NO_TEST 
         if do_test:
             if self.cfg.TEST.FINAL_MODEL == "best_val":
-                print("测试验证性能最好的模型")
-                self.load_model(self.output_dir)
+                epoch = self.load_model(self.output_dir)
+                print(f"测试验证性能最好的模型-epoch {epoch}模型")
             else:
                 print("测试最后一个 epoch 的模型")
             self.test()

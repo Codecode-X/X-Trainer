@@ -170,13 +170,13 @@ class PromptLearner(nn.Module):
         self.n_cls = n_cls  # 类别数
         
         # 将 所有类别通用的 上下文向量 ctx 设为 可训练参数
-        self.learnable_ctx = nn.Parameter(ctx_vectors)
+        self.ctx = nn.Parameter(ctx_vectors)
 
         # 记录每一类的 prompt 的结尾 EOT 索引位置
         self.eot_indices = eot_indices
 
     def forward(self):
-        learnable_ctx = self.learnable_ctx  # 取出上下文向量
+        learnable_ctx = self.ctx  # 取出上下文向量
         if learnable_ctx.dim() == 2: # 只存在于所有类别都用同样的前缀
             learnable_ctx = learnable_ctx.unsqueeze(0).expand(self.n_cls, -1, -1)  # 维度适配
 

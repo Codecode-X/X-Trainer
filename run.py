@@ -6,8 +6,10 @@
     - python run.py --train --config_path config/Clip-VitB32-ep10-Caltech101-AdamW.yaml --output-dir output
     - python run.py --train --config_path config/CoOpClip-VitB16-ep50-Caltech101-SGD.yaml --output-dir output
     
-测试
+测试 
     - python run.py --eval_only --config_path output/25-03-31-19-40-20/config.yaml --output-dir output --model_dir output/25-03-31-19-40-20 --load_epoch 5
+    # 测试CoOp官方提供的imagenet预训练权重
+    - python run.py --eval_only --config_path config/CoOpClip-VitB16-ep50-Caltech101-SGD.yaml --output-dir output --model_dir output/seed1 --load_epoch 50
 """
 
 from utils import load_yaml_config, setup_logger, set_random_seed
