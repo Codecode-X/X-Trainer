@@ -240,7 +240,7 @@ class TrainerBase:
             sched_dict = None
             if self._scheds[name] is not None:
                 sched_dict = self._scheds[name].state_dict()  # 获取学习率调度器状态字典
-
+ 
             # 保存 checkpoint
             save_checkpoint(
                 {
