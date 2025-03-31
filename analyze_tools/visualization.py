@@ -137,7 +137,7 @@ def display_img_attn(model, img, visualize=False, output_path=None):
 
 if __name__ == "__main__":
     cfg_path = "/root/NP-CLIP/X-Trainer/config/Clip-VitB16-ep50-Caltech101-AdamW.yaml"
-    image_path = "/root/NP-CLIP/X-Trainer/vis_tools/seer2.jpg"  # 图像路径
+    image_path = "/root/NP-CLIP/X-Trainer/vis_tools/imgs/seer2.jpg"  # 图像路径
     output_path = "/root/NP-CLIP/X-Trainer/vis_tools/output"  # 输出路径
     cfg = load_yaml_config(cfg_path) # 读取配置
 
