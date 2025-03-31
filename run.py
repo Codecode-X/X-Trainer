@@ -1,3 +1,15 @@
+""" 
+使用示例:
+
+验证
+    - python run.py --train --config_path config/defaults.yaml --output-dir output
+    - python run.py --train --config_path config/Clip-VitB32-ep10-Caltech101-AdamW.yaml --output-dir output
+    - python run.py --train --config_path config/CoOpClip-VitB16-ep50-Caltech101-SGD.yaml --output-dir output
+    
+测试
+    - python run.py --eval_only --config_path output/25-03-31-19-40-20/config.yaml --output-dir output --model_dir output/25-03-31-19-40-20 --load_epoch 5
+"""
+
 from utils import load_yaml_config, setup_logger, set_random_seed
 from engine import build_trainer
 import argparse
@@ -15,10 +27,13 @@ def main(args):
     assert args.train or args.eval_only, "训练和评估模式至少要设置一个！"
     assert args.train != args.eval_only, "训练和评估模式不能同时设置！" 
 
-    # 读取配置文件 并 设置输出目录
-    modify_fn = lambda cfg: setattr(cfg, "OUTPUT_DIR", osp.join(cfg.OUTPUT_DIR,  # 修正: 输出目录 = cfg.OUTPUT_DIR + 当前时间 
-                datetime.datetime.now().strftime(r"%y-%m-%d-%H-%M-%S"))) or cfg  # or cfg: 保证返回 cfg
-    cfg = load_yaml_config(args.config_path, save=True, modify_fn=modify_fn) # 读取配置
+    def modify_fn(cfg):
+        """ 修改配置函数 """
+        cfg = reset_cfg(cfg, args) # 根据args覆盖cfg
+        cfg.OUTPUT_DIR = osp.join(cfg.OUTPUT_DIR,  # 修正: 输出目录 = cfg.OUTPUT_DIR + 当前时间 
+                                    datetime.datetime.now().strftime(r"%y-%m-%d-%H-%M-%S"))
+    # 读取配置并修改    
+    cfg = load_yaml_config(args.config_path, save=True, modify_fn=modify_fn) 
     
     # 设置日志记录器
     setup_logger(cfg.OUTPUT_DIR) # 设置日志记录器
@@ -68,7 +83,3 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     main(args)
-
-    # python run.py --train --config_path config/defaults.yaml --output-dir output
-    # python run.py --train --config_path config/Clip-VitB32-ep10-Caltech101-AdamW.yaml --output-dir output
-    # python run.py --train --config_path config/CoOpClip-VitB16-ep50-Caltech101-SGD.yaml --output-dir output

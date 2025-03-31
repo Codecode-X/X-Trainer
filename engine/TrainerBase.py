@@ -289,10 +289,6 @@ class TrainerBase:
             checkpoint = load_checkpoint(model_path) # 加载检查点
             state_dict = checkpoint["state_dict"] # 获取状态字典
             epoch = checkpoint["epoch"] # 获取 epoch
-            val_result = checkpoint["val_result"] # 获取验证结果
-            print(
-                f"Load {model_path} to {name} (epoch={epoch}, val_result={val_result:.1f})"
-            )
             self._models[name].load_state_dict(state_dict) # 加载模型状态字典
 
 
@@ -550,8 +546,10 @@ class TrainerBase:
         if need_eval:
             # 如果每个 epoch 后都验证，则进行验证，并保存验证性能最好的模型
             curr_result = self.test(split="val")  # TODO：是否有输出验证结果
+            assert curr_result is not None, "验证结果为 None"
             is_best = curr_result > self.best_result
             if is_best:
+                print(f"验证性能提升：{self.best_result:.1f} -> {curr_result:.1f}, 保存最佳模型")
                 self.best_result = curr_result
                 self.save_model(
                     self.epoch,

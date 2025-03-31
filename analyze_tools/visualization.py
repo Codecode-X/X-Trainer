@@ -1,3 +1,13 @@
+"""
+使用示例：
+
+python -m analyze_tools.visualization
+
+功能：
+    1. 可视化注意力权重
+    2. 可视化每一层每个区域的注意力
+"""
+
 import torch
 import numpy as np
 import matplotlib.pyplot as plt
@@ -133,12 +143,13 @@ def display_img_attn(model, img, visualize=False, output_path=None):
 
         plt.tight_layout()
         mkdir_if_missing(output_path)
+        print(f"保存 attention heatmaps 至 {output_path}/img_attn.png")
         plt.savefig(f"{output_path}/img_attn.png")
 
 if __name__ == "__main__":
-    cfg_path = "/root/NP-CLIP/X-Trainer/config/Clip-VitB16-ep50-Caltech101-AdamW.yaml"
-    image_path = "/root/NP-CLIP/X-Trainer/vis_tools/imgs/seer2.jpg"  # 图像路径
-    output_path = "/root/NP-CLIP/X-Trainer/vis_tools/output"  # 输出路径
+    cfg_path = "/root/NP-CLIP/X-Trainer/config/Clip-VitB32-ep10-Caltech101-AdamW.yaml"
+    image_path = "/root/NP-CLIP/X-Trainer/analyze_tools/imgs/white.jpg"  # 图像路径
+    output_path = "/root/NP-CLIP/X-Trainer/analyze_tools/output"  # 输出路径
     cfg = load_yaml_config(cfg_path) # 读取配置
 
     # 加载模型
