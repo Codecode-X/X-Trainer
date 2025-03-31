@@ -20,7 +20,7 @@ TRAIN:
   NO_TEST: False  # 训练完成后跳过测试阶段
   CHECKPOINT_FREQ: 5  # 模型保存频率（单位：epoch）
   PRINT_FREQ: 5  # 训练日志打印间隔（单位：batch）
-  MAX_EPOCH: 50  # 最大训练轮次（单位：epoch）
+  MAX_EPOCH: 10  # 最大训练轮次（单位：epoch）
 
 # 测试流程
 TEST:
@@ -90,7 +90,7 @@ LR_SCHEDULER:
   WARMUP:
     NAME: "LinearWarmupScheduler" # 预热器类名
     WARMUP_RECOUNT: True # 是否在预热结束后重置周期
-    EPOCHS: 5 # 预热轮数
+    EPOCHS: 1 # 预热轮数
     MIN_LR: 1e-6  # 最小学习率
 
 

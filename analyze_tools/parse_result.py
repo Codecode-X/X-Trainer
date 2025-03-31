@@ -46,11 +46,10 @@ import numpy as np
 import os.path as osp 
 import argparse 
 from collections import OrderedDict, defaultdict 
+from utils import check_isfile, listdir_nohidden, compute_ci95
 
-from XTrainer.utils import check_isfile, listdir_nohidden, compute_ci95
 
-
-def parse_function(*metrics, directory="", args=None, end_signal=None):
+def parse_result(*metrics, directory="", args=None, end_signal=None):
     """ 解析日志文件中的指标。
     参数：
         metrics (tuple): 包含指标的元组。
@@ -135,7 +134,7 @@ def main(args, end_signal):
         for directory in listdir_nohidden(args.directory, sort=True):
             directory = osp.join(args.directory, directory)  # 构造子目录路径
             # 解析当前子目录的日志文件
-            results = parse_function(
+            results = parse_result(
                 metric, directory=directory, args=args, end_signal=end_signal
             )
 
@@ -151,7 +150,7 @@ def main(args, end_signal):
 
     else:  # 如果不是多实验模式
         # 直接解析指定目录的日志文件
-        parse_function(
+        parse_result(
             metric, directory=args.directory, args=args, end_signal=end_signal
         )
 

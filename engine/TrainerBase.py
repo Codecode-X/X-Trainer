@@ -409,7 +409,9 @@ class TrainerBase:
         # 遍历所有模型名称，更新学习率
         for name in names:
             if self._scheds[name] is not None:
+                # print("Before step:", self._scheds[name].last_epoch)
                 self._scheds[name].step()  # 更新学习率
+                # print("After step:", self._scheds[name].last_epoch)
 
     
     def get_current_lr(self, names=None):
