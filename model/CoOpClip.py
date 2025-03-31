@@ -27,9 +27,8 @@ class CoOpClip(ModelBase):
         super().__init__(cfg)  # 调用父类 Clip 的构造函数
         # 读取预训练的 CLIP 模型
         pretrained_clip = Clip.build_model(cfg) # 调用父类 build 得到预训练的 CLIP 模型 (读取预训练权重)
-        if cfg.TRAINER.PREC == "fp32" or cfg.TRAINER.PREC == "amp": 
-            warnings.warn("Clip 默认是 fp16, 已自动转为 fp16")
-            pretrained_clip.float() # Clip 默认是 fp16
+        if cfg.TRAINER.PREC == "fp32" or cfg.TRAINER.PREC == "amp":  # clip模型默认是 float16 精度
+            pretrained_clip.float() # 将模型转换为 float32 精度
             
         self.image_encoder = pretrained_clip.visual  # 图像编码器
         self.text_encoder = pretrained_clip.transformer  # 文本编码器
@@ -67,8 +66,8 @@ class CoOpClip(ModelBase):
         重写 forward 函数 
         
         参数：
-            - image: 输入图像，形状为 (batch_size, 3, height, width)
-            - return_feature: 是否返回图像特征，默认为 False
+            - image(torch.Tensor): 输入图像，形状为 (batch_size, 3, height, width)
+            - return_feature(bool): 是否返回图像特征，默认为 False
 
         主要步骤：
             1. 编码图像特征
@@ -106,7 +105,7 @@ class CoOpClip(ModelBase):
 
 class PromptLearner(nn.Module):
     """ 
-    提示学习器：用于生成每个类别最优的的提示信息
+    提示学习器：用学习所有类别通用的上下文词ctx来生成每个类别的提示信息
     
     参数：
         - cfg: 配置文件，包含模型的超参数和训练设置
@@ -127,7 +126,7 @@ class PromptLearner(nn.Module):
         
         主要步骤：
         1. 读取参数和配置
-        2. 初始化上下文前缀词和嵌入向量
+        2. 初始化上下文前缀词和嵌入向量 | 上下文前缀词为所有类别通用
         3. 构造每个类别的完整的提示文本 -> [SOS] + 上下文向量 ctx(可学习) + 类别名 + 句号 + [EOS]
         4. 注册需持久化保存的张量 token_prefix 和 token_suffix
         5. 将上下文向量 learnable_ctx 设为可训练参数
@@ -139,7 +138,7 @@ class PromptLearner(nn.Module):
         dtype = clip_model.dtype  # CLIP 模型的数据类型
         clip_imsize = clip_model.image_encoder.input_resolution # CLIP 模型的输入图像尺寸
         # 读取配置
-        ctx_init = cfg.MODEL.init_ctx  # 是否使用预设的上下文词
+        ctx_init = cfg.MODEL.init_ctx  # 是否使用预设的上下文词 | 如 "a photo of a" | 所有类别通用的上下文词
         cfg_imsize = cfg.INPUT.SIZE # 配置文件中设定的输入图像尺寸
         assert cfg_imsize == clip_imsize, f"cfg_imsize ({cfg_imsize}) 必须等于 clip_imsize ({clip_imsize})" # 确保输入尺寸匹配
         
@@ -155,9 +154,9 @@ class PromptLearner(nn.Module):
         print(f'初始上下文向量："{prompt_prefix}"')
         print(f"上下文 token 数为 (tokens): {n_ctx}")
         
-        """构造 每个类别 完整的 prompt 文本（[SOS] + 上下文向量 ctx(可学习) + 类别名 + 句号 + [EOS]）"""
+        """构造 每个类别 的 prompt 文本（[SOS] + 上下文向量 ctx(可学习) + 类别名 + 句号 + [EOS]）"""
         classnames = [name.replace("_", " ") for name in classnames]  # 处理类别名称中的"_"
-        prompts = [prompt_prefix + " " + name + "." for name in classnames]  # 生成完整的 prompt 文本（前缀词 + name + 句号）
+        prompts = [prompt_prefix + " " + name + "." for name in classnames]  # 生成 prompt 文本（前缀词 + name + 句号）
         tokenized_prompts = torch.cat([tokenize(p) for p in prompts])  # 将文字形式的 prompt 分词编码为 token
         eot_indices = tokenized_prompts.argmax(dim=-1)  # 获取 tokenized_prompts 的 [EOS] token 的 索引
         with torch.no_grad():
@@ -170,7 +169,7 @@ class PromptLearner(nn.Module):
 
         self.n_cls = n_cls  # 类别数
         
-        # 将上下文向量 ctx 设为 可训练参数
+        # 将 所有类别通用的 上下文向量 ctx 设为 可训练参数
         self.learnable_ctx = nn.Parameter(ctx_vectors)
 
         # 记录每一类的 prompt 的结尾 EOT 索引位置

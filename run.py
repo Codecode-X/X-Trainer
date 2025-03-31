@@ -1,4 +1,4 @@
-from utils import load_yaml_config, setup_logger, set_random_seed, collect_env_info
+from utils import load_yaml_config, setup_logger, set_random_seed
 from engine import build_trainer
 import argparse
 import torch
@@ -70,4 +70,5 @@ if __name__ == "__main__":
     main(args)
 
     # python run.py --train --config_path config/defaults.yaml --output-dir output
+    # python run.py --train --config_path config/Clip-VitB16-ep50-Caltech101-AdamW.yaml --output-dir output
     # python run.py --train --config_path config/CoOpClip-VitB16-ep50-Caltech101-SGD.yaml --output-dir output

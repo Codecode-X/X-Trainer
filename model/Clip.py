@@ -255,7 +255,7 @@ class Clip(ModelBase):
         CLIP 前向传播。
         
         参数：
-            - image: 图像数据 | [batch, 3, 224, 224]
+            - image(torch.Tensor): 输入图像，形状为 (batch_size, 3, height, width)
             - return_feature (bool): 是否返回特征
         
         返回：
@@ -390,8 +390,16 @@ class Clip(ModelBase):
             for key in ["input_resolution", "context_length", "vocab_size"]:
                 if key in state_dict:
                     del state_dict[key]
-            convert_weights(model)
+            convert_weights(model) # clip 默认使用 fp16 精度
             model.load_state_dict(state_dict)
+
+            # 根据cfg的精度要求，转换模型的精度
+            if cfg.TRAINER.PREC == 'fp32':
+                model.float()
+            elif cfg.TRAINER.PREC == 'fp16':
+                pass
+            else:
+                raise NotImplementedError(f"Clip没有实现该精度转换方法: {cfg.TRAINER.PREC}")
 
             # 返回 eval 模式下的 CLIP 模型
             return model.eval()
@@ -716,6 +724,7 @@ class VisionTransformer(nn.Module):
         # 保存输入分辨率和输出维度
         self.input_resolution = input_resolution  # 输入图像的分辨率，例如 224×224
         self.output_dim = output_dim  
+        self.patch_size = patch_size  # 每个 patch 的大小，例如 16×16
         
         # **卷积层：将输入图像转换为 patch embedding**
         # 这里使用一个 2D 卷积层，类似于 ViT 直接将图像分割为 patch，并进行 embedding

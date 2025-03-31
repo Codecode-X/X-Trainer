@@ -15,7 +15,7 @@ def build_model(cfg):
     1. 检查模型是否被注册。
     2. 实例化模型。
     3. 调用模型的自己的 build_model() 方法。
-    4. 返回实例化后的模型对象。
+    4. 返回实例化后的模型对，转移到设备，并默认设置为评估模式。
     """
     model_name = cfg.MODEL.NAME # 获取模型名称
     avai_models = MODEL_REGISTRY.registered_names() # 获取所有已经注册的模型
@@ -28,7 +28,6 @@ def build_model(cfg):
         print("正在调用模型构造方法构造模型....")
         model = MODEL_REGISTRY.get(model_name)(cfg) # 直接调用模型构造方法
     except TypeError as e:
-        raise e
         print("直接调用模型构造方法失败，尝试使用模型的 build_model 方法....")
         model_class = MODEL_REGISTRY.get(model_name) # 获取模型类
         if hasattr(model_class, "build_model") and callable(model_class.build_model):
@@ -36,4 +35,8 @@ def build_model(cfg):
         else:
             print("该模型没有 build_model 方法")
             raise e
+    # 转移到设备 并 设置模型为评估模式
+    device = 'cuda' if cfg.USE_CUDA else 'cpu'
+    model.to(device).eval()
+    
     return model

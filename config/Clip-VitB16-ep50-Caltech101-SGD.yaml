@@ -11,7 +11,7 @@ RESUME: ""  # 断点续训路径（需包含`checkpoint.pth`文件）
 # ===================== 训练引擎配置 (Engine) =====================
 TRAINER:
   NAME: "TrainerClip"  # 训练器类名
-  PREC: "fp32"  # 训练精度：fp32、fp16、amp（自动混合精度）
+  PREC: "fp16"  # 训练精度：fp32、fp16、amp（自动混合精度）
   FROZEN: False  # 冻结文本编码器
 
 # 训练流程
